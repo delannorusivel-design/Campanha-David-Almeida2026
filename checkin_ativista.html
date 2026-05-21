@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="theme-color" content="#0D1F3C"/>
-<title>Check-in — Campanha David Almeida 2026</title>
+<title>Check-in — Campanha Daniel Almeida 2026</title>
 <style>
 :root{
   --navy:#0D1F3C;--blue:#1B4F8A;--lblue:#D6EAF8;
@@ -146,7 +146,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);
   z-index:200;display:none;align-items:flex-end}
 .modal-bg.open{display:flex}
-#lgpd-modal.open{display:flex!important}
+#lgpd-modal{display:none}#lgpd-modal.open{display:flex!important}
 .modal{background:#fff;border-radius:20px 20px 0 0;padding:20px 16px 32px;
   width:100%;max-height:80vh;overflow-y:auto}
 .modal h2{font-size:16px;font-weight:700;margin-bottom:16px;color:var(--navy)}
@@ -590,7 +590,7 @@ function showFb(type, msg) {
 function verificarConsentimento() {
   const consent = localStorage.getItem("lgpd_consent");
   if (!consent) {
-    const m=document.getElementById("lgpd-modal"); m.style.display="flex"; m.style.flexDirection="column"; m.style.justifyContent="flex-end";
+    document.getElementById("lgpd-modal").classList.add("open");
     document.body.style.overflow = "hidden";
   } else {
     iniciarApp();
@@ -615,7 +615,7 @@ function aceitarLGPD() {
     ]
   };
   localStorage.setItem("lgpd_consent", JSON.stringify(registro));
-  document.getElementById("lgpd-modal").style.display="none";
+  document.getElementById("lgpd-modal").classList.remove("open");
   document.body.style.overflow = "";
   iniciarApp();
 }
@@ -640,7 +640,7 @@ verificarConsentimento();
 <!-- ══ MODAL LGPD ══════════════════════════════════ -->
 <div id="lgpd-modal" style="
   position:fixed;inset:0;background:rgba(0,0,0,.85);
-  z-index:500;display:none;align-items:flex-end;
+  z-index:500;align-items:flex-end;
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
   flex-direction:column;justify-content:flex-end">
 
