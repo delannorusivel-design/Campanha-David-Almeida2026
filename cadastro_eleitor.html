@@ -344,12 +344,14 @@ function salvar() {
   eleitores.push(eleitor);
   localStorage.setItem("eleitores_campanha", JSON.stringify(eleitores));
 
-  // Envia ao Sheets — URL fixa
+  // Envia ao Sheets via FormData (resolve CORS do Apps Script)
   const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzK0Gaehzj1bsqE-6UyXtUJlamHW-b8Lqgc33hKw6ipC97G7ZJ0VAeX18cAO1k9lkQtNg/exec";
+  const form = new FormData();
+  form.append("dados", JSON.stringify(eleitor));
   fetch(WEBHOOK_URL, {
-    method:"POST", mode:"no-cors",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify(eleitor)
+    method: "POST",
+    mode: "no-cors",
+    body: form
   }).catch(()=>{});
 
   atualizarContadores();
