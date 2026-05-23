@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<meta name="theme-color" content="#1A1A1A"/>
+<title>Mapa Visual — Avante 70 · 2026</title>
+<style>
+:root{
+  --amarelo:#F5C000;--laranja:#E87722;--preto:#1A1A1A;
+  --green:#1A7A4A;--red:#7B241C;--border:#333;--muted:#718096;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+  background:#111;color:#fff;min-height:100vh;padding-bottom:80px}
+.header{background:var(--preto);padding:14px 16px;position:sticky;top:0;
+  z-index:100;border-bottom:2px solid var(--amarelo)}
+.header-top{display:flex;align-items:center;gap:10px}
+.logo{width:36px;height:36px;border-radius:50%;background:var(--amarelo);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:900;color:var(--preto);flex-shrink:0}
+.header h1{font-size:15px;font-weight:700;color:var(--amarelo)}
+.header p{font-size:10px;color:rgba(255,255,255,.5);margin-top:1px}
+.content{padding:12px}
+.card{background:#1E1E1E;border-radius:12px;padding:14px;
+  margin-bottom:12px;border:0.5px solid var(--border)}
+.sec-lbl{font-size:10px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;display:block}
+
+/* TABS */
+.map-tabs{display:flex;gap:0;margin-bottom:14px;background:#1E1E1E;
+  border-radius:10px;padding:4px;border:0.5px solid var(--border)}
+.map-tab{flex:1;padding:8px;border:none;background:transparent;
+  border-radius:7px;cursor:pointer;font-size:12px;font-weight:500;
+  color:var(--muted);transition:all .15s}
+.map-tab.active{background:var(--amarelo);color:var(--preto);font-weight:700}
+
+/* FILTROS */
+.filtros{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.filtro-btn{padding:6px 12px;border-radius:20px;border:0.5px solid var(--border);
+  background:#1E1E1E;cursor:pointer;font-size:11px;font-weight:500;
+  color:var(--muted);transition:all .15s;white-space:nowrap}
+.filtro-btn.active{background:var(--amarelo);color:var(--preto);
+  border-color:var(--amarelo);font-weight:700}
+
+/* CANDIDATO TABS */
+.cand-tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none}
+.cand-tabs::-webkit-scrollbar{display:none}
+.cand-tab{flex-shrink:0;padding:7px 13px;border-radius:20px;
+  border:0.5px solid var(--border);background:#1E1E1E;cursor:pointer;
+  font-size:11px;font-weight:500;color:var(--muted)}
+.cand-tab.active{color:var(--preto);font-weight:700}
+
+/* SVG MAPS */
+.map-wrap{background:#0D1117;border-radius:12px;overflow:hidden;
+  margin-bottom:12px;position:relative}
+.map-wrap svg{width:100%;height:auto;display:block}
+
+/* TOOLTIP */
+.tooltip{position:fixed;background:#1E1E1E;border:1px solid var(--amarelo);
+  border-radius:10px;padding:10px 14px;font-size:12px;color:#fff;
+  z-index:300;pointer-events:none;display:none;max-width:220px;line-height:1.7;
+  box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.tooltip-nome{font-size:13px;font-weight:700;color:var(--amarelo);margin-bottom:4px}
+
+/* LEGENDA */
+.legenda{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
+.leg-box{width:14px;height:14px;border-radius:3px;flex-shrink:0}
+
+/* CARDS DAS ZONAS */
+.zona-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.zona-card{background:#1E1E1E;border-radius:10px;padding:10px;
+  border:0.5px solid var(--border);border-top:3px solid transparent;
+  cursor:pointer;transition:all .2s}
+.zona-card:hover{transform:translateY(-2px)}
+.zona-card-nome{font-size:11px;font-weight:600;margin-bottom:4px}
+.zona-card-total{font-size:22px;font-weight:700}
+.zona-card-int{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;
+  background:var(--preto);border-top:0.5px solid var(--border);
+  display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
+.nav-btn{flex:1;padding:10px 4px 8px;background:none;border:none;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  font-size:10px;font-weight:500;color:var(--muted)}
+.nav-btn.active{color:var(--amarelo)}
+.nav-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;
+  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.panel{display:none}.panel.active{display:block}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="logo">70</div>
+    <div style="flex:1">
+      <h1>🗺️ Mapa de Calor Visual</h1>
+      <p>Avante 70 · Amazonas 2026</p>
+    </div>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip">
+  <div class="tooltip-nome" id="tt-nome"></div>
+  <div id="tt-body"></div>
+</div>
+
+<div class="content">
+
+  <!-- TABS MAPA -->
+  <div class="map-tabs">
+    <button class="map-tab active" id="mt-manaus" onclick="setMapTab('manaus')">🏙️ Manaus</button>
+    <button class="map-tab" id="mt-interior" onclick="setMapTab('interior')">🌿 Interior AM</button>
+  </div>
+
+  <!-- CANDIDATO TABS -->
+  <div class="cand-tabs" id="cand-tabs"></div>
+
+  <!-- FILTRO INTERESSE -->
+  <div class="filtros" id="filtros-int"></div>
+
+  <!-- ── MANAUS ── -->
+  <div class="panel active" id="panel-manaus">
+
+    <!-- Mapa SVG de Manaus por zona -->
+    <div class="map-wrap">
+      <svg viewBox="0 0 400 380" xmlns="http://www.w3.org/2000/svg" id="svg-manaus">
+        <!-- Rio Negro / Solimões -->
+        <rect width="400" height="380" fill="#0D1117"/>
+        <path d="M0 300 Q100 280 200 290 Q300 300 400 285 L400 380 L0 380 Z"
+          fill="#1B2B4B" opacity="0.6"/>
+        <text x="200" y="350" fill="#2A4A7A" font-size="11"
+          text-anchor="middle" font-style="italic">Rio Negro / Solimões</text>
+
+        <!-- ZONA NORTE -->
+        <path id="zona-norte"
+          d="M60 20 L340 20 L360 80 L320 120 L280 100 L200 110 L120 100 L80 120 L40 80 Z"
+          fill="#333" stroke="#1A1A1A" stroke-width="2" cursor="pointer"
+          onclick="clicouZona('Zona Norte')"
+          onmouseenter="hoverZona(event,'Zona Norte')" onmouseleave="hideTip()"/>
+        <text x="200" y="72" fill="#fff" font-size="13" font-weight="700"
+          text-anchor="middle" pointer-events="none">Zona Norte</text>
+        <text id="lbl-norte" x="200" y="90" fill="rgba(255,255,255,.7)"
+          font-size="11" text-anchor="middle" pointer-events="none">0 cadastros</text>
+
+        <!-- ZONA OESTE -->
+        <path id="zona-oeste"
+          d="M40 80 L80 120 L70 180 L50 220 L20 200 L10 140 Z"
+          fill="#333" stroke="#1A1A1A" stroke-width="2" cursor="pointer"
+          onclick="clicouZona('Zona Oeste')"
+          onmouseenter="hoverZona(event,'Zona Oeste')" onmouseleave="hideTip()"/>
+        <text x="48" y="158" fill="#fff" font-size="11" font-weight="700"
+          text-anchor="middle" pointer-events="none">Z. Oeste</text>
+        <text id="lbl-oeste" x="48" y="173" fill="rgba(255,255,255,.7)"
+          font-size="9" text-anchor="middle" pointer-events="none">0</text>
+
+        <!-- CENTRO -->
+        <path id="zona-centro"
+          d="M80 120 L200 110 L220 170 L200 210 L140 220 L90 200 L70 180 Z"
+          fill="#333" stroke="#1A1A1A" stroke-width="2" cursor="pointer"
+          onclick="clicouZona('Centro')"
+          onmouseenter="hoverZona(event,'Centro')" onmouseleave="hideTip()"/>
+        <text x="150" y="168" fill="#fff" font-size="13" font-weight="700"
+          text-anchor="middle" pointer-events="none">Centro</text>
+        <text id="lbl-centro" x="150" y="186" fill="rgba(255,255,255,.7)"
+          font-size="11" text-anchor="middle" pointer-events="none">0 cadastros</text>
+
+        <!-- ZONA LESTE -->
+        <path id="zona-leste"
+          d="M280 100 L320 120 L360 80 L380 140 L370 220 L330 240 L280 230 L260 180 L220 170 L200 110 Z"
+          fill="#333" stroke="#1A1A1A" stroke-width="2" cursor="pointer"
+          onclick="clicouZona('Zona Leste')"
+          onmouseenter="hoverZona(event,'Zona Leste')" onmouseleave="hideTip()"/>
+        <text x="300" y="168" fill="#fff" font-size="13" font-weight="700"
+          text-anchor="middle" pointer-events="none">Zona Leste</text>
+        <text id="lbl-leste" x="300" y="186" fill="rgba(255,255,255,.7)"
+          font-size="11" text-anchor="middle" pointer-events="none">0 cadastros</text>
+
+        <!-- ZONA SUL -->
+        <path id="zona-sul"
+          d="M90 200 L140 220 L200 210 L260 180 L280 230 L260 270 L200 280 L140 275 L100 260 L70 240 L50 220 Z"
+          fill="#333" stroke="#1A1A1A" stroke-width="2" cursor="pointer"
+          onclick="clicouZona('Zona Sul')"
+          onmouseenter="hoverZona(event,'Zona Sul')" onmouseleave="hideTip()"/>
+        <text x="175" y="245" fill="#fff" font-size="13" font-weight="700"
+          text-anchor="middle" pointer-events="none">Zona Sul</text>
+        <text id="lbl-sul" x="175" y="263" fill="rgba(255,255,255,.7)"
+          font-size="11" text-anchor="middle" pointer-events="none">0 cadastros</text>
+
+        <!-- Indicador de norte -->
+        <circle cx="370" cy="30" r="14" fill="#1E1E1E" stroke="#333"/>
+        <text x="370" y="35" fill="#F5C000" font-size="13" font-weight="900"
+          text-anchor="middle">N</text>
+      </svg>
+    </div>
+
+    <!-- Legenda de calor -->
+    <div class="legenda">
+      <div class="leg-item"><div class="leg-box" style="background:#1B3A5A"></div>1-2</div>
+      <div class="leg-item"><div class="leg-box" style="background:#4A235A"></div>3-5</div>
+      <div class="leg-item"><div class="leg-box" style="background:#7D3C00"></div>6-10</div>
+      <div class="leg-item"><div class="leg-box" style="background:#C49A00"></div>11-20</div>
+      <div class="leg-item"><div class="leg-box" style="background:#F5C000"></div>20+</div>
+      <div class="leg-item"><div class="leg-box" style="background:#333"></div>Sem dados</div>
+    </div>
+
+    <!-- Cards das zonas -->
+    <div style="margin-top:14px">
+      <span class="sec-lbl">Detalhes por zona</span>
+      <div class="zona-cards" id="zona-cards-manaus"></div>
+    </div>
+
+  </div>
+
+  <!-- ── INTERIOR ── -->
+  <div class="panel" id="panel-interior">
+
+    <!-- Mapa SVG esquemático do Amazonas -->
+    <div class="map-wrap">
+      <svg viewBox="0 0 400 420" xmlns="http://www.w3.org/2000/svg" id="svg-interior">
+        <rect width="400" height="420" fill="#0D1117"/>
+
+        <!-- Contorno do Amazonas (simplificado) -->
+        <path d="M200 20 L320 40 L380 80 L390 160 L360 220 L340 300
+                 L280 360 L200 390 L120 370 L60 310 L20 240 L10 160
+                 L30 80 L80 40 Z"
+          fill="#141A2E" stroke="#2A3A5A" stroke-width="1.5"/>
+
+        <!-- Rio Amazonas -->
+        <path d="M20 220 Q100 200 200 210 Q300 220 390 200"
+          fill="none" stroke="#1B3A7A" stroke-width="4" opacity="0.7"/>
+        <text x="200" y="198" fill="#2A4A7A" font-size="9"
+          text-anchor="middle" font-style="italic">Rio Amazonas</text>
+
+        <!-- Municípios como círculos clicáveis -->
+        <!-- Manaus (capital) -->
+        <circle id="mun-manaus" cx="200" cy="180" r="18" fill="#F5C000"
+          stroke="#1A1A1A" stroke-width="2" cursor="pointer"
+          onmouseenter="hoverMun(event,'Manaus')" onmouseleave="hideTip()"/>
+        <text x="200" y="175" fill="#1A1A1A" font-size="9" font-weight="900"
+          text-anchor="middle" pointer-events="none">MANAUS</text>
+        <text id="lbl-m-manaus" x="200" y="187" fill="#1A1A1A" font-size="8"
+          text-anchor="middle" pointer-events="none">capital</text>
+
+        <!-- Parintins -->
+        <circle id="mun-parintins" cx="330" cy="150" r="10" fill="#333"
+          stroke="#555" stroke-width="1.5" cursor="pointer"
+          onmouseenter="hoverMun(event,'Parintins')" onmouseleave="hideTip()"/>
+        <text x="330" y="170" fill="rgba(255,255,255,.7)" font-size="8"
+          text-anchor="middle" pointer-events="none">Parintins</text>
+
+        <!-- Itacoatiara -->
+        <circle id="mun-itacoatiara" cx="275" cy="160" r="10" fill="#333"
+          stroke="#555" stroke-width="1.5" cursor="pointer"
+          onmouseenter="hoverMun(event,'Itacoatiara')" onmouseleave="hideTip()"/>
+        <text x="275" y="180" fill="rgba(255,255,255,.7)" font-size="8"
+          text-anchor="middle" pointer-events="none">Itacoatiara</text>
+
+        <!-- Manacapuru -->
+        <circle id="mun-manacapuru" cx="145" cy="195" r="9" fill="#333"
+          stroke="#555" stroke-width="1.5" cursor="pointer"
+          onmouseenter="hoverMun(event,'Manacapuru')" onmouseleave="hideTip()"/>
+        <text x="145" y="213" fill="rgba(255,255,255,.7)" font-size="8"
+          text-anchor="middle" pointer-events="none">Manacapuru</text>
+
+        <!-- Coari -->
+        <circle id="mun-coari" cx="90" cy="200" r="9" fill="#333"
+          stroke="#555" stroke-width="1.5" cursor="pointer"
+          onmouseenter="hoverMun(event,'Coari')" onmouseleave="hideTip()"/>
+        <text x="90" y="218" fill="rgba(255,255,255,.7)" font-size="8"
+          text-anchor="middle" pointer-events="none">Coari</text>
+
+        <!-- Tefé -->
+        <circle id="mun-tefe" cx="60" cy="230" r="8" fill="#333"
+          stroke="#555" stroke-width="1.5" cursor="pointer"
+          onmouseenter="hoverMun(event,'Tefé')" onmouseleave="hideTip()"/>
+        <text x="60" y="247" fill="rgba(255,255,255,.7)" font-size="8"
+          text-anchor="middle" pointer-events="none">Tefé</text>
+
+        <!-- Maués -->
+        <circle id="mun-maues" cx="295" cy="220" r="8" fill="#333"
+          stroke="#555" stroke-width="1.5" cursor="pointer"
+          onmouseenter="hoverMun(event,'Maués')" onmouseleave="hideTip()"/>
+        <text x="295" y="237" fill="rgba(255,255,255,.7)" font-size="8"
+          text-anchor="middle" pointer-events="none">Maués</text>
+
+        <!-- São Gabriel da Cachoeira -->
+        <circle id="mun-saogabriel" cx="130" cy="80" r="8" fill="#333"
+          stroke="#555" stroke-width="1.5" cursor="pointer"
+          onmouseenter="hoverMun(event,'São Gabriel')" onmouseleave="hideTip()"/>
+        <text x="130" y="97" fill="rgba(255,255,255,.7)" font-size="8"
+          text-anchor="middle" pointer-events="none">S. Gabriel</text>
+
+        <!-- Tabatinga -->
+        <circle id="mun-tabatinga" cx="45" cy="280" r="8" fill="#333"
+          stroke="#555" stroke-width="1.5" cursor="pointer"
+          onmouseenter="hoverMun(event,'Tabatinga')" onmouseleave="hideTip()"/>
+        <text x="45" y="297" fill="rgba(255,255,255,.7)" font-size="8"
+          text-anchor="middle" pointer-events="none">Tabatinga</text>
+
+        <!-- Humaitá -->
+        <circle id="mun-humaita" cx="180" cy="330" r="8" fill="#333"
+          stroke="#555" stroke-width="1.5" cursor="pointer"
+          onmouseenter="hoverMun(event,'Humaitá')" onmouseleave="hideTip()"/>
+        <text x="180" y="347" fill="rgba(255,255,255,.7)" font-size="8"
+          text-anchor="middle" pointer-events="none">Humaitá</text>
+
+        <!-- Lábrea -->
+        <circle id="mun-labrea" cx="130" cy="310" r="8" fill="#333"
+          stroke="#555" stroke-width="1.5" cursor="pointer"
+          onmouseenter="hoverMun(event,'Lábrea')" onmouseleave="hideTip()"/>
+        <text x="130" y="327" fill="rgba(255,255,255,.7)" font-size="8"
+          text-anchor="middle" pointer-events="none">Lábrea</text>
+
+        <!-- Borba -->
+        <circle id="mun-borba" cx="260" cy="270" r="7" fill="#333"
+          stroke="#555" stroke-width="1.5" cursor="pointer"
+          onmouseenter="hoverMun(event,'Borba')" onmouseleave="hideTip()"/>
+        <text x="260" y="286" fill="rgba(255,255,255,.7)" font-size="8"
+          text-anchor="middle" pointer-events="none">Borba</text>
+
+        <!-- Indicador Norte -->
+        <circle cx="370" cy="30" r="14" fill="#1E1E1E" stroke="#333"/>
+        <text x="370" y="35" fill="#F5C000" font-size="13" font-weight="900"
+          text-anchor="middle">N</text>
+
+        <!-- Legenda -->
+        <text x="200" y="410" fill="rgba(255,255,255,.3)" font-size="8"
+          text-anchor="middle">Mapa esquemático · Amazonas</text>
+      </svg>
+    </div>
+
+    <!-- Legenda -->
+    <div class="legenda">
+      <div class="leg-item"><div class="leg-box" style="background:#333"></div>Sem cadastros</div>
+      <div class="leg-item"><div class="leg-box" style="background:#1B3A5A"></div>1-2</div>
+      <div class="leg-item"><div class="leg-box" style="background:#4A235A"></div>3-5</div>
+      <div class="leg-item"><div class="leg-box" style="background:#A04000"></div>6+</div>
+      <div class="leg-item"><div class="leg-box" style="background:#F5C000"></div>Capital</div>
+    </div>
+
+    <!-- Top municípios -->
+    <div style="margin-top:14px">
+      <span class="sec-lbl">Cadastros no interior</span>
+      <div id="interior-list"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="nav-manaus" onclick="setTab('manaus')">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Manaus
+  </button>
+  <button class="nav-btn" id="nav-interior" onclick="setTab('interior')">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    Interior AM
+  </button>
+</nav>
+
+<script>
+const CANDIDATOS = [
+  {nome:"Todos",      slug:"todos",  cor:"#F5C000", key:null},
+  {nome:"Aryel 7070", slug:"aryel",  cor:"#E87722", key:"eleitores_aryel"},
+  {nome:"Daniel 70070",slug:"daniel",cor:"#C49A00", key:"eleitores_daniel"},
+  {nome:"David 70",   slug:"david",  cor:"#A04000", key:"eleitores_david"},
+];
+
+const INTERESSES = [
+  "Todos","Saúde","Segurança","Educação","Emprego",
+  "Infraestrutura","Transporte","Moradia","Agricultura","Meio Ambiente","Mulheres","Juventude"
+];
+
+const ZONAS_MANAUS = ["Zona Norte","Zona Sul","Centro","Zona Oeste","Zona Leste"];
+const MUNICIPIOS_INTERIOR = [
+  "parintins","itacoatiara","manacapuru","coari","tefe",
+  "maues","saogabriel","tabatinga","humaita","labrea","borba"
+];
+const MUN_NOMES = {
+  "parintins":"Parintins","itacoatiara":"Itacoatiara","manacapuru":"Manacapuru",
+  "coari":"Coari","tefe":"Tefé","maues":"Maués","saogabriel":"São Gabriel da Cachoeira",
+  "tabatinga":"Tabatinga","humaita":"Humaitá","labrea":"Lábrea","borba":"Borba"
+};
+
+let candAtivo = "todos";
+let intAtivo  = "Todos";
+let mapAtivo  = "manaus";
+
+function carregarDados() {
+  var lista = [];
+  CANDIDATOS.slice(1).forEach(function(c) {
+    var l = JSON.parse(localStorage.getItem(c.key)||"[]");
+    l.forEach(function(e){ e._cand = c.slug; });
+    lista = lista.concat(l);
+  });
+  return lista;
+}
+
+function filtrarLista() {
+  var lista = carregarDados();
+  if (candAtivo !== "todos")
+    lista = lista.filter(function(e){ return e._cand === candAtivo; });
+  if (intAtivo !== "Todos")
+    lista = lista.filter(function(e){ return e.interesse === intAtivo; });
+  return lista;
+}
+
+// Cor baseada na quantidade
+function corCalor(n, max, corBase) {
+  if (!n || !max) return "#333";
+  var pct = n / max;
+  if (pct > 0.75) return corBase || "#F5C000";
+  if (pct > 0.5)  return "#C49A00";
+  if (pct > 0.25) return "#4A235A";
+  return "#1B3A5A";
+}
+
+function renderTudo() {
+  var lista = filtrarLista();
+  var cand  = CANDIDATOS.find(function(c){return c.slug===candAtivo;})||CANDIDATOS[0];
+
+  // Tabs candidatos
+  document.getElementById("cand-tabs").innerHTML = CANDIDATOS.map(function(c){
+    var isAtivo = candAtivo === c.slug;
+    return '<button class="cand-tab' + (isAtivo?" active":"") + '"' +
+      (isAtivo?' style="background:'+c.cor+';border-color:'+c.cor+'"':'') +
+      ' onclick="filtrarCand(\''+c.slug+'\')">' + c.nome + '</button>';
+  }).join("");
+
+  // Filtros interesse
+  document.getElementById("filtros-int").innerHTML = INTERESSES.map(function(i){
+    var isAtivo = intAtivo === i;
+    return '<button class="filtro-btn'+(isAtivo?" active":"") + '"' +
+      (isAtivo?' style="background:'+cand.cor+';border-color:'+cand.cor+';color:#1A1A1A"':'') +
+      ' onclick="filtrarInt(\''+i+'\')">' + i + '</button>';
+  }).join("");
+
+  // ── MANAUS ──
+  var porZona = {};
+  ZONAS_MANAUS.forEach(function(z){ porZona[z] = 0; });
+  lista.filter(function(e){return e.tipo_local!=="interior";})
+    .forEach(function(e){ if(e.zona && porZona[e.zona]!==undefined) porZona[e.zona]++; });
+
+  var maxZona = Math.max.apply(null, Object.values(porZona).concat([1]));
+
+  var zonaIds = {
+    "Zona Norte":"zona-norte","Zona Sul":"zona-sul","Centro":"zona-centro",
+    "Zona Oeste":"zona-oeste","Zona Leste":"zona-leste"
+  };
+  var lblIds = {
+    "Zona Norte":"lbl-norte","Zona Sul":"lbl-sul","Centro":"lbl-centro",
+    "Zona Oeste":"lbl-oeste","Zona Leste":"lbl-leste"
+  };
+
+  ZONAS_MANAUS.forEach(function(zona) {
+    var n   = porZona[zona];
+    var el  = document.getElementById(zonaIds[zona]);
+    var lbl = document.getElementById(lblIds[zona]);
+    if (el)  el.setAttribute("fill", corCalor(n, maxZona, cand.cor));
+    if (lbl) lbl.textContent = n + (zona==="Zona Oeste"||zona==="Centro"?"":" cadastros");
+  });
+
+  // Cards zonas Manaus
+  var topInt = function(zona) {
+    var counts = {};
+    lista.filter(function(e){return e.zona===zona&&e.interesse;})
+      .forEach(function(e){ counts[e.interesse]=(counts[e.interesse]||0)+1; });
+    var top = Object.entries(counts).sort(function(a,b){return b[1]-a[1];})[0];
+    return top ? top[0] : "—";
+  };
+
+  document.getElementById("zona-cards-manaus").innerHTML = ZONAS_MANAUS.map(function(zona){
+    var n   = porZona[zona];
+    var cor = n > 0 ? (cand.cor || "#F5C000") : "#333";
+    var int = topInt(zona);
+    return '<div class="zona-card" style="border-top-color:'+cor+'"' +
+      ' onclick="clicouZona(\''+zona+'\')">' +
+      '<div class="zona-card-nome" style="color:'+cor+'">'+zona+'</div>' +
+      '<div class="zona-card-total" style="color:'+cor+'">'+n+'</div>' +
+      '<div class="zona-card-int">Principal: '+int+'</div>' +
+      '</div>';
+  }).join("");
+
+  // ── INTERIOR ──
+  var porMun = {};
+  lista.filter(function(e){return e.tipo_local==="interior"||e.zona==="Interior";})
+    .forEach(function(e){
+      var m = (e.municipio||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+      if (m) porMun[m] = (porMun[m]||0) + 1;
+    });
+
+  var maxMun = Math.max.apply(null, Object.values(porMun).concat([1]));
+
+  // Colore os círculos no SVG
+  MUNICIPIOS_INTERIOR.forEach(function(slug) {
+    var el  = document.getElementById("mun-"+slug);
+    var nome = MUN_NOMES[slug] || slug;
+    var nomeNorm = nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+    var n   = porMun[nomeNorm] || porMun[slug] || 0;
+    if (el) el.setAttribute("fill", n > 0 ? corCalor(n, maxMun, cand.cor) : "#333");
+  });
+
+  // Lista interior
+  var interiorLista = Object.entries(porMun)
+    .sort(function(a,b){return b[1]-a[1];}).slice(0,8);
+
+  if (interiorLista.length === 0) {
+    document.getElementById("interior-list").innerHTML =
+      '<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">' +
+      'Nenhum cadastro do interior ainda.<br/>Use o app de cadastro e selecione 🌿 Interior.</div>';
+  } else {
+    var emojis = ["🥇","🥈","🥉","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣"];
+    document.getElementById("interior-list").innerHTML = interiorLista.map(function(item,i){
+      return '<div style="display:flex;align-items:center;gap:10px;' +
+        'background:#1E1E1E;border-radius:8px;padding:9px 12px;margin-bottom:6px">' +
+        '<span style="font-size:18px;width:24px">' + (emojis[i]||i+1) + '</span>' +
+        '<div style="flex:1"><div style="font-size:12px;font-weight:600">' + item[0] + '</div></div>' +
+        '<span style="font-size:20px;font-weight:700;color:'+(cand.cor||"#F5C000")+'">'
+        + item[1] + '</span></div>';
+    }).join("");
+  }
+}
+
+// Tooltip
+function hoverZona(evt, zona) {
+  var lista = filtrarLista();
+  var n = lista.filter(function(e){return e.zona===zona;}).length;
+  var counts = {};
+  lista.filter(function(e){return e.zona===zona&&e.interesse;})
+    .forEach(function(e){counts[e.interesse]=(counts[e.interesse]||0)+1;});
+  var top = Object.entries(counts).sort(function(a,b){return b[1]-a[1];}).slice(0,3);
+
+  document.getElementById("tt-nome").textContent = zona;
+  document.getElementById("tt-body").innerHTML =
+    "<strong>" + n + "</strong> cadastro" + (n!==1?"s":"") +
+    (top.length ? "<br/>Principais: " + top.map(function(t){return t[0]+" ("+t[1]+")";}).join(", ") : "");
+  showTip(evt);
+}
+
+function hoverMun(evt, nome) {
+  var lista = filtrarLista();
+  var nomeNorm = nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  var n = lista.filter(function(e){
+    var m = (e.municipio||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+    return m === nomeNorm || m.includes(nomeNorm);
+  }).length;
+  document.getElementById("tt-nome").textContent = nome;
+  document.getElementById("tt-body").innerHTML = "<strong>" + n + "</strong> cadastro" + (n!==1?"s":"");
+  showTip(evt);
+}
+
+function clicouZona(zona) {
+  filtrarInt("Todos");
+}
+
+function showTip(evt) {
+  var t = document.getElementById("tooltip");
+  t.style.display = "block";
+  t.style.left = Math.min(evt.clientX+12, window.innerWidth-230) + "px";
+  t.style.top  = Math.max(evt.clientY-80, 10) + "px";
+}
+function hideTip() {
+  document.getElementById("tooltip").style.display = "none";
+}
+
+function filtrarCand(slug) { candAtivo = slug; renderTudo(); }
+function filtrarInt(int)   { intAtivo  = int;  renderTudo(); }
+
+function setMapTab(id) {
+  document.getElementById("mt-manaus").classList.toggle("active",  id==="manaus");
+  document.getElementById("mt-interior").classList.toggle("active", id==="interior");
+  document.getElementById("panel-manaus").classList.toggle("active",   id==="manaus");
+  document.getElementById("panel-interior").classList.toggle("active", id==="interior");
+  mapAtivo = id;
+}
+
+function setTab(id) {
+  setMapTab(id);
+  document.getElementById("nav-manaus").classList.toggle("active",   id==="manaus");
+  document.getElementById("nav-interior").classList.toggle("active", id==="interior");
+}
+
+renderTudo();
+setInterval(renderTudo, 30000);
+</script>
+</body>
+</html>
