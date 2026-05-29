@@ -849,8 +849,27 @@ function enviarCheckin() {
     "&lng=" + checkin.lng +
     "&acc=" + checkin.acc;
 
+  // Envia dados sem foto via GET (rápido)
   var img = new Image();
   img.src = "https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec?" + p;
+
+  // Envia foto separadamente via POST (em background)
+  if (fotoBase64) {
+    var fotoComprimida = comprimirFoto(fotoBase64, 800, 0.6);
+    fetch("https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec", {
+      method: "POST",
+      mode: "no-cors",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        acao: "salvar_foto",
+        token: "avante70-am-2026-token-secreto",
+        id: String(checkin.id),
+        nome: checkin.nome,
+        dia: checkin.dia,
+        foto: fotoComprimida
+      })
+    }).catch(function(e){ console.log("Foto:", e); });
+  }
 
   // 4. Limpa campos após 1 segundo
   setTimeout(function() {
@@ -1008,6 +1027,28 @@ function iniciarApp() {
   atualizarPerfil();
   atualizarContadores();
   renderHistorico();
+}
+
+
+// ── COMPRIMIR FOTO ────────────────────────────────────
+function comprimirFoto(base64, maxWidth, qualidade) {
+  try {
+    if (!base64) return "";
+    // Cria canvas para redimensionar
+    var img = new window.Image();
+    var canvas = document.createElement("canvas");
+    var ctx = canvas.getContext("2d");
+    img.src = base64;
+    // Calcula dimensões mantendo proporção
+    var ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
+    if (ratio >= 1) return base64; // já é pequena
+    canvas.width  = Math.round(img.width  * ratio);
+    canvas.height = Math.round(img.height * ratio);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL("image/jpeg", qualidade||0.6);
+  } catch(e) {
+    return base64; // fallback sem compressão
+  }
 }
 
 // ── INIT ────────────────────────────────────────────
