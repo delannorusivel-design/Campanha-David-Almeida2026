@@ -795,16 +795,15 @@ function selTipo(btn) {
 }
 
 // ── ENVIAR CHECK-IN ─────────────────────────────────
-async function enviarCheckin() {
-  if (!perfil?.nome) { showFb("err", "Configure seu perfil primeiro."); return; }
-  if (!fotoBase64)   { showFb("err", "Tire uma foto antes de enviar."); return; }
-  if (!gpsData)      { showFb("err", "Aguarde o GPS localizar você."); return; }
+function enviarCheckin() {
+  if (!perfil || !perfil.nome) { showFb("err", "Configure seu perfil primeiro."); return; }
+  if (!fotoBase64)             { showFb("err", "Tire uma foto antes de enviar."); return; }
+  if (!gpsData)                { showFb("err", "Aguarde o GPS localizar você."); return; }
 
-  const btn = document.getElementById("btn-send");
-  btn.disabled = true;
-  btn.textContent = "⏳ Salvando...";
+  var btn = document.getElementById("btn-send");
 
-  const checkin = {
+  // Monta objeto do check-in
+  var checkin = {
     id:       Date.now(),
     dia:      hoje,
     hora:     new Date().toLocaleTimeString("pt-BR", {hour:"2-digit",minute:"2-digit"}),
@@ -819,50 +818,48 @@ async function enviarCheckin() {
     lng:      gpsData.lng,
     acc:      gpsData.acc,
     foto:     fotoBase64,
-    maps_url: `https://maps.google.com/?q=${gpsData.lat},${gpsData.lng}`,
+    maps_url: "https://maps.google.com/?q=" + gpsData.lat + "," + gpsData.lng,
   };
 
-  // Salva local
+  // 1. Salva localmente PRIMEIRO
   checkins.push(checkin);
   localStorage.setItem("checkins_hoje", JSON.stringify(checkins));
 
-  // Envia ao Google Sheets via webhook
-  try {
-    var p = new URLSearchParams({
-      acao:     "checkin",
-      token:    "avante70-am-2026-token-secreto",
-      id:       String(checkin.id),
-      dia:      checkin.dia,
-      hora:     checkin.hora,
-      nome:     checkin.nome,
-      zona:     checkin.zona,
-      lider:    checkin.lider||"",
-      tipo:     checkin.tipo,
-      eleit:    String(checkin.eleit),
-      obs:      checkin.obs||"",
-      lat:      String(checkin.lat||""),
-      lng:      String(checkin.lng||""),
-      acc:      String(checkin.acc||""),
-    });
-    new Image().src = "https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec?" + p.toString();
-  } catch(e) { console.log("Webhook erro:", e); }
-
-  // Libera UI imediatamente — não espera o webhook
+  // 2. Libera UI imediatamente
   btn.disabled = false;
   btn.textContent = "✅ Enviar check-in";
-  showFb("ok", `✅ Check-in #${checkins.length} registrado! ${new Date().toLocaleTimeString("pt-BR")} · ${tipoSel}`);
+  showFb("ok", "✅ Check-in #" + checkins.length + " salvo! " +
+    checkin.hora + " · " + tipoSel);
   atualizarContadores();
   renderHistorico();
 
-  // Envia ao webhook em background (não bloqueia a UI)
-  setTimeout(() => {
-    // (campos limpos abaixo)
-    // Limpa campos
+  // 3. Envia ao Google Sheets em background (não bloqueia nada)
+  var p = "acao=checkin" +
+    "&token=avante70-am-2026-token-secreto" +
+    "&id=" + checkin.id +
+    "&dia=" + encodeURIComponent(checkin.dia) +
+    "&hora=" + encodeURIComponent(checkin.hora) +
+    "&nome=" + encodeURIComponent(checkin.nome) +
+    "&zona=" + encodeURIComponent(checkin.zona) +
+    "&lider=" + encodeURIComponent(checkin.lider) +
+    "&tipo=" + encodeURIComponent(checkin.tipo) +
+    "&eleit=" + checkin.eleit +
+    "&obs=" + encodeURIComponent(checkin.obs) +
+    "&lat=" + checkin.lat +
+    "&lng=" + checkin.lng +
+    "&acc=" + checkin.acc;
+
+  var img = new Image();
+  img.src = "https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec?" + p;
+
+  // 4. Limpa campos após 1 segundo
+  setTimeout(function() {
     document.getElementById("f-eleit").value = "";
     document.getElementById("f-obs").value   = "";
     retake();
   }, 1200);
 }
+
 
 // ── CONTADORES ──────────────────────────────────────
 function atualizarContadores() {
