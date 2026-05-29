@@ -425,7 +425,7 @@ function renderCheckin(c) {
         <span class="ci-tipo">${c.tipo}</span>
       </div>
       <div class="ci-hora">
-        ⏰ ${c.hora}
+        ⏰ ${formatarHora(c.hora)}
         ${c.eleit>0?`<br/><span style="color:var(--green);font-weight:600">${c.eleit} eleit.</span>`:""}
       </div>
     </div>
@@ -473,7 +473,7 @@ function renderMapa() {
   // Usa OpenStreetMap via iframe
   const pontos = checkins.map(c =>
     `<li style="margin-bottom:8px;font-size:12px">
-      <strong>${c.hora}</strong> · ${c.nome} · ${c.zona}<br/>
+      <strong>${formatarHora(c.hora)}</strong> · ${c.nome} · ${c.zona}<br/>
       <a href="${c.maps_url}" target="_blank" style="color:var(--blue);font-size:11px">
         📍 ${c.lat}, ${c.lng} — Abrir no Maps
       </a>
@@ -544,7 +544,7 @@ function renderTimeline() {
     const cor = cores_tipo[c.tipo] || "#888";
     return `<div class="tl-item">
       <div class="tl-dot" style="background:${cor}"></div>
-      <div class="tl-hora">⏰ ${c.hora}</div>
+      <div class="tl-hora">⏰ ${formatarHora(c.hora)}</div>
       <div class="tl-txt">${c.nome} · ${c.tipo}</div>
       <div class="tl-sub">📍 ${c.zona}${c.eleit?` · ${c.eleit} eleitores`:""}</div>
       ${c.obs?`<div style="font-size:10px;color:var(--muted);margin-top:2px">💬 ${c.obs}</div>`:""}
@@ -561,6 +561,18 @@ function fecharFoto() {
   document.getElementById("foto-modal").classList.remove("open");
 }
 
+
+
+function formatarHora(hora) {
+  if (!hora) return "--:--";
+  // Se for timestamp ISO, extrai a hora
+  if (hora.includes("T")) {
+    var partes = hora.split("T");
+    if (partes[1]) return partes[1].slice(0,5);
+  }
+  // Se já for HH:MM
+  return hora.slice(0,5);
+}
 
 // ── UTILITÁRIOS ──────────────────────────────────────
 function escHtml(s) {
@@ -614,21 +626,14 @@ function iniciarMapaGeral(checkins) {
   var cLat  = lats.reduce(function(a,b){return a+b;},0)/lats.length;
   var cLng  = lngs.reduce(function(a,b){return a+b;},0)/lngs.length;
 
-  // Monta URL do OpenStreetMap com marcadores via uMap embed
-  // Usa Google Maps embed estático com múltiplos marcadores
-  var markers = comGPS.slice(0,10).map(function(ci,i){
-    return encodeURIComponent(parseFloat(ci.lat).toFixed(6)+","+parseFloat(ci.lng).toFixed(6));
-  }).join("|");
+  // OpenStreetMap embed — sem restrições
+  var osmGeralUrl = "https://www.openstreetmap.org/export/embed.html?bbox="+
+    (cLng-0.03)+"%2C"+(cLat-0.03)+"%2C"+(cLng+0.03)+"%2C"+(cLat+0.03)+
+    "&layer=mapnik&marker="+cLat+"%2C"+cLng;
 
-  // Constrói iframe OpenStreetMap com marcadores via URL de exportação
-  // Para múltiplos pontos usa link de busca do Maps
-  var mapsUrl = "https://maps.google.com/maps?q=" +
-    cLat.toFixed(6)+","+cLng.toFixed(6) +
-    "&z=14&output=embed&hl=pt-BR";
-
-  container.innerHTML = '<iframe src="'+mapsUrl+'" ' +
+  container.innerHTML = '<iframe src="'+osmGeralUrl+'" ' +
     'width="100%" height="280" style="border:none;border-radius:10px" ' +
-    'allowfullscreen loading="lazy"></iframe>' +
+    'loading="lazy"></iframe>' +
     '<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">' +
     comGPS.map(function(ci){
       var cor = {"Visita domiciliar":"#E87722","Abordagem de rua":"#F5C000",
@@ -671,16 +676,17 @@ function iniciarMiniMapas(checkins) {
       var miniWrap = document.getElementById("mapamini-"+ci.id);
       if (!miniWrap) return;
 
-      var mapsEmbed = "https://maps.google.com/maps?q=" +
-        lat.toFixed(6)+","+lng.toFixed(6)+
-        "&z=16&output=embed&hl=pt-BR";
+      // Usa OpenStreetMap embed que não tem restrições
+      var osmUrl = "https://www.openstreetmap.org/export/embed.html?bbox="+
+        (lng-0.002)+"%2C"+(lat-0.002)+"%2C"+(lng+0.002)+"%2C"+(lat+0.002)+
+        "&layer=mapnik&marker="+lat+"%2C"+lng;
 
       miniWrap.innerHTML =
-        '<iframe src="'+mapsEmbed+'" ' +
-        'width="100%" height="160" ' +
-        'style="border:none;border-radius:10px;margin-top:6px" ' +
-        'allowfullscreen loading="lazy"></iframe>' +
-        '<a href="https://maps.google.com/?q='+lat+','+lng+'" target="_blank" ' +
+        '<iframe src="'+osmUrl+'" '+
+        'width="100%" height="160" '+
+        'style="border:none;border-radius:10px;margin-top:6px" '+
+        'loading="lazy"></iframe>'+
+        '<a href="https://maps.google.com/?q='+lat+','+lng+'" target="_blank" '+
         'style="display:inline-block;margin-top:5px;background:#1A1A1A;color:#F5C000;'+
         'font-size:10px;font-weight:700;padding:4px 12px;border-radius:8px;text-decoration:none">'+
         '🗺️ Abrir no Google Maps</a>';
