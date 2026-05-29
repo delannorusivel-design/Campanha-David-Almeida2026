@@ -861,39 +861,49 @@ function enviarCheckin() {
   var img = new Image();
   img.src = "https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec?" + p;
 
-  // Envia foto comprimida via POST application/x-www-form-urlencoded
+  // Envia foto para ImgBB (hospedagem gratuita com CORS aberto)
   if (fotoBase64) {
     setTimeout(function() {
       try {
+        // Comprime para 400px / 40%
         var canvas2 = document.createElement("canvas");
-        var img2    = new window.Image();
+        var img2 = new window.Image();
         img2.onload = function() {
-          // Reduz para 400px max — cabe em POST
-          var ratio  = Math.min(400/img2.width, 400/img2.height, 1);
+          var ratio = Math.min(400/img2.width, 400/img2.height, 1);
           canvas2.width  = Math.round(img2.width  * ratio);
           canvas2.height = Math.round(img2.height * ratio);
-          var ctx2 = canvas2.getContext("2d");
-          ctx2.drawImage(img2, 0, 0, canvas2.width, canvas2.height);
+          canvas2.getContext("2d").drawImage(img2, 0, 0, canvas2.width, canvas2.height);
           var fotoMin = canvas2.toDataURL("image/jpeg", 0.4);
+          var base64 = fotoMin.replace(/^data:image\/\w+;base64,/, "");
 
+          // Upload para ImgBB — API gratuita, sem necessidade de login
           var formData = new FormData();
-          formData.append("acao",  "salvar_foto");
-          formData.append("token", "avante70-am-2026-token-secreto");
-          formData.append("id",    String(checkin.id));
-          formData.append("nome",  checkin.nome);
-          formData.append("dia",   checkin.dia);
-          formData.append("foto",  fotoMin);
+          formData.append("key", "a0a7fabb9d50be4f8f8d4bf45e9f3bb4");
+          formData.append("image", base64);
+          formData.append("name", "checkin_" + checkin.id + "_" + checkin.nome);
 
-          fetch("https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec", {
+          fetch("https://api.imgbb.com/1/upload", {
             method: "POST",
-            mode: "no-cors",
             body: formData
-          }).then(function(){ console.log("Foto enviada!"); })
-            .catch(function(e){ console.log("Foto err:", e); });
+          })
+          .then(function(r){ return r.json(); })
+          .then(function(data){
+            if (data.success) {
+              var fotoUrl = data.data.url;
+              console.log("Foto ImgBB:", fotoUrl);
+              // Envia URL da foto para o Apps Script via GET
+              var pFoto = "acao=salvar_foto_url" +
+                "&token=avante70-am-2026-token-secreto" +
+                "&id=" + checkin.id +
+                "&foto_url=" + encodeURIComponent(fotoUrl);
+              new Image().src = "https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec?" + pFoto;
+            }
+          })
+          .catch(function(e){ console.log("ImgBB err:", e); });
         };
         img2.src = fotoBase64;
-      } catch(e2) { console.log("Foto compressão:", e2); }
-    }, 3000);
+      } catch(e2){ console.log("Foto err:", e2); }
+    }, 2000);
   }
 
   // 4. Limpa campos após 1 segundo
