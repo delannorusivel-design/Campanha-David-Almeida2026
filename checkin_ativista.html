@@ -802,8 +802,7 @@ async function enviarCheckin() {
 
   const btn = document.getElementById("btn-send");
   btn.disabled = true;
-  btn.textContent = "⏳ Enviando...";
-  showFb("loading", "Enviando check-in... aguarde.");
+  btn.textContent = "⏳ Salvando...";
 
   const checkin = {
     id:       Date.now(),
@@ -848,12 +847,16 @@ async function enviarCheckin() {
     new Image().src = "https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec?" + p.toString();
   } catch(e) { console.log("Webhook erro:", e); }
 
+  // Libera UI imediatamente — não espera o webhook
+  btn.disabled = false;
+  btn.textContent = "✅ Enviar check-in";
+  showFb("ok", `✅ Check-in #${checkins.length} registrado! ${new Date().toLocaleTimeString("pt-BR")} · ${tipoSel}`);
+  atualizarContadores();
+  renderHistorico();
+
+  // Envia ao webhook em background (não bloqueia a UI)
   setTimeout(() => {
-    btn.disabled = false;
-    btn.textContent = "✅ Enviar check-in";
-    showFb("ok", `✅ Check-in #${checkins.length} enviado! ${new Date().toLocaleTimeString("pt-BR")} · ${tipoSel}`);
-    atualizarContadores();
-    renderHistorico();
+    // (campos limpos abaixo)
     // Limpa campos
     document.getElementById("f-eleit").value = "";
     document.getElementById("f-obs").value   = "";
