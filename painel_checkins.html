@@ -297,15 +297,7 @@ const ZCORS = {
 };
 
 // Simula check-ins recebidos (em produção vêm do Sheets)
-const CHECKINS_DEMO = [
-  {id:1,dia:hoje,hora:"08:14",ts:"2026-04-29T08:14:00",nome:"João Pereira",zona:"Zona Norte",lider:"Carlos Menezes",tipo:"Visita domiciliar",eleit:8,obs:"Boa receptividade na Rua das Flores",lat:"-23.4880",lng:"-46.6290",acc:12,maps_url:"https://maps.google.com/?q=-23.4880,-46.6290",foto:null},
-  {id:2,dia:hoje,hora:"09:31",ts:"2026-04-29T09:31:00",nome:"Maria Santos",zona:"Zona Sul",lider:"Ana Rodrigues",tipo:"Distribuição de material",eleit:15,obs:"",lat:"-23.5830",lng:"-46.6350",acc:8,maps_url:"https://maps.google.com/?q=-23.5830,-46.6350",foto:null},
-  {id:3,dia:hoje,hora:"10:02",ts:"2026-04-29T10:02:00",nome:"João Pereira",zona:"Zona Norte",lider:"Carlos Menezes",tipo:"Abordagem de rua",eleit:22,obs:"Praça central — alto movimento",lat:"-23.4920",lng:"-46.6310",acc:15,maps_url:"https://maps.google.com/?q=-23.4920,-46.6310",foto:null},
-  {id:4,dia:hoje,hora:"10:45",ts:"2026-04-29T10:45:00",nome:"Carlos Lima",zona:"Zona Leste",lider:"Roberto Almeida",tipo:"Visita domiciliar",eleit:5,obs:"",lat:"-23.5390",lng:"-46.5010",acc:20,maps_url:"https://maps.google.com/?q=-23.5390,-46.5010",foto:null},
-  {id:5,dia:hoje,hora:"11:18",ts:"2026-04-29T11:18:00",nome:"Ana Ferreira",zona:"Centro",lider:"João da Silva",tipo:"Reunião com liderança",eleit:0,obs:"Reunião com Assoc. Comercial — positiva",lat:"-23.5480",lng:"-46.6360",acc:10,maps_url:"https://maps.google.com/?q=-23.5480,-46.6360",foto:null},
-  {id:6,dia:hoje,hora:"12:30",ts:"2026-04-29T12:30:00",nome:"Maria Santos",zona:"Zona Sul",lider:"Ana Rodrigues",tipo:"Abordagem de rua",eleit:18,obs:"",lat:"-23.5860",lng:"-46.6320",acc:11,maps_url:"https://maps.google.com/?q=-23.5860,-46.6320",foto:null},
-  {id:7,dia:hoje,hora:"13:45",ts:"2026-04-29T13:45:00",nome:"Paulo Mendes",zona:"Zona Oeste",lider:"Maria Conceição",tipo:"Distribuição de material",eleit:12,obs:"Faltando panfleto — pediu reposição",lat:"-23.5320",lng:"-46.7010",acc:9,maps_url:"https://maps.google.com/?q=-23.5320,-46.7010",foto:null},
-];
+const CHECKINS_DEMO = []; // dados demo removidos
 
 // Carrega check-ins reais do localStorage (do app do ativista na mesma origem)
 // Cache dos check-ins buscados do servidor
@@ -324,12 +316,7 @@ function carregarCheckins() {
   });
 
   var todos = _checkinsServidor.concat(somenteLocais);
-
-  // Remove demo se tiver dados reais
-  if (todos.length > 0) {
-    return todos.sort(function(a,b){return b.hora.localeCompare(a.hora);});
-  }
-  return CHECKINS_DEMO.concat(todos).sort(function(a,b){return b.hora.localeCompare(a.hora);});
+  return todos.sort(function(a,b){return b.hora.localeCompare(a.hora);});
 }
 
 // Busca check-ins do Google Sheets via webhook
@@ -416,7 +403,11 @@ function renderDash() {
 
   // Check-ins
   document.getElementById("checkins-list").innerHTML = comFiltro.length === 0
-    ? `<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">Nenhum check-in nesta zona.</div>`
+    ? `<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px">
+        <div style="font-size:32px;margin-bottom:8px">📍</div>
+        <div>Nenhum check-in ainda hoje.</div>
+        <div style="font-size:11px;margin-top:6px;color:#aaa">Os check-ins do campo aparecem aqui automaticamente.</div>
+      </div>`
     : comFiltro.map(c => renderCheckin(c)).join("");
 
   // Inicia mapa geral e mini-mapas após renderizar
