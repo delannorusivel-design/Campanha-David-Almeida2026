@@ -385,7 +385,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
       style="background:#1B4F8A;font-size:13px;padding:10px">
       📁 Problemas com a câmera? Use a galeria
     </button>
-    <button class="btn-send" id="btn-send" onclick="enviarCheckin()">
+    <button class="btn-send" id="btn-checkin-send" onclick="enviarCheckin()">
       ✅ Enviar check-in
     </button>
   </div>
@@ -417,7 +417,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
       </select></div>
     <div class="field"><label>Líder responsável</label>
       <input id="m-lider" placeholder="Ex: Carlos Menezes"/></div>
-    <button class="btn-send" onclick="salvarPerfil()" style="margin-top:8px">
+    <button class="btn-salvar-perfil" onclick="salvarPerfil()" style="margin-top:8px;background:#1A7A4A;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;display:block">
       💾 Salvar perfil
     </button>
   </div>
@@ -800,7 +800,7 @@ function enviarCheckin() {
   if (!fotoBase64)             { showFb("err", "Tire uma foto antes de enviar."); return; }
   if (!gpsData)                { showFb("err", "Aguarde o GPS localizar você."); return; }
 
-  var btn = document.getElementById("btn-send");
+  var btn = document.getElementById("btn-checkin-send");
   if (btn) { btn.disabled = true; btn.textContent = "⏳ Salvando..."; }
 
   // Monta objeto do check-in
@@ -835,8 +835,7 @@ function enviarCheckin() {
   }
 
   // 2. Libera UI imediatamente
-  btn.disabled = false;
-  btn.textContent = "✅ Enviar check-in";
+  if(btn){btn.disabled = false; btn.textContent = "✅ Enviar check-in";}
   showFb("ok", "✅ Check-in #" + checkins.length + " salvo! " +
     checkin.hora + " · " + tipoSel);
   atualizarContadores();
