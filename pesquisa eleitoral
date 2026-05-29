@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta http-equiv="X-Frame-Options" content="DENY"/>
+<meta name="theme-color" content="#1A1A1A"/>
+<title>Pesquisa Eleitoral — Avante 70 · 2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  background:#F0F0F0;color:#1A1A1A;min-height:100vh;padding-bottom:80px}
+
+/* PIN */
+#pin-modal{position:fixed;inset:0;background:#1A1A1A;z-index:9999;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:24px;}
+.logo-pin{width:72px;height:72px;border-radius:50%;background:#F5C000;
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;font-weight:900;color:#1A1A1A;margin-bottom:20px;}
+#pin-modal h2{color:#F5C000;font-size:20px;font-weight:700;
+  margin-bottom:6px;text-align:center;}
+#pin-modal p{color:#888;font-size:12px;margin-bottom:24px;text-align:center;}
+#pin-input{background:#2D2D2D;border:2px solid #333;border-radius:12px;
+  padding:16px 20px;font-size:28px;font-weight:700;color:#F5C000;
+  text-align:center;width:200px;letter-spacing:8px;outline:none;
+  -webkit-text-security:disc;}
+#pin-input:focus{border-color:#F5C000;}
+#pin-err{color:#E87722;font-size:12px;margin-top:10px;min-height:20px;text-align:center;}
+#pin-btn{background:#F5C000;color:#1A1A1A;border:none;border-radius:12px;
+  padding:14px 40px;font-size:15px;font-weight:700;cursor:pointer;margin-top:16px;}
+.pin-dots{display:flex;gap:10px;margin-top:16px;}
+.pin-dot{width:14px;height:14px;border-radius:50%;background:#333;transition:background .2s;}
+.pin-dot.filled{background:#F5C000;}
+
+/* HEADER */
+.hd{background:#1A1A1A;}
+.hd-top{padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.logo{width:40px;height:40px;border-radius:50%;background:#F5C000;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:900;color:#1A1A1A;flex-shrink:0;}
+.hd-txt h1{font-size:15px;font-weight:700;color:#F5C000;}
+.hd-txt p{font-size:10px;color:rgba(255,255,255,.6);margin-top:2px;}
+.hd-bar{height:4px;background:linear-gradient(90deg,#F5C000,#E87722);}
+
+/* TABS */
+.tabs{display:flex;background:#fff;border-radius:12px;padding:4px;
+  margin:12px 12px 0;border:1px solid #ddd;}
+.tab-btn{flex:1;padding:9px 4px;border:none;border-radius:8px;
+  background:transparent;cursor:pointer;font-size:11px;font-weight:500;color:#888;}
+.tab-btn.on{background:#1A1A1A;color:#F5C000;font-weight:700;}
+
+.content{padding:12px;}
+.panel{display:none;}.panel.on{display:block;}
+
+/* CARDS */
+.card{background:#fff;border-radius:12px;padding:14px;
+  margin-bottom:12px;border:1px solid #ddd;}
+.lbl{font-size:10px;font-weight:700;color:#888;text-transform:uppercase;
+  letter-spacing:.06em;margin-bottom:10px;display:block;}
+.field{margin-bottom:10px;}
+.field label{font-size:11px;color:#888;display:block;margin-bottom:4px;font-weight:500;}
+.field input,.field select,.field textarea{
+  width:100%;border:1px solid #ddd;border-radius:9px;
+  padding:11px 12px;font-size:15px;outline:none;
+  background:#fff;-webkit-appearance:none;color:#1A1A1A;}
+.field input:focus,.field select:focus{border-color:#F5C000;box-shadow:0 0 0 3px #FFF8DC;}
+.field textarea{resize:vertical;min-height:80px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+.kpi{background:#fff;border-radius:10px;padding:10px;text-align:center;border:1px solid #ddd;}
+.kpi-v{font-size:22px;font-weight:700;}
+.kpi-l{font-size:9px;color:#888;margin-top:2px;text-transform:uppercase;}
+
+/* BOTÕES DE SELEÇÃO */
+.sel-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.btn-sel{padding:11px 8px;border-radius:9px;border:1.5px solid #ddd;
+  background:#fff;cursor:pointer;font-size:12px;font-weight:500;
+  color:#666;text-align:center;display:block;width:100%;-webkit-appearance:none;}
+
+/* CANDIDATO TABS */
+.cand-tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.cand-tabs::-webkit-scrollbar{display:none;}
+.cand-tab{flex-shrink:0;padding:7px 13px;border-radius:20px;
+  border:1px solid #ddd;background:#fff;cursor:pointer;
+  font-size:11px;font-weight:500;color:#888;}
+.cand-tab.on{color:#fff;font-weight:700;}
+
+/* GRÁFICO DE BARRAS */
+.bar-wrap{margin-bottom:8px;}
+.bar-label{display:flex;justify-content:space-between;
+  font-size:11px;margin-bottom:3px;}
+.bar-track{height:22px;background:#F0F0F0;border-radius:6px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;
+  justify-content:flex-end;padding-right:8px;font-size:10px;
+  font-weight:700;color:#fff;transition:width .8s;}
+
+/* RESPOSTA CARD */
+.resp-card{background:#fff;border-radius:10px;padding:10px 12px;
+  margin-bottom:8px;border:1px solid #ddd;}
+.resp-nome{font-size:12px;font-weight:600;}
+.resp-info{font-size:10px;color:#888;margin-top:2px;}
+.resp-tag{font-size:10px;padding:2px 8px;border-radius:8px;
+  font-weight:600;display:inline-block;margin-top:4px;}
+.tag-sim{background:#C8F0DC;color:#1A7A4A;}
+.tag-nao{background:#FDDCDC;color:#7B241C;}
+.tag-talvez{background:#FFF3CD;color:#856404;}
+.tag-ns{background:#F0F0F0;color:#888;}
+.tag-tema{background:#D6EAF8;color:#1B4F8A;}
+
+/* DISPARO */
+.disparo-card{background:#1A1A1A;border-radius:12px;padding:14px;margin-bottom:12px;}
+.disparo-card .lbl{color:#F5C000;}
+.preview-msg{background:#2D2D2D;border-radius:10px;padding:12px;
+  font-size:12px;color:#ddd;line-height:1.7;white-space:pre-wrap;
+  margin-top:8px;border:1px solid #333;}
+
+.btn-main{background:#1A1A1A;color:#F5C000;border:none;border-radius:12px;
+  padding:16px;font-size:15px;font-weight:700;cursor:pointer;
+  width:100%;margin-bottom:8px;display:block;-webkit-appearance:none;}
+.btn-main:active{opacity:.8;}
+.btn-disparar{background:#F5C000;color:#1A1A1A;border:none;border-radius:12px;
+  padding:16px;font-size:15px;font-weight:700;cursor:pointer;
+  width:100%;margin-bottom:8px;display:block;-webkit-appearance:none;}
+.btn-sec{background:#fff;color:#888;border:1px solid #ddd;
+  border-radius:12px;padding:12px;font-size:13px;
+  cursor:pointer;width:100%;display:block;-webkit-appearance:none;}
+
+.fb{padding:12px 14px;border-radius:10px;font-size:13px;
+  margin-bottom:12px;font-weight:500;display:none;}
+.fb.ok{display:block;background:#C8F0DC;color:#1A7A4A;border:1px solid #5DCAA5;}
+.fb.err{display:block;background:#FDDCDC;color:#7B241C;}
+.fb.info{display:block;background:#D6EAF8;color:#1B4F8A;}
+
+.search-inp{width:100%;border:1px solid #ddd;border-radius:9px;
+  padding:10px 12px;font-size:14px;outline:none;
+  background:#fff;margin-bottom:10px;display:block;}
+
+/* NUVEM DE TEMAS */
+.tema-cloud{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.tema-tag{padding:5px 12px;border-radius:20px;font-size:11px;
+  font-weight:600;cursor:default;}
+
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;
+  background:#1A1A1A;border-top:1px solid #333;
+  display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);}
+.nav-btn{flex:1;padding:10px 4px 8px;background:none;border:none;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  font-size:10px;font-weight:500;color:#666;}
+.nav-btn.on{color:#F5C000;}
+.nav-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;
+  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+
+/* LGPD aviso */
+.lgpd-av{background:#FFF3CD;border-radius:8px;padding:10px 12px;
+  font-size:11px;color:#856404;margin-bottom:12px;line-height:1.6;
+  border:1px solid #E2C97A;}
+</style>
+</head>
+<body>
+
+<!-- PIN -->
+<div id="pin-modal">
+  <div class="logo-pin">70</div>
+  <h2>Acesso Restrito</h2>
+  <p>Pesquisa Eleitoral · Avante 70<br/>Digite o PIN de acesso</p>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+  </div>
+  <input id="pin-input" type="password" inputmode="numeric"
+    maxlength="4" placeholder="••••"
+    oninput="atualizarDots()" onkeydown="if(event.key==='Enter')verificarPin()"/>
+  <div id="pin-err"></div>
+  <button id="pin-btn" onclick="verificarPin()">Entrar</button>
+</div>
+
+<div class="hd">
+  <div class="hd-top">
+    <div class="logo">70</div>
+    <div class="hd-txt">
+      <h1>📊 Pesquisa Eleitoral</h1>
+      <p>Instituto de Pesquisa · Amazonas 2026</p>
+    </div>
+  </div>
+  <div class="hd-bar"></div>
+</div>
+
+<div style="padding:12px 12px 0;">
+  <div class="tabs">
+    <button class="tab-btn on" id="tab-dash"    onclick="setTab('dash')">📊 Resultados</button>
+    <button class="tab-btn"    id="tab-disparo" onclick="setTab('disparo')">📤 Disparar</button>
+    <button class="tab-btn"    id="tab-config"  onclick="setTab('config')">⚙️ Configurar</button>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══ DASHBOARD ══ -->
+<div class="panel on" id="panel-dash">
+
+  <div class="kpi-row" id="kpi-row"></div>
+
+  <div class="cand-tabs" id="cand-tabs"></div>
+
+  <!-- Gráfico de intenção -->
+  <div class="card">
+    <span class="lbl">Intenção de voto</span>
+    <div id="grafico-intencao"></div>
+  </div>
+
+  <!-- Temas mais citados -->
+  <div class="card">
+    <span class="lbl">Temas de interesse na base</span>
+    <div class="tema-cloud" id="tema-cloud"></div>
+  </div>
+
+  <!-- Gráfico por zona -->
+  <div class="card">
+    <span class="lbl">Favorabilidade por zona (%)</span>
+    <div id="grafico-zonas"></div>
+  </div>
+
+  <!-- Respostas recebidas -->
+  <div class="card">
+    <span class="lbl" id="lbl-respostas">Respostas recebidas</span>
+    <input class="search-inp" id="search-resp"
+      placeholder="🔍 Buscar nome ou WhatsApp..."
+      oninput="renderRespostas()"/>
+    <div id="lista-respostas"></div>
+  </div>
+
+</div>
+
+<!-- ══ DISPARAR ══ -->
+<div class="panel" id="panel-disparo">
+
+  <div class="lgpd-av">
+    ⚖️ <strong>Base legal:</strong> pesquisa de uso interno · Lei 9.504/97 Art. 57-B · LGPD Art. 7º, I · Consentimento coletado em campo. A pesquisa é identificada como "Instituto de Pesquisa Amazonas 2026" para garantir respostas neutras e espontâneas. <strong>Resultados de uso exclusivamente interno da coordenação.</strong>
+  </div>
+
+  <div id="fb-disp" class="fb"></div>
+
+  <div class="card">
+    <span class="lbl">Configurar disparo</span>
+    <!-- filtro candidato oculto — uso interno -->
+    <input type="hidden" id="d-cand" value="todos"/>
+    <div class="field"><label>Filtrar por interesse (opcional)</label>
+      <select id="d-interesse" onchange="atualizarPreview()">
+        <option value="">Todos os interesses</option>
+        <option>Saúde</option><option>Segurança</option><option>Educação</option>
+        <option>Emprego</option><option>Infraestrutura</option><option>Transporte</option>
+        <option>Moradia</option><option>Agricultura</option>
+        <option>Meio Ambiente</option><option>Mulheres</option><option>Juventude</option>
+      </select></div>
+    <div class="field"><label>Filtrar por zona (opcional)</label>
+      <select id="d-zona" onchange="atualizarPreview()">
+        <option value="">Todas as zonas</option>
+        <option>Zona Norte</option><option>Zona Sul</option>
+        <option>Centro</option><option>Zona Oeste</option>
+        <option>Zona Leste</option><option>Interior</option>
+      </select></div>
+    <div class="field"><label>Filtrar por intenção de voto</label>
+      <select id="d-intencao" onchange="atualizarPreview()">
+        <option value="">Todos</option>
+        <option value="TALVEZ">🤔 Apenas indecisos (TALVEZ)</option>
+        <option value="NAO_SABE">❓ Apenas "não sabe"</option>
+        <option value="SIM">✅ Apenas confirmados</option>
+      </select></div>
+  </div>
+
+  <div class="disparo-card">
+    <span class="lbl">Preview da mensagem</span>
+    <div style="font-size:12px;color:#888;margin-bottom:6px">
+      Eleitores selecionados: <strong id="d-count" style="color:#F5C000">0</strong>
+    </div>
+    <div class="preview-msg" id="preview-msg"></div>
+  </div>
+
+  <div class="card">
+    <span class="lbl">Personalizar pergunta (opcional)</span>
+    <div class="field">
+      <textarea id="d-pergunta-custom"
+        placeholder="Deixe em branco para usar a pergunta padrão&#10;&#10;Ou escreva sua pergunta aqui. Use [NOME] para o primeiro nome do eleitor."
+        oninput="atualizarPreview()"></textarea>
+    </div>
+  </div>
+
+  <button class="btn-disparar" onclick="dispararPesquisa()">
+    📤 Disparar pesquisa via WhatsApp
+  </button>
+  <p style="font-size:10px;color:#888;text-align:center;margin-bottom:12px;line-height:1.6">
+    Apenas eleitores que consentiram expressamente receberão a pesquisa.<br/>
+    Respostas registradas automaticamente na planilha.
+  </p>
+
+</div>
+
+<!-- ══ CONFIGURAR ══ -->
+<div class="panel" id="panel-config">
+  <div class="card">
+    <span class="lbl">Perguntas da pesquisa</span>
+
+    <div class="field"><label>Pergunta 1 — Decisão de voto (neutra)</label>
+      <textarea id="cfg-p1" rows="6">Olá, [NOME]! 👋
+
+Aqui é o Instituto de Pesquisa Amazonas 2026.
+
+Estamos realizando uma pesquisa eleitoral rápida e sua opinião é muito importante!
+
+Responda apenas com o número:
+
+1️⃣ — Já sei em quem vou votar para Governador
+2️⃣ — Ainda estou decidindo
+3️⃣ — Não sei ainda
+4️⃣ — Prefiro não responder
+
+Obrigado pela participação! 🙏</textarea></div>
+
+    <div class="field"><label>Pergunta 2 — Prioridade para o Amazonas</label>
+      <textarea id="cfg-p2" rows="8">Olá, [NOME]! 👋
+
+Instituto de Pesquisa Amazonas 2026 — segunda pergunta.
+
+Qual é a sua maior prioridade para o Amazonas hoje?
+
+1️⃣ Saúde pública
+2️⃣ Segurança
+3️⃣ Emprego e renda
+4️⃣ Educação
+5️⃣ Infraestrutura e estradas
+6️⃣ Meio ambiente
+7️⃣ Outra
+
+Responda só com o número! 🙏</textarea></div>
+
+    <div class="field"><label>Pergunta 3 — Perfil de candidato ideal</label>
+      <textarea id="cfg-p3" rows="8">Olá, [NOME]! 👋
+
+Instituto de Pesquisa Amazonas 2026 — última pergunta.
+
+Se a eleição para Governador fosse hoje, qual perfil de candidato você preferiria?
+
+1️⃣ Alguém com experiência em gestão pública
+2️⃣ Alguém que vem do setor privado
+3️⃣ Alguém ligado às causas sociais
+4️⃣ Alguém jovem e com novas ideias
+5️⃣ Não tenho preferência
+
+Responda só com o número! 🙏</textarea></div>
+
+    <button class="btn-main" onclick="salvarConfig()">💾 Salvar configurações</button>
+  </div>
+
+  <div class="card">
+    <span class="lbl">Importar respostas manualmente</span>
+    <p style="font-size:12px;color:#888;margin-bottom:10px;line-height:1.6">
+      Se o eleitor respondeu por fora do sistema, registre aqui manualmente.
+    </p>
+    <div class="g2">
+      <div class="field"><label>WhatsApp do eleitor</label>
+        <input id="m-fone" placeholder="(92) 99999-0000" oninput="fmtFone(this)"/></div>
+      <div class="field"><label>Resposta (1-4)</label>
+        <select id="m-resp">
+          <option value="">Selecionar</option>
+          <option value="1">1 — Vai votar</option>
+          <option value="2">2 — Indeciso</option>
+          <option value="3">3 — Com dúvidas</option>
+          <option value="4">4 — Não responde</option>
+        </select></div>
+    </div>
+    <div class="field"><label>Observação</label>
+      <input id="m-obs" placeholder="Ex: Respondeu por ligação"/></div>
+    <button class="btn-main" onclick="importarManual()">➕ Registrar resposta</button>
+  </div>
+</div>
+
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-btn on" id="nav-dash" onclick="setNavTab('dash')">
+    <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 5-5"/></svg>
+    Resultados
+  </button>
+  <button class="nav-btn" id="nav-disparo" onclick="setNavTab('disparo')">
+    <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    Disparar
+  </button>
+  <button class="nav-btn" id="nav-config" onclick="setNavTab('config')">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Config
+  </button>
+</nav>
+
+<script>
+// ── PIN ───────────────────────────────────────────────
+var PIN_HASH = "7a3ed03b12b784c2581ae5308e31f2a80248b481d8b0d369ee2193dcc3c1c4c5";
+var SESSAO_KEY = "pesq_sessao_avante70";
+
+async function hashPin(pin) {
+  var enc = new TextEncoder().encode(pin);
+  var buf = await crypto.subtle.digest("SHA-256", enc);
+  return Array.from(new Uint8Array(buf))
+    .map(function(b){return b.toString(16).padStart(2,"0");}).join("");
+}
+
+function verificarSessao() {
+  try {
+    var s = JSON.parse(sessionStorage.getItem(SESSAO_KEY)||"null");
+    if (!s) return false;
+    if (Date.now() - s.ts > 8*3600*1000) { sessionStorage.removeItem(SESSAO_KEY); return false; }
+    return s.ok === true;
+  } catch(e) { return false; }
+}
+
+async function verificarPin() {
+  var pin = document.getElementById("pin-input").value.trim();
+  if (pin.length < 4) { document.getElementById("pin-err").textContent="Digite 4 dígitos."; return; }
+  var hash = await hashPin(pin);
+  if (hash === PIN_HASH) {
+    sessionStorage.setItem(SESSAO_KEY, JSON.stringify({ok:true,ts:Date.now()}));
+    document.getElementById("pin-modal").style.display = "none";
+    document.body.style.overflow = "";
+    renderDash();
+  } else {
+    document.getElementById("pin-err").textContent = "PIN incorreto.";
+    document.getElementById("pin-input").value = "";
+    atualizarDots();
+    document.getElementById("pin-btn").disabled = true;
+    setTimeout(function(){document.getElementById("pin-btn").disabled=false;},2000);
+  }
+}
+
+function atualizarDots() {
+  var v = document.getElementById("pin-input").value;
+  for(var i=0;i<4;i++) {
+    var d=document.getElementById("pd"+i);
+    if(d) d.className="pin-dot"+(i<v.length?" filled":"");
+  }
+}
+
+// ── DADOS ─────────────────────────────────────────────
+var CANDS = {
+  aryel:  {nome:"Aryel Almeida",  num:"7070",  cor:"#E87722", key:"el_aryel"},
+  daniel: {nome:"Daniel Almeida", num:"70070", cor:"#C49A00", key:"el_daniel"},
+  david:  {nome:"David Almeida",  num:"70",    cor:"#A04000", key:"el_david"},
+};
+
+var WEBHOOK = "https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec";
+var TOKEN   = "avante70-am-2026-token-secreto";
+
+var respostas  = JSON.parse(localStorage.getItem("pesq_respostas")||"[]");
+var candAtivo  = "todos";
+
+function escHtml(s) {
+  if(!s) return "";
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#x27;");
+}
+
+function carregarBase() {
+  var lista = [];
+  Object.values(CANDS).forEach(function(c) {
+    var l = JSON.parse(localStorage.getItem(c.key)||"[]");
+    l.forEach(function(e){ e._cand=c; });
+    lista = lista.concat(l);
+  });
+  return lista;
+}
+
+function filtrarBase() {
+  var base = carregarBase();
+  if (candAtivo !== "todos")
+    base = base.filter(function(e){ return e._cand && e._cand.key === CANDS[candAtivo]?.key; });
+  return base;
+}
+
+// ── TABS ──────────────────────────────────────────────
+function setTab(id) {
+  ["dash","disparo","config"].forEach(function(t){
+    document.getElementById("panel-"+t).className = "panel"+(t===id?" on":"");
+    document.getElementById("tab-"+t).className   = "tab-btn"+(t===id?" on":"");
+  });
+  if(id==="dash")    renderDash();
+  if(id==="disparo") atualizarPreview();
+}
+function setNavTab(id) {
+  setTab(id);
+  ["dash","disparo","config"].forEach(function(t){
+    document.getElementById("nav-"+t).className = "nav-btn"+(t===id?" on":"");
+  });
+}
+
+// ── DASHBOARD ─────────────────────────────────────────
+function renderDash() {
+  var base = filtrarBase();
+  var total = base.length;
+
+  // KPIs
+  var sim    = base.filter(function(e){return e.intencao==="SIM";}).length;
+  var talvez = base.filter(function(e){return e.intencao==="TALVEZ";}).length;
+  var nao    = base.filter(function(e){return e.intencao==="NAO";}).length;
+  var resps  = respostas.filter(function(r){
+    return candAtivo==="todos"||r.candidato===candAtivo;
+  }).length;
+
+  document.getElementById("kpi-row").innerHTML = [
+    {v:total,  l:"Base total",  c:"#1A1A1A"},
+    {v:sim,    l:"✅ SIM",      c:"#1A7A4A"},
+    {v:talvez, l:"🤔 Indecisos",c:"#856404"},
+    {v:resps,  l:"📊 Responderam",c:"#1B4F8A"},
+  ].map(function(k){
+    return '<div class="kpi"><div class="kpi-v" style="color:'+k.c+'">'+k.v+'</div>'+
+      '<div class="kpi-l">'+k.l+'</div></div>';
+  }).join("");
+
+  // Tabs candidatos
+  var tabs = [{slug:"todos",nome:"Todos",cor:"#1A1A1A"}].concat(
+    Object.entries(CANDS).map(function(e){
+      return {slug:e[0],nome:e[1].nome.split(" ")[0]+" "+e[1].num,cor:e[1].cor};
+    })
+  );
+  document.getElementById("cand-tabs").innerHTML = tabs.map(function(t){
+    var at = candAtivo===t.slug;
+    return '<button class="cand-tab'+(at?" on":"") + '"'+
+      (at?' style="background:'+t.cor+';border-color:'+t.cor+'"':'')+
+      ' onclick="filtrarCand(\''+t.slug+'\')">'+ t.nome +'</button>';
+  }).join("");
+
+  // Gráfico intenção
+  var intencoes = [
+    {k:"SIM",     l:"✅ Vai votar",   cor:"#1A7A4A"},
+    {k:"TALVEZ",  l:"🤔 Indeciso",    cor:"#F5C000"},
+    {k:"NAO",     l:"❌ Contrário",   cor:"#E87722"},
+    {k:"NAO_SABE",l:"❓ Não sabe",    cor:"#888"},
+    {k:"",        l:"📭 Não informou",cor:"#ddd"},
+  ];
+  var maxInt = Math.max(sim, talvez, nao, 1);
+  document.getElementById("grafico-intencao").innerHTML = intencoes.map(function(it){
+    var n = base.filter(function(e){return (e.intencao||"")=== it.k;}).length;
+    var pct = total>0?Math.round(n/total*100):0;
+    var w   = total>0?Math.round(n/maxInt*100):0;
+    return '<div class="bar-wrap">'+
+      '<div class="bar-label">'+
+        '<span>'+escHtml(it.l)+'</span>'+
+        '<span style="color:'+it.cor+';font-weight:700">'+n+' ('+pct+'%)</span>'+
+      '</div>'+
+      '<div class="bar-track">'+
+        '<div class="bar-fill" style="width:'+w+'%;background:'+it.cor+'">'+
+          (w>12?pct+'%':'')+'</div>'+
+      '</div>'+
+    '</div>';
+  }).join("");
+
+  // Nuvem de temas
+  var temas = {};
+  base.forEach(function(e){
+    if(e.interesse){temas[e.interesse]=(temas[e.interesse]||0)+1;}
+  });
+  var maxTema = Math.max.apply(null, Object.values(temas).concat([1]));
+  var cores = ["#E87722","#F5C000","#1A7A4A","#1B4F8A","#4A235A","#7B241C","#856404"];
+  document.getElementById("tema-cloud").innerHTML = Object.entries(temas)
+    .sort(function(a,b){return b[1]-a[1];})
+    .map(function(t,i){
+      var tam = 10 + Math.round(t[1]/maxTema*8);
+      var cor = cores[i%cores.length];
+      return '<span class="tema-tag" style="background:'+cor+'22;color:'+cor+
+        ';font-size:'+tam+'px">'+escHtml(t[0])+' ('+t[1]+')</span>';
+    }).join("");
+
+  // Gráfico por zona
+  var zonas = ["Zona Norte","Zona Sul","Centro","Zona Oeste","Zona Leste","Interior"];
+  document.getElementById("grafico-zonas").innerHTML = zonas.map(function(z){
+    var zBase = base.filter(function(e){return e.zona===z;});
+    var zSim  = zBase.filter(function(e){return e.intencao==="SIM";}).length;
+    var pct   = zBase.length>0?Math.round(zSim/zBase.length*100):0;
+    var cor   = pct>=60?"#1A7A4A":pct>=35?"#F5C000":"#E87722";
+    return '<div class="bar-wrap">'+
+      '<div class="bar-label">'+
+        '<span>'+z+'</span>'+
+        '<span style="color:'+cor+';font-weight:700">'+pct+'% fav · '+zBase.length+' eleit.</span>'+
+      '</div>'+
+      '<div class="bar-track">'+
+        '<div class="bar-fill" style="width:'+pct+'%;background:'+cor+'">'+
+          (pct>12?pct+'%':'')+'</div>'+
+      '</div>'+
+    '</div>';
+  }).join("");
+
+  renderRespostas();
+}
+
+function filtrarCand(slug) { candAtivo=slug; renderDash(); }
+
+// ── RESPOSTAS ─────────────────────────────────────────
+function renderRespostas() {
+  var q = (document.getElementById("search-resp")||{}).value||"";
+  q = q.toLowerCase();
+  var lista = respostas.filter(function(r){
+    var matchCand = candAtivo==="todos"||r.candidato===candAtivo;
+    var matchQ = !q||r.nome.toLowerCase().includes(q)||r.fone.includes(q);
+    return matchCand && matchQ;
+  }).reverse();
+
+  document.getElementById("lbl-respostas").textContent =
+    "Respostas recebidas (" + lista.length + ")";
+
+  var RESP_LABELS = {
+    "1":{l:"✅ Vai votar",cls:"tag-sim"},
+    "2":{l:"🤔 Indeciso",cls:"tag-talvez"},
+    "3":{l:"❓ Com dúvidas",cls:"tag-ns"},
+    "4":{l:"🔇 Não responde",cls:"tag-ns"},
+  };
+
+  if (!lista.length) {
+    document.getElementById("lista-respostas").innerHTML =
+      '<div style="text-align:center;padding:24px;color:#888;font-size:13px">'+
+      'Nenhuma resposta registrada ainda.<br/>Dispare a pesquisa na aba 📤 Disparar.</div>';
+    return;
+  }
+
+  document.getElementById("lista-respostas").innerHTML = lista.map(function(r){
+    var rl = RESP_LABELS[r.resposta]||{l:r.resposta,cls:"tag-ns"};
+    return '<div class="resp-card">'+
+      '<div class="resp-nome">👤 '+escHtml(r.nome)+'</div>'+
+      '<div class="resp-info">📱 '+escHtml(r.fone)+' · ⏰ '+r.hora+'</div>'+
+      '<span class="resp-tag '+rl.cls+'">'+rl.l+'</span>'+
+      (r.tema?'<span class="resp-tag tag-tema" style="margin-left:4px">'+escHtml(r.tema)+'</span>':'')+
+      (r.obs?'<div style="font-size:10px;color:#888;margin-top:4px">'+escHtml(r.obs)+'</div>':'')+
+    '</div>';
+  }).join("");
+}
+
+// ── DISPARO ───────────────────────────────────────────
+function getBaseDisparo() {
+  var base = carregarBase();
+  var cand    = document.getElementById("d-cand")?.value||"todos";
+  var int     = document.getElementById("d-interesse")?.value||"";
+  var zona    = document.getElementById("d-zona")?.value||"";
+  var intencao= document.getElementById("d-intencao")?.value||"";
+
+  if (cand !== "todos")
+    base = base.filter(function(e){return e._cand&&e._cand.key===CANDS[cand]?.key;});
+  if (int)
+    base = base.filter(function(e){return e.interesse===int;});
+  if (zona)
+    base = base.filter(function(e){return e.zona===zona;});
+  if (intencao)
+    base = base.filter(function(e){return e.intencao===intencao;});
+
+  // Remove opt-outs
+  var optOuts = JSON.parse(localStorage.getItem("pesq_optouts")||"[]");
+  base = base.filter(function(e){
+    return !optOuts.includes((e.fone||"").replace(/\D/g,""));
+  });
+
+  return base;
+}
+
+function getMsgPadrao() {
+  // Usa template salvo ou padrão neutro
+  var p1 = localStorage.getItem("pesq_p1");
+  if (p1) return p1;
+  return "Olá, [NOME]! 👋\n\n" +
+    "Instituto de Pesquisa Amazonas 2026.\n\n" +
+    "Estamos realizando uma pesquisa eleitoral rápida!\n\n" +
+    "Responda apenas com o número:\n\n" +
+    "1️⃣ — Já sei em quem vou votar para Governador\n" +
+    "2️⃣ — Ainda estou decidindo\n" +
+    "3️⃣ — Não sei ainda\n" +
+    "4️⃣ — Prefiro não responder\n\n" +
+    "Obrigado pela participação! 🙏";
+}
+
+function atualizarPreview() {
+  var base = getBaseDisparo();
+  var candSlug = document.getElementById("d-cand")?.value||"todos";
+  // cand não usado — pesquisa neutra
+  var custom = (document.getElementById("d-pergunta-custom")?.value||"").trim();
+  var msg  = custom || getMsgPadrao();
+  var prev = msg.replace("[NOME]","Maria");
+
+  if (document.getElementById("d-count"))
+    document.getElementById("d-count").textContent = base.length;
+  if (document.getElementById("preview-msg"))
+    document.getElementById("preview-msg").textContent = prev;
+}
+
+function dispararPesquisa() {
+  var base = getBaseDisparo();
+  if (!base.length) {
+    showFb("fb-disp","err","Nenhum eleitor encontrado com os filtros selecionados.");return;
+  }
+
+  var conf = confirm(
+    "Confirmar disparo?\n\n" +
+    base.length + " eleitores receberão a pesquisa via WhatsApp.\n\n" +
+    "Esta ação é irreversível."
+  );
+  if (!conf) return;
+
+  var candSlug = document.getElementById("d-cand").value;
+  var custom   = document.getElementById("d-pergunta-custom").value.trim();
+
+  var enviados = 0;
+  base.forEach(function(e) {
+    var msg = custom || getMsgPadrao();
+    msg = msg.replace(/\[NOME\]/g, (e.nome||"").split(" ")[0]);
+
+    enviados++;
+  });
+
+  // Salva log local
+  var logs = JSON.parse(localStorage.getItem("pesq_disparos")||"[]");
+  logs.push({
+    dia:new Date().toISOString().slice(0,10),
+    hora:new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}),
+    total:enviados, candidato:candSlug,
+  });
+  localStorage.setItem("pesq_disparos", JSON.stringify(logs));
+
+  showFb("fb-disp","ok",
+    "✅ "+enviados+" disparos registrados! Envie via Z-API pelo Apps Script.");
+}
+
+// ── IMPORTAR MANUAL ───────────────────────────────────
+function importarManual() {
+  var fone = document.getElementById("m-fone").value.trim();
+  var resp = document.getElementById("m-resp").value;
+  var obs  = document.getElementById("m-obs").value.trim();
+  if (!fone||!resp) { alert("Preencha WhatsApp e resposta."); return; }
+
+  // Busca eleitor na base
+  var base = carregarBase();
+  var el   = base.find(function(e){
+    return (e.fone||"").replace(/\D/g,"")=== fone.replace(/\D/g,"");
+  });
+
+  var reg = {
+    id:        Date.now(),
+    fone:      fone,
+    nome:      el?el.nome:"Não identificado",
+    candidato: el&&el._cand?el._cand.key:"desconhecido",
+    resposta:  resp,
+    obs:       obs,
+    dia:       new Date().toISOString().slice(0,10),
+    hora:      new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}),
+    manual:    true,
+  };
+
+  respostas.push(reg);
+  localStorage.setItem("pesq_respostas", JSON.stringify(respostas));
+
+  document.getElementById("m-fone").value="";
+  document.getElementById("m-resp").value="";
+  document.getElementById("m-obs").value="";
+  alert("✅ Resposta de "+(el?el.nome:fone)+" registrada!");
+  renderDash();
+}
+
+function salvarConfig() {
+  localStorage.setItem("pesq_p1", document.getElementById("cfg-p1").value);
+  localStorage.setItem("pesq_p2", document.getElementById("cfg-p2").value);
+  localStorage.setItem("pesq_p3", document.getElementById("cfg-p3").value);
+  alert("✅ Configurações salvas!");
+}
+
+function fmtFone(inp) {
+  var v=inp.value.replace(/\D/g,"");
+  if(v.length>11)v=v.slice(0,11);
+  if(v.length>6)      v="("+v.slice(0,2)+") "+v.slice(2,7)+"-"+v.slice(7);
+  else if(v.length>2) v="("+v.slice(0,2)+") "+v.slice(2);
+  inp.value=v;
+}
+
+function showFb(id,t,m) {
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.className="fb "+t; el.textContent=m;
+  if(t==="ok"||t==="info") setTimeout(function(){el.className="fb";},5000);
+  el.scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+// ── INIT ──────────────────────────────────────────────
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", function() {
+    if (!verificarSessao()) {
+      document.getElementById("pin-modal").style.display="flex";
+      document.body.style.overflow="hidden";
+    } else {
+      document.getElementById("pin-modal").style.display="none";
+      renderDash();
+    }
+  });
+} else {
+  if (!verificarSessao()) {
+    document.getElementById("pin-modal").style.display="flex";
+    document.body.style.overflow="hidden";
+  } else {
+    document.getElementById("pin-modal").style.display="none";
+    renderDash();
+  }
+}
+</script>
+</body>
+</html>
