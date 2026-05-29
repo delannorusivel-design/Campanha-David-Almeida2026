@@ -801,6 +801,7 @@ function enviarCheckin() {
   if (!gpsData)                { showFb("err", "Aguarde o GPS localizar você."); return; }
 
   var btn = document.getElementById("btn-send");
+  if (btn) { btn.disabled = true; btn.textContent = "⏳ Salvando..."; }
 
   // Monta objeto do check-in
   var checkin = {
@@ -821,9 +822,17 @@ function enviarCheckin() {
     maps_url: "https://maps.google.com/?q=" + gpsData.lat + "," + gpsData.lng,
   };
 
-  // 1. Salva localmente PRIMEIRO
-  checkins.push(checkin);
-  localStorage.setItem("checkins_hoje", JSON.stringify(checkins));
+  // 1. Salva localmente (sem a foto para não estourar quota)
+  var checkinSemFoto = Object.assign({}, checkin);
+  delete checkinSemFoto.foto; // foto não vai pro localStorage
+  checkins.push(checkinSemFoto);
+  try {
+    localStorage.setItem("checkins_hoje", JSON.stringify(checkins));
+  } catch(qe) {
+    // Quota exceeded — limpa checkins antigos e tenta de novo
+    checkins = [checkinSemFoto];
+    localStorage.setItem("checkins_hoje", JSON.stringify(checkins));
+  }
 
   // 2. Libera UI imediatamente
   btn.disabled = false;
