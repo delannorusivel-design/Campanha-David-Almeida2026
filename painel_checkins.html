@@ -165,6 +165,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
   background:#333;transition:background .2s;}
 .pin-dot.filled{background:#F5C000;}
 
+
+/* ── FEED SOCIAL ── */
+.feed-card{background:#fff;border-radius:16px;margin-bottom:16px;overflow:hidden;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);border:1px solid #eee}
+.feed-header{display:flex;align-items:center;gap:10px;padding:12px 14px}
+.feed-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:700;font-size:15px;flex-shrink:0}
+.feed-user{flex:1;min-width:0}
+.feed-nome{font-size:14px;font-weight:700;color:#1A1A1A}
+.feed-meta{font-size:11px;color:#888;margin-top:2px}
+.feed-tipo-badge{font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;flex-shrink:0}
+.feed-foto-wrap{width:100%;background:#000;line-height:0}
+.feed-foto{width:100%;max-height:480px;object-fit:cover;cursor:pointer;display:block}
+.feed-foto-pendente{padding:40px;text-align:center;color:#aaa;font-size:13px;background:#F8F8F8}
+.feed-foto-erro{padding:40px;text-align:center;color:#aaa;font-size:13px;background:#F8F8F8}
+.feed-footer{display:flex;gap:14px;padding:12px 14px 8px;flex-wrap:wrap}
+.feed-stat{font-size:12px;color:#555}
+.feed-stat b{color:#1A7A4A}
+.feed-obs{padding:0 14px 10px;font-size:13px;color:#444;line-height:1.5}
+.feed-mapas{display:flex;gap:8px;padding:0 14px 14px}
+.feed-map-btn{flex:1;text-align:center;padding:9px;border-radius:10px;
+  font-size:12px;font-weight:700;text-decoration:none}
 </style>
 </head>
 <body>
@@ -415,39 +437,60 @@ function renderDash() {
 
 function renderCheckin(c) {
   const cor  = ZCORS[c.zona] || "#888";
-  const temFoto = c.foto && c.foto !== "[foto_local]";
-  return `<div class="checkin-card" style="border-left:3px solid ${cor}">
-    <div class="ci-header">
-      <div>
-        <div class="ci-nome">👤 ${c.nome}</div>
-        <div class="ci-sub">📍 ${c.zona} · ${c.lider||"—"}</div>
-        <span class="ci-tipo">${c.tipo}</span>
-      </div>
-      <div class="ci-hora">
-        ⏰ ${formatarHora(c.hora)}
-        ${c.eleit>0?`<br/><span style="color:var(--green);font-weight:600">${c.eleit} eleit.</span>`:""}
-      </div>
-    </div>
-    ${temFoto
-      ? `<img class="ci-foto" src="${c.foto}" alt="foto check-in" onclick="abrirFoto('${c.foto}')"/>`
-      : c.foto_url
-        ? `<img src="${c.foto_url}" style="width:100%;border-radius:8px;margin:8px 0;aspect-ratio:4/3;object-fit:cover;cursor:pointer" onclick="window.open('${c.foto_url}','_blank')" />`
-        : `<div style="background:var(--lgray);border-radius:8px;padding:20px;text-align:center;
-           font-size:12px;color:var(--muted);margin:8px 0">📷 Foto salva no dispositivo</div>`}
-    <div class="ci-gps" id="gps-${c.id}">
-      📍
-      <span class="coords-txt">
-        ${c.lat}, ${c.lng} (±${c.acc}m)
-      </span>
-      <a href="${c.maps_url}" target="_blank" style="margin-left:4px">— Ver no Maps</a>
-    </div>
-    <div class="ci-endereco" id="end-${c.id}">🏠 Buscando endereço...</div>
-    ${c.lat ? `<div id="mapamini-wrap-${c.id}" style="margin-top:8px">
-      <div id="mapamini-${c.id}" class="ci-mapa-mini"></div>
-    </div>` : ""}
-    ${c.obs?`<div style="font-size:11px;color:var(--muted);margin-top:6px;
-      background:var(--lgray);border-radius:6px;padding:5px 8px">💬 ${c.obs}</div>`:""}
-  </div>`;
+  const emojiTipo = {
+    "Visita domiciliar":"🏠","Abordagem de rua":"🗣️",
+    "Distribuição de material":"📋","Evento":"🎤","Reunião de líderes":"👥"
+  }[c.tipo] || "📍";
+
+  // Iniciais para avatar
+  var iniciais = (c.nome||"A").split(" ").map(function(p){return p[0];}).slice(0,2).join("").toUpperCase();
+
+  // Bloco da foto — estilo feed social
+  var fotoHtml;
+  if (c.foto_url) {
+    fotoHtml = '<div class="feed-foto-wrap">' +
+      '<img src="'+c.foto_url+'" class="feed-foto" loading="lazy" ' +
+      'onclick="abrirFotoFull(\''+c.foto_url+'\')" ' +
+      'onerror="this.closest(\'.feed-foto-wrap\').innerHTML=\'<div class=feed-foto-erro>📷 Foto indisponível</div>\'"/>' +
+      '</div>';
+  } else {
+    fotoHtml = '<div class="feed-foto-pendente">⏳ Foto sendo processada...</div>';
+  }
+
+  return '<div class="feed-card">' +
+    // Header estilo rede social
+    '<div class="feed-header">' +
+      '<div class="feed-avatar" style="background:'+cor+'">'+iniciais+'</div>' +
+      '<div class="feed-user">' +
+        '<div class="feed-nome">'+escHtml(c.nome||"Ativista")+'</div>' +
+        '<div class="feed-meta">📍 '+escHtml(c.zona||"")+(c.lider?' · '+escHtml(c.lider):'')+' · ⏰ '+formatarHora(c.hora)+'</div>' +
+      '</div>' +
+      '<div class="feed-tipo-badge" style="background:'+cor+'22;color:'+cor+'">'+emojiTipo+' '+escHtml(c.tipo||"")+'</div>' +
+    '</div>' +
+    // Foto grande
+    fotoHtml +
+    // Rodapé com infos
+    '<div class="feed-footer">' +
+      (c.eleit>0 ? '<span class="feed-stat">👥 <b>'+c.eleit+'</b> eleitores</span>' : '') +
+      '<span class="feed-stat">📍 '+(c.lat&&c.lng?parseFloat(c.lat).toFixed(4)+", "+parseFloat(c.lng).toFixed(4):"sem GPS")+'</span>' +
+    '</div>' +
+    (c.obs ? '<div class="feed-obs">💬 '+escHtml(c.obs)+'</div>' : '') +
+    // Botões de mapa
+    (c.lat&&c.lng ? '<div class="feed-mapas">' +
+      '<a href="https://maps.google.com/?q='+c.lat+','+c.lng+'" target="_blank" class="feed-map-btn" style="background:#1A1A1A;color:#F5C000">🗺️ Maps</a>' +
+      '<a href="https://waze.com/ul?ll='+c.lat+','+c.lng+'&navigate=yes" target="_blank" class="feed-map-btn" style="background:#05C8F7;color:#fff">🚗 Waze</a>' +
+    '</div>' : '') +
+  '</div>';
+}
+
+function abrirFotoFull(url) {
+  var overlay = document.createElement("div");
+  overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99999;" +
+    "display:flex;align-items:center;justify-content:center;cursor:pointer;padding:20px";
+  overlay.onclick = function(){ document.body.removeChild(overlay); };
+  overlay.innerHTML = '<img src="'+url+'" style="max-width:100%;max-height:100%;border-radius:12px"/>' +
+    '<div style="position:absolute;top:20px;right:20px;color:#fff;font-size:32px">✕</div>';
+  document.body.appendChild(overlay);
 }
 
 function filtrarZona(zona) {
