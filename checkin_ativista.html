@@ -1,1335 +1,891 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"/>
-  <meta http-equiv="X-Frame-Options" content="DENY"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="theme-color" content="#0D1F3C"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0D1F3C">
 <title>Check-in — Campanha David Almeida 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --navy:#0D1F3C;--blue:#1B4F8A;--lblue:#D6EAF8;
-  --green:#1A7A4A;--lgreen:#C8F0DC;
-  --amber:#856404;--lambr:#FFF3CD;
-  --red:#7B241C;--lred:#FDDCDC;
-  --border:#E2E8F0;--text:#1C1C1C;--muted:#718096;--lgray:#F7F8FA;
+:root {
+  --azul: #0D1F3C;
+  --verde: #00A859;
+  --verde2: #00C96A;
+  --amarelo: #FFD600;
+  --branco: #FFFFFF;
+  --cinza1: #F4F6FA;
+  --cinza2: #E2E8F0;
+  --cinza3: #94A3B8;
+  --vermelho: #EF4444;
+  --card-bg: #FFFFFF;
+  --shadow: 0 2px 16px rgba(13,31,60,0.10);
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
-  background:#EEF2FF;color:var(--text);min-height:100vh;
-  padding-bottom:env(safe-area-inset-bottom)}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--cinza1);
+  color: var(--azul);
+  min-height: 100vh;
+  padding-bottom: 32px;
+}
 
-.header{background:var(--navy);padding:14px 16px 12px;
-  text-align:center;position:sticky;top:0;z-index:100}
-.header h1{font-size:15px;font-weight:700;color:#C8F0DC;letter-spacing:.3px}
-.header p{font-size:11px;color:#5DCAA5;margin-top:2px}
-.hora-badge{display:inline-block;background:rgba(255,255,255,.12);
-  color:#C8F0DC;font-size:13px;font-weight:600;padding:4px 14px;
-  border-radius:20px;margin-top:6px;letter-spacing:.5px}
+/* HEADER */
+.header {
+  background: var(--azul);
+  color: white;
+  padding: 14px 16px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+}
+.header-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 1px;
+  color: var(--amarelo);
+}
+.header-sub { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 1px; }
+.header-right { display: flex; align-items: center; gap: 10px; }
+.btn-perfil {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+.hora-display { font-size: 13px; color: var(--amarelo); font-weight: 600; }
 
-.content{padding:14px 14px 100px}
+/* PERFIL BANNER */
+.perfil-banner {
+  background: linear-gradient(135deg, #0D1F3C 60%, #1a3a6e);
+  color: white;
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.perfil-avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--verde); display: flex; align-items: center;
+  justify-content: center; font-weight: 700; font-size: 17px;
+  flex-shrink: 0; color: white;
+}
+.perfil-info { flex: 1; min-width: 0; }
+.perfil-nome { font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.perfil-zona { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 2px; }
+.sem-perfil { color: rgba(255,255,255,0.55); font-size: 13px; font-style: italic; }
 
-/* ── PERFIL ── */
-.perfil-card{background:#fff;border-radius:14px;padding:14px;
-  margin-bottom:12px;border:0.5px solid var(--border);
-  display:flex;align-items:center;gap:12px}
-.avatar{width:46px;height:46px;border-radius:50%;background:var(--lblue);
-  color:var(--blue);font-size:16px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.perfil-nome{font-size:14px;font-weight:600}
-.perfil-zona{font-size:11px;color:var(--muted);margin-top:2px}
-.perfil-status{font-size:10px;margin-top:4px}
-.btn-change{background:none;border:0.5px solid var(--border);
-  border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;
-  color:var(--muted);margin-left:auto;flex-shrink:0}
+/* STATS BAR */
+.stats-bar {
+  display: flex; background: white;
+  border-bottom: 1px solid var(--cinza2);
+}
+.stat-item {
+  flex: 1; text-align: center; padding: 10px 4px;
+  border-right: 1px solid var(--cinza2);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num { font-size: 22px; font-weight: 700; color: var(--verde); font-family: 'Bebas Neue', sans-serif; }
+.stat-label { font-size: 10px; color: var(--cinza3); text-transform: uppercase; letter-spacing: 0.5px; }
 
-/* ── SETUP ── */
-.setup-card{background:#fff;border-radius:14px;padding:16px;
-  margin-bottom:12px;border:0.5px solid var(--border)}
-.sec-lbl{font-size:10px;font-weight:700;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;display:block}
-.field{margin-bottom:10px}
-.field label{font-size:11px;color:var(--muted);display:block;margin-bottom:4px}
-.field input,.field select{width:100%;border:0.5px solid var(--border);
-  border-radius:9px;padding:11px 12px;font-size:15px;outline:none;
-  background:#fff;-webkit-appearance:none}
-.field input:focus,.field select:focus{border-color:var(--blue);
-  box-shadow:0 0 0 3px rgba(27,79,138,.1)}
+/* SEÇÃO */
+.section { padding: 16px; }
+.section-title {
+  font-size: 13px; font-weight: 700; color: var(--azul);
+  text-transform: uppercase; letter-spacing: 0.8px;
+  margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+}
 
-/* ── CHECKIN PRINCIPAL ── */
-.checkin-card{background:#fff;border-radius:16px;padding:16px;
-  margin-bottom:12px;border:0.5px solid var(--border)}
+/* CÂMERA */
+.camera-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.camera-area {
+  position: relative;
+  background: #111;
+  min-height: 260px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+#preview-video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: none;
+  transform: scaleX(-1); /* selfie espelhado */
+}
+#preview-video.traseira { transform: scaleX(1); }
+.camera-placeholder {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px; color: rgba(255,255,255,0.6);
+}
+.camera-placeholder .icon { font-size: 48px; }
+.camera-placeholder p { font-size: 13px; text-align: center; padding: 0 20px; }
+.foto-preview-wrap {
+  position: relative; width: 100%; display: none;
+}
+.foto-preview-wrap img {
+  width: 100%; display: block;
+  max-height: 340px; object-fit: cover;
+}
+.foto-stamp {
+  position: absolute; bottom: 8px; left: 8px;
+  background: rgba(0,0,0,0.65);
+  color: white; font-size: 10px;
+  padding: 4px 8px; border-radius: 6px;
+  font-family: monospace;
+}
 
-/* ── CÂMERA PROFISSIONAL ── */
-.cam-container{position:relative;background:#000;border-radius:16px;
-  overflow:hidden;margin-bottom:12px;width:100%}
-.cam-viewfinder{position:relative;width:100%;aspect-ratio:4/3;
-  background:#111;display:flex;align-items:center;justify-content:center}
-#video{width:100%;height:100%;object-fit:cover;display:block;
-  border-radius:0;-webkit-transform:translateZ(0);transform:translateZ(0)}
-#canvas{display:none}
-#foto-preview{width:100%;height:100%;object-fit:cover;display:none;
-  position:absolute;inset:0}
+/* STATUS upload */
+.upload-status {
+  padding: 8px 14px; font-size: 12px; font-weight: 600;
+  display: none; align-items: center; gap: 8px;
+  border-top: 1px solid var(--cinza2);
+}
+.upload-status.enviando { display: flex; color: #F59E0B; background: #FFFBEB; }
+.upload-status.ok { display: flex; color: var(--verde); background: #F0FDF4; }
+.upload-status.erro { display: flex; color: var(--vermelho); background: #FEF2F2; }
 
-/* Overlay inicial */
-.cam-idle{position:absolute;inset:0;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;background:rgba(0,0,0,.85);
-  cursor:pointer;z-index:10}
-.cam-idle-icon{font-size:56px;margin-bottom:10px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
-.cam-idle-txt{font-size:14px;color:#fff;font-weight:600;margin-bottom:4px}
-.cam-idle-sub{font-size:11px;color:rgba(255,255,255,.5)}
+.camera-controls {
+  padding: 12px 14px;
+  display: flex; gap: 10px; align-items: center;
+  background: white;
+}
+.btn-cam {
+  flex: 1; padding: 11px;
+  border-radius: 10px; border: none; cursor: pointer;
+  font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif;
+  transition: all .15s;
+}
+.btn-cam.primary { background: var(--verde); color: white; }
+.btn-cam.primary:active { background: #009348; }
+.btn-cam.secondary { background: var(--cinza2); color: var(--azul); }
+.btn-cam.secondary:active { background: #cbd5e1; }
+.btn-cam.danger { background: #FEE2E2; color: var(--vermelho); }
+.btn-flip {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: white; border-radius: 50%;
+  width: 38px; height: 38px; display: flex;
+  align-items: center; justify-content: center;
+  cursor: pointer; position: absolute; top: 12px; right: 12px;
+  font-size: 18px;
+}
+.btn-capturar-overlay {
+  position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+  width: 64px; height: 64px; border-radius: 50%;
+  background: white; border: 4px solid rgba(255,255,255,0.5);
+  cursor: pointer; display: none;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+.btn-capturar-overlay::after {
+  content: ''; position: absolute; inset: 6px;
+  background: white; border-radius: 50%;
+}
+canvas#foto-canvas { display: none; }
 
-/* Viewfinder ativo — guias */
-.cam-guide{position:absolute;inset:0;pointer-events:none;z-index:5}
-.cam-guide::before,.cam-guide::after{content:"";position:absolute;
-  width:60px;height:60px;border-color:rgba(255,255,255,.7);border-style:solid}
-.cam-guide::before{top:16px;left:16px;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
-.cam-guide::after{top:16px;right:16px;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
-.cam-guide-b::before,.cam-guide-b::after{content:"";position:absolute;
-  width:60px;height:60px;border-color:rgba(255,255,255,.7);border-style:solid}
-.cam-guide-b::before{bottom:16px;left:16px;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
-.cam-guide-b::after{bottom:16px;right:16px;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
+/* FORM */
+.form-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 14px;
+  margin-bottom: 16px;
+}
 
-/* Mira central */
-.cam-crosshair{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:40px;height:40px;pointer-events:none;z-index:5}
-.cam-crosshair::before{content:"";position:absolute;top:50%;left:0;right:0;
-  height:1px;background:rgba(255,255,255,.4)}
-.cam-crosshair::after{content:"";position:absolute;left:50%;top:0;bottom:0;
-  width:1px;background:rgba(255,255,255,.4)}
+.gps-info {
+  background: var(--cinza1);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 12px; color: var(--cinza3);
+  display: flex; align-items: center; gap: 8px;
+}
+.gps-info.ok { color: var(--verde); background: #F0FDF4; }
+.gps-info.erro { color: var(--vermelho); background: #FEF2F2; }
 
-/* Barra de controles */
-.cam-controls{position:absolute;bottom:0;left:0;right:0;
-  background:linear-gradient(transparent,rgba(0,0,0,.8));
-  padding:20px 16px 14px;display:none;z-index:10;
-  align-items:center;justify-content:space-between}
-.cam-controls.visible{display:flex}
-.cam-ctrl-btn{width:44px;height:44px;border-radius:50%;border:none;
-  background:rgba(255,255,255,.2);color:#fff;font-size:18px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-.cam-ctrl-btn:active{transform:scale(.9);background:rgba(255,255,255,.35)}
+.tipo-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+}
+.tipo-btn {
+  border: 2px solid var(--cinza2);
+  background: white; border-radius: 10px;
+  padding: 10px 6px; cursor: pointer;
+  text-align: center; font-size: 11px; font-weight: 600;
+  color: var(--azul); transition: all .15s;
+  font-family: 'Inter', sans-serif;
+}
+.tipo-btn .emoji { font-size: 20px; display: block; margin-bottom: 4px; }
+.tipo-btn.ativo { border-color: var(--verde); background: #F0FDF4; color: var(--verde); }
 
-/* Botão obturador */
-.cam-shutter{width:72px;height:72px;border-radius:50%;
-  border:4px solid #fff;background:transparent;
-  cursor:pointer;position:relative;display:flex;
-  align-items:center;justify-content:center}
-.cam-shutter::after{content:"";width:56px;height:56px;border-radius:50%;
-  background:#fff;display:block;transition:transform .1s}
-.cam-shutter:active::after{transform:scale(.85)}
+.input-wrap { display: flex; flex-direction: column; gap: 6px; }
+.input-label { font-size: 12px; font-weight: 600; color: var(--azul); }
+.input-field {
+  padding: 11px 14px; border-radius: 10px;
+  border: 2px solid var(--cinza2);
+  font-size: 14px; font-family: 'Inter', sans-serif;
+  width: 100%; background: white; color: var(--azul);
+  transition: border-color .15s;
+}
+.input-field:focus { outline: none; border-color: var(--verde); }
 
-/* Zoom indicator */
-.cam-zoom{position:absolute;top:14px;left:50%;transform:translateX(-50%);
-  background:rgba(0,0,0,.5);color:#fff;font-size:11px;font-weight:700;
-  padding:3px 10px;border-radius:20px;z-index:10;display:none;
-  -webkit-backdrop-filter:blur(4px)}
+.eleit-row { display: flex; align-items: center; gap: 12px; }
+.eleit-count {
+  font-size: 32px; font-weight: 700; color: var(--azul);
+  font-family: 'Bebas Neue', sans-serif; min-width: 60px; text-align: center;
+}
+.eleit-btns { display: flex; gap: 8px; }
+.eleit-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: none; font-size: 22px; cursor: pointer;
+  font-weight: 700; transition: all .15s;
+}
+.eleit-btn.mais { background: var(--verde); color: white; }
+.eleit-btn.mais:active { background: #009348; }
+.eleit-btn.menos { background: var(--cinza2); color: var(--azul); }
+.eleit-btn.menos:active { background: #cbd5e1; }
 
-/* Flash overlay */
-.cam-flash{position:absolute;inset:0;background:#fff;opacity:0;
-  pointer-events:none;z-index:20;transition:opacity .15s}
+.btn-enviar {
+  width: 100%; padding: 16px;
+  background: var(--verde); color: white;
+  border: none; border-radius: 14px;
+  font-size: 16px; font-weight: 700;
+  cursor: pointer; font-family: 'Inter', sans-serif;
+  transition: all .15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-enviar:active { background: #009348; transform: scale(0.98); }
+.btn-enviar:disabled { background: var(--cinza3); cursor: not-allowed; }
 
-/* Preview mode */
-.cam-preview-controls{display:none;padding:10px 12px;background:#111;
-  align-items:center;justify-content:space-between;gap:8px}
-.cam-preview-controls.visible{display:flex}
-.btn-preview-action{flex:1;padding:11px;border:none;border-radius:10px;
-  font-size:13px;font-weight:700;cursor:pointer;display:flex;
-  align-items:center;justify-content:center;gap:6px}
-.btn-usar{background:#1A7A4A;color:#fff}
-.btn-refazer{background:#333;color:#fff}
+/* CHECKINS LISTA */
+.checkin-item {
+  background: white; border-radius: 14px;
+  box-shadow: var(--shadow);
+  overflow: hidden; margin-bottom: 12px;
+}
+.ci-header {
+  padding: 12px 14px;
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--cinza2);
+}
+.ci-tipo-badge {
+  background: var(--cinza1); border-radius: 8px;
+  padding: 4px 8px; font-size: 11px; font-weight: 600;
+  color: var(--azul);
+}
+.ci-hora { font-size: 12px; color: var(--cinza3); margin-left: auto; }
+.ci-foto { width: 100%; display: block; max-height: 200px; object-fit: cover; }
+.ci-body { padding: 10px 14px; }
+.ci-eleit { font-size: 13px; color: var(--verde); font-weight: 700; }
+.ci-obs { font-size: 12px; color: var(--cinza3); margin-top: 4px; }
+.ci-gps { font-size: 11px; color: var(--cinza3); margin-top: 4px; }
+.ci-foto-enviando {
+  background: #FFFBEB; padding: 10px 14px;
+  font-size: 12px; color: #F59E0B;
+  display: flex; align-items: center; gap: 6px;
+}
+.ci-foto-ok {
+  background: #F0FDF4; padding: 6px 14px;
+  font-size: 11px; color: var(--verde);
+}
 
-/* Info da foto */
-.foto-stamp{position:absolute;bottom:8px;left:8px;right:8px;
-  background:rgba(0,0,0,.6);border-radius:6px;padding:5px 8px;
-  font-size:10px;color:#fff;display:none;z-index:15;line-height:1.6;
-  -webkit-backdrop-filter:blur(4px)}
+/* MODAL PERFIL */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55); z-index: 200;
+  display: none; align-items: flex-end;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: white; width: 100%;
+  border-radius: 20px 20px 0 0;
+  padding: 20px 16px 32px;
+  max-height: 80vh; overflow-y: auto;
+}
+.modal-title {
+  font-size: 17px; font-weight: 700; color: var(--azul);
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.modal-close {
+  margin-left: auto; background: var(--cinza2);
+  border: none; border-radius: 50%;
+  width: 32px; height: 32px; cursor: pointer; font-size: 16px;
+}
+.btn-salvar {
+  width: 100%; padding: 14px;
+  background: var(--azul); color: white;
+  border: none; border-radius: 12px;
+  font-size: 15px; font-weight: 700; cursor: pointer;
+  margin-top: 16px; font-family: 'Inter', sans-serif;
+}
 
-/* Qualidade badge */
-.cam-quality{position:absolute;top:14px;right:14px;background:rgba(0,0,0,.5);
-  color:#F5C000;font-size:10px;font-weight:700;padding:3px 8px;
-  border-radius:20px;z-index:10;display:none}
+/* TOAST */
+.toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--azul); color: white;
+  padding: 12px 20px; border-radius: 12px;
+  font-size: 13px; font-weight: 600;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+  z-index: 300; white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.verde { background: var(--verde); }
+.toast.vermelho { background: var(--vermelho); }
 
-.btn-cam{background:var(--navy);color:#fff;border:none;border-radius:12px;
-  padding:14px;font-size:15px;font-weight:600;cursor:pointer;
-  width:100%;margin-bottom:8px;display:flex;align-items:center;
-  justify-content:center;gap:8px;transition:opacity .15s}
-.btn-cam:active{opacity:.8}
-.btn-cam.secondary{background:var(--lgray);color:var(--text);border:0.5px solid var(--border)}
-.btn-send{background:#1A7A4A;color:#fff;border:none;border-radius:12px;
-  padding:16px;font-size:16px;font-weight:700;cursor:pointer;
-  width:100%;margin-bottom:8px;display:flex;align-items:center;
-  justify-content:center;gap:8px;letter-spacing:.3px;transition:all .2s}
-.btn-send:disabled{opacity:.4;cursor:not-allowed}
-.btn-send:active{transform:scale(.98)}
-
-/* Feedback */
-.fb{padding:12px 14px;border-radius:10px;font-size:13px;
-  margin-bottom:10px;display:none;font-weight:500}
-.fb.ok{display:block;background:var(--lgreen);color:var(--green);border:0.5px solid #5DCAA5}
-.fb.err{display:block;background:var(--lred);color:var(--red)}
-.fb.loading{display:block;background:var(--lambr);color:var(--amber)}
-
-/* Histórico */
-.historico{margin-top:16px}
-.hist-item{background:#fff;border-radius:12px;padding:11px 13px;
-  margin-bottom:8px;border:0.5px solid var(--border);
-  display:flex;gap:10px;align-items:flex-start}
-.hist-thumb{width:56px;height:56px;border-radius:8px;object-fit:cover;flex-shrink:0}
-.hist-thumb-placeholder{width:56px;height:56px;border-radius:8px;
-  background:var(--lgray);display:flex;align-items:center;
-  justify-content:center;font-size:20px;flex-shrink:0}
-.hist-info{flex:1;min-width:0}
-.hist-tipo{font-size:12px;font-weight:600}
-.hist-hora{font-size:10px;color:var(--muted);margin-top:1px}
-.hist-loc{font-size:10px;color:var(--blue);margin-top:3px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hist-badge{font-size:9px;padding:2px 7px;border-radius:8px;
-  display:inline-block;margin-top:4px}
-.badge-green{background:var(--lgreen);color:var(--green)}
-.badge-blue{background:var(--lblue);color:var(--blue)}
-.badge-amber{background:var(--lambr);color:var(--amber)}
-
-/* Contador de check-ins */
-.counter-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
-.counter{background:#fff;border-radius:10px;padding:10px;
-  text-align:center;border:0.5px solid var(--border)}
-.counter-n{font-size:22px;font-weight:700}
-.counter-l{font-size:9px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
-
-/* Modal de perfil */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);
-  z-index:200;display:none;align-items:flex-end}
-.modal-bg.open{display:flex}
-#lgpd-modal{display:none}#lgpd-modal.open{display:flex!important}
-.modal{background:#fff;border-radius:20px 20px 0 0;padding:20px 16px 32px;
-  width:100%;max-height:80vh;overflow-y:auto}
-.modal h2{font-size:16px;font-weight:700;margin-bottom:16px;color:var(--navy)}
-.modal-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted)}
-
-/* ── TIPO DE ATIVIDADE ── */
-.tipo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px}
-.tipo-btn{padding:10px 4px;border-radius:10px;border:1.5px solid #ddd;
-  background:#fff;cursor:pointer;font-size:11px;font-weight:500;
-  color:#666;text-align:center;display:flex;flex-direction:column;
-  align-items:center;gap:4px;-webkit-appearance:none;outline:none;width:100%}
-.tipo-btn .ti{font-size:20px;line-height:1}
-.tipo-btn:active{opacity:.7}
+/* GALERIA fallback */
+.btn-galeria {
+  background: none; border: none; color: var(--cinza3);
+  font-size: 12px; cursor: pointer; padding: 4px 0;
+  font-family: 'Inter', sans-serif; text-decoration: underline;
+}
+#input-galeria { display: none; }
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="header">
-  <h1>📍 Check-in de Campo</h1>
-  <p>Campanha David Almeida 2026</p>
-  <div class="hora-badge" id="hora-badge">--:--:--</div>
+  <div>
+    <div class="header-logo">📍 AVANTE 70</div>
+    <div class="header-sub">Campanha David Almeida 2026</div>
+  </div>
+  <div class="header-right">
+    <div class="hora-display" id="hora-display">--:--</div>
+    <button class="btn-perfil" onclick="abrirPerfil()">✏️ Perfil</button>
+  </div>
 </div>
 
-<div class="content">
-
-  <!-- PERFIL -->
-  <div class="perfil-card" id="perfil-card">
-    <div class="avatar" id="av-initials">?</div>
-    <div>
-      <div class="perfil-nome" id="perfil-nome">Configure seu perfil</div>
-      <div class="perfil-zona" id="perfil-zona">Toque para configurar</div>
-      <div class="perfil-status" id="perfil-status"></div>
-    </div>
-    <button class="btn-change" onclick="abrirModal()">✏️ Editar</button>
+<!-- PERFIL BANNER -->
+<div class="perfil-banner" id="perfil-banner">
+  <div class="perfil-avatar" id="perfil-avatar">?</div>
+  <div class="perfil-info" id="perfil-info">
+    <div class="sem-perfil">Configure seu perfil para começar</div>
   </div>
+</div>
 
-  <!-- CONTADORES -->
-  <div class="counter-row" id="counter-row">
-    <div class="counter">
-      <div class="counter-n" id="cnt-total" style="color:var(--blue)">0</div>
-      <div class="counter-l">Check-ins hoje</div>
-    </div>
-    <div class="counter">
-      <div class="counter-n" id="cnt-campo" style="color:var(--green)">0</div>
-      <div class="counter-l">Em campo</div>
-    </div>
-    <div class="counter">
-      <div class="counter-n" id="cnt-eleit" style="color:var(--amber)">0</div>
-      <div class="counter-l">Eleitores</div>
-    </div>
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num" id="stat-hoje">0</div>
+    <div class="stat-label">Hoje</div>
   </div>
+  <div class="stat-item">
+    <div class="stat-num" id="stat-eleit">0</div>
+    <div class="stat-label">Eleitores</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" id="stat-total">0</div>
+    <div class="stat-label">Total</div>
+  </div>
+</div>
 
-  <!-- FEEDBACK -->
-  <div class="fb" id="fb"></div>
+<!-- CÂMERA -->
+<div class="section">
+  <div class="section-title">📷 Foto do campo</div>
+  <div class="camera-card">
+    <div class="camera-area" id="camera-area">
+      <video id="preview-video" autoplay playsinline muted></video>
+      <canvas id="foto-canvas"></canvas>
 
-  <!-- CHECK-IN CARD -->
-  <div class="checkin-card">
-    <span class="sec-lbl">Novo check-in</span>
+      <!-- Placeholder inicial -->
+      <div class="camera-placeholder" id="camera-placeholder">
+        <div class="icon">📷</div>
+        <p>Toque para ativar a câmera</p>
+      </div>
 
-    <!-- Câmera Profissional -->
-    <div class="cam-container" id="cam-container">
-
-      <!-- Viewfinder -->
-      <div class="cam-viewfinder" id="cam-viewfinder">
-
-        <!-- Vídeo ao vivo -->
-        <video id="video" autoplay playsinline muted
-          style="width:100%;height:100%;object-fit:cover;display:none"></video>
-
-        <!-- Preview da foto tirada -->
-        <img id="foto-preview" alt="Foto capturada"
-          style="width:100%;height:100%;object-fit:cover;display:none;position:absolute;inset:0"/>
-
-        <!-- Tela inicial (idle) -->
-        <div class="cam-idle" id="cam-idle" onclick="iniciarCamera()">
-          <div class="cam-idle-icon">📷</div>
-          <div class="cam-idle-txt">Toque para abrir a câmera</div>
-          <div class="cam-idle-sub">📷 Traseira · 🤳 Selfie — alterne nos controles</div>
-        </div>
-
-        <!-- Guias do viewfinder (aparecem quando câmera ativa) -->
-        <div class="cam-guide" id="cam-guide" style="display:none"></div>
-        <div class="cam-guide-b" id="cam-guide-b" style="display:none"
-          style="position:absolute;inset:0;pointer-events:none;z-index:5"></div>
-        <div class="cam-crosshair" id="cam-crosshair" style="display:none"></div>
-
-        <!-- Badge de qualidade -->
-        <div class="cam-quality" id="cam-quality">HD</div>
-
-        <!-- Zoom indicator -->
-        <div class="cam-zoom" id="cam-zoom">1×</div>
-
-        <!-- Flash overlay -->
-        <div class="cam-flash" id="cam-flash"></div>
-
-        <!-- Carimbo na foto -->
+      <!-- Preview da foto tirada -->
+      <div class="foto-preview-wrap" id="foto-preview-wrap">
+        <img id="foto-preview-img" src="" alt="Foto capturada">
         <div class="foto-stamp" id="foto-stamp"></div>
-
-        <!-- Canvas oculto para captura -->
-        <canvas id="canvas" style="display:none"></canvas>
       </div>
 
-      <!-- Controles da câmera ativa -->
-      <div class="cam-controls" id="cam-controls">
-        <!-- Virar câmera / Selfie -->
-        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
-          <button class="cam-ctrl-btn" id="btn-virar" onclick="virarCamera()" title="Selfie / Traseira">🤳</button>
-          <span id="lbl-cam" style="font-size:9px;color:rgba(255,255,255,.7);font-weight:600">SELFIE</span>
-        </div>
+      <!-- Botão flip câmera (aparece quando câmera ativa) -->
+      <button class="btn-flip" id="btn-flip" style="display:none" onclick="flipCamera()">🔄</button>
 
-        <!-- Obturador -->
-        <div class="cam-shutter" id="cam-shutter" onclick="tirarFoto()"></div>
+      <!-- Botão de captura circular sobre o vídeo -->
+      <div class="btn-capturar-overlay" id="btn-capturar-overlay" onclick="capturarFoto()"></div>
+    </div>
 
-        <!-- Fechar câmera -->
-        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
-          <button class="cam-ctrl-btn" onclick="fecharCamera()" title="Fechar">✕</button>
-          <span style="font-size:9px;color:rgba(255,255,255,.7);font-weight:600">FECHAR</span>
-        </div>
-      </div>
+    <!-- Status do upload -->
+    <div class="upload-status" id="upload-status">
+      <span id="upload-icon">⏳</span>
+      <span id="upload-msg">Enviando foto...</span>
+    </div>
 
-      <!-- Controles do preview -->
-      <div class="cam-preview-controls" id="cam-preview-controls">
-        <button class="btn-preview-action btn-refazer" onclick="retake()">
-          🔄 Tirar outra
+    <div class="camera-controls" id="camera-controls">
+      <button class="btn-cam secondary" id="btn-ativar-cam" onclick="ativarCamera()">📷 Ativar câmera</button>
+      <button class="btn-galeria" onclick="document.getElementById('input-galeria').click()">📁 Galeria</button>
+      <input type="file" accept="image/*" capture="environment" id="input-galeria" onchange="usarFotoGaleria(this)">
+    </div>
+    <div class="camera-controls" id="camera-controls-2" style="display:none">
+      <button class="btn-cam danger" onclick="resetarCamera()">✕ Descartar</button>
+      <button class="btn-cam primary" onclick="confirmarFoto()">✅ Usar esta foto</button>
+    </div>
+  </div>
+
+  <!-- GPS -->
+  <div class="gps-info" id="gps-info">
+    <span>📍</span> <span id="gps-texto">Aguardando GPS...</span>
+  </div>
+</div>
+
+<!-- FORMULÁRIO -->
+<div class="section" style="padding-top:0">
+  <div class="section-title">📋 Dados do check-in</div>
+  <div class="form-card">
+
+    <!-- Tipo de atividade -->
+    <div>
+      <div class="input-label" style="margin-bottom:8px">Tipo de atividade</div>
+      <div class="tipo-grid">
+        <button class="tipo-btn" data-tipo="Visita domiciliar" onclick="selecionarTipo(this)">
+          <span class="emoji">🏠</span>Visita
         </button>
-        <button class="btn-preview-action btn-usar" onclick="confirmarFoto()">
-          ✅ Usar esta foto
+        <button class="tipo-btn" data-tipo="Abordagem de rua" onclick="selecionarTipo(this)">
+          <span class="emoji">🗣️</span>Abordagem
+        </button>
+        <button class="tipo-btn" data-tipo="Distribuição de material" onclick="selecionarTipo(this)">
+          <span class="emoji">📦</span>Material
+        </button>
+        <button class="tipo-btn" data-tipo="Evento" onclick="selecionarTipo(this)">
+          <span class="emoji">🎤</span>Evento
+        </button>
+        <button class="tipo-btn" data-tipo="Reunião de líderes" onclick="selecionarTipo(this)">
+          <span class="emoji">🤝</span>Reunião
+        </button>
+        <button class="tipo-btn" data-tipo="Outro" onclick="selecionarTipo(this)">
+          <span class="emoji">📝</span>Outro
         </button>
       </div>
-
     </div>
 
-    <!-- GPS -->
-    <div class="gps-row" id="gps-row">
-      <div class="gps-dot loading" id="gps-dot"></div>
-      <span id="gps-txt">Aguardando localização GPS...</span>
+    <!-- Eleitores -->
+    <div>
+      <div class="input-label">Eleitores abordados</div>
+      <div class="eleit-row" style="margin-top:8px">
+        <div class="eleit-btns">
+          <button class="eleit-btn menos" onclick="ajustarEleit(-1)">−</button>
+          <button class="eleit-btn mais" onclick="ajustarEleit(1)">+</button>
+        </div>
+        <div class="eleit-count" id="eleit-count">0</div>
+        <div style="font-size:12px;color:var(--cinza3)">eleitores<br>nesta atividade</div>
+      </div>
     </div>
 
-    <!-- Tipo de ação -->
-    <span class="sec-lbl">Tipo de atividade</span>
-    <div class="tipo-grid">
-      <button class="tipo-btn sel" data-tipo="Visita domiciliar" onclick="selTipo(this)">
-        <span class="ti">🏠</span>Visita
-      </button>
-      <button class="tipo-btn" data-tipo="Abordagem de rua" onclick="selTipo(this)">
-        <span class="ti">🗣️</span>Abordagem
-      </button>
-      <button class="tipo-btn" data-tipo="Distribuição de material" onclick="selTipo(this)">
-        <span class="ti">📦</span>Material
-      </button>
-      <button class="tipo-btn" data-tipo="Evento ou ação" onclick="selTipo(this)">
-        <span class="ti">🎤</span>Evento
-      </button>
-      <button class="tipo-btn" data-tipo="Reunião com liderança" onclick="selTipo(this)">
-        <span class="ti">🤝</span>Reunião
-      </button>
-      <button class="tipo-btn" data-tipo="Outro" onclick="selTipo(this)">
-        <span class="ti">📝</span>Outro
-      </button>
+    <!-- Obs -->
+    <div class="input-wrap">
+      <label class="input-label">Observação (opcional)</label>
+      <textarea class="input-field" id="obs-field" rows="2" placeholder="Ex: Rua das Flores, 12 casas visitadas..."></textarea>
     </div>
 
-    <!-- Eleitores abordados -->
-    <div class="field">
-      <label>Eleitores abordados nesta atividade</label>
-      <input id="f-eleit" type="number" min="0" placeholder="0"/>
-    </div>
-
-    <!-- Descrição rápida -->
-    <div class="field">
-      <label>Observação rápida (opcional)</label>
-      <input id="f-obs" placeholder="Ex: Boa receptividade no bairro"/>
-    </div>
-
-    <!-- Fallback para iOS: input file -->
-    <input type="file" id="file-fallback" accept="image/*" capture="environment"
-      style="display:none" onchange="usarFotoFallback(this)"/>
-    <button class="btn-cam secondary" id="btn-fallback"
-      onclick="document.getElementById('file-fallback').click()"
-      style="background:#1B4F8A;font-size:13px;padding:10px">
-      📁 Problemas com a câmera? Use a galeria
-    </button>
-    <button class="btn-send" id="btn-checkin-send" onclick="enviarCheckin()">
+    <!-- Botão enviar -->
+    <button class="btn-enviar" id="btn-enviar" onclick="enviarCheckin()">
       ✅ Enviar check-in
     </button>
   </div>
 
-  <!-- HISTÓRICO DO DIA -->
-  <div class="historico">
-    <span class="sec-lbl">Meus check-ins de hoje</span>
-    <div id="historico-list">
-      <div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">
-        Nenhum check-in ainda hoje.<br/>Faça o primeiro registro!
-      </div>
+  <!-- Lista de hoje -->
+  <div class="section-title" style="margin-top:8px">📋 Meus check-ins de hoje</div>
+  <div id="lista-checkins">
+    <div style="text-align:center;padding:24px;color:var(--cinza3);font-size:13px">
+      Nenhum check-in ainda hoje.<br>Faça o primeiro registro!
     </div>
-  </div>
-
-</div><!-- /content -->
-
-<!-- MODAL PERFIL -->
-<div class="modal-bg" id="modal-bg" onclick="fecharModal(event)">
-  <div class="modal">
-    <button class="modal-close" onclick="fecharModal()">✕</button>
-    <h2>👤 Seu perfil</h2>
-    <div class="field"><label>Nome completo *</label>
-      <input id="m-nome" placeholder="Ex: João Pereira"/></div>
-    <div class="field"><label>Zona eleitoral *</label>
-      <select id="m-zona">
-        <option value="">Selecionar...</option>
-        <option>Zona Norte</option><option>Zona Sul</option>
-        <option>Centro</option><option>Zona Oeste</option><option>Zona Leste</option>
-      </select></div>
-    <div class="field"><label>Líder responsável</label>
-      <input id="m-lider" placeholder="Ex: Carlos Menezes"/></div>
-    <button class="btn-salvar-perfil" onclick="salvarPerfil()" style="margin-top:8px;background:#1A7A4A;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;display:block">
-      💾 Salvar perfil
-    </button>
   </div>
 </div>
 
+<!-- MODAL PERFIL -->
+<div class="modal-overlay" id="modal-perfil">
+  <div class="modal-box">
+    <div class="modal-title">
+      👤 Seu perfil
+      <button class="modal-close" onclick="fecharPerfil()">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="input-wrap">
+        <label class="input-label">Nome completo *</label>
+        <input class="input-field" id="p-nome" type="text" placeholder="Seu nome">
+      </div>
+      <div class="input-wrap">
+        <label class="input-label">Zona eleitoral *</label>
+        <select class="input-field" id="p-zona">
+          <option value="">Selecionar...</option>
+          <option>Zona Norte</option>
+          <option>Zona Sul</option>
+          <option>Centro</option>
+          <option>Zona Oeste</option>
+          <option>Zona Leste</option>
+          <option>Zona Rural</option>
+        </select>
+      </div>
+      <div class="input-wrap">
+        <label class="input-label">Líder responsável</label>
+        <input class="input-field" id="p-lider" type="text" placeholder="Nome do seu líder">
+      </div>
+    </div>
+    <button class="btn-salvar" onclick="salvarPerfil()">💾 Salvar perfil</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
 <script>
+// ── CONFIG ──
+const WEBHOOK = "https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec";
+const TOKEN   = "avante70-am-2026-token-secreto";
+const IMGBB_KEY = "fa0fb4b7023a56777344127963e3b826";
 
-function escHtml(s) {
-  if (!s) return "";
-  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#x27;");
-}
+// ── ESTADO ──
+let perfil   = JSON.parse(localStorage.getItem("perfil_ativista") || "{}");
+let checkins = JSON.parse(localStorage.getItem("checkins_hoje")   || "[]");
+let gpsPos   = null;
+let tipoSel  = "";
+let eleit    = 0;
+let fotoBase64 = "";      // foto atual (base64 sem prefix)
+let fotoUrl    = "";      // URL ImgBB após upload
+let stream     = null;
+let facingMode = "environment";
+let fotoConfirmada = false;
 
-// ── ESTADO ──────────────────────────────────────────
-let perfil   = JSON.parse(localStorage.getItem("perfil_ativista") || "null");
-let checkins = JSON.parse(localStorage.getItem("checkins_hoje") || "[]");
-let gpsData  = null;
-let streamV  = null;
-let fotoBase64 = null;
-let tipoSel  = "Visita domiciliar";
-let camAtiva = false;
-
-// Limpa checkins se for outro dia
-const hoje = new Date().toISOString().slice(0,10);
-if (checkins.length && checkins[0]?.dia !== hoje) {
+const hojeKey = new Date().toLocaleDateString("pt-BR");
+if (localStorage.getItem("checkins_dia") !== hojeKey) {
   checkins = [];
-  localStorage.setItem("checkins_hoje", JSON.stringify(checkins));
+  localStorage.setItem("checkins_dia", hojeKey);
+  localStorage.setItem("checkins_hoje", "[]");
 }
 
-// ── RELÓGIO ─────────────────────────────────────────
+// ── HORA ──
 function atualizarHora() {
-  const now = new Date();
-  document.getElementById("hora-badge").textContent =
-    now.toLocaleTimeString("pt-BR", {hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  const h = new Date().toLocaleTimeString("pt-BR", {hour:"2-digit",minute:"2-digit"});
+  document.getElementById("hora-display").textContent = h;
 }
-setInterval(atualizarHora, 1000);
 atualizarHora();
+setInterval(atualizarHora, 1000);
 
-// ── GPS ─────────────────────────────────────────────
-function iniciarGPS() {
-  if (!navigator.geolocation) {
-    setGPS("err", "GPS não disponível neste dispositivo");
-    return;
-  }
-  navigator.geolocation.watchPosition(
-    pos => {
-      gpsData = {
-        lat: pos.coords.latitude.toFixed(6),
-        lng: pos.coords.longitude.toFixed(6),
-        acc: Math.round(pos.coords.accuracy),
-      };
-      setGPS("ok", `📍 ${gpsData.lat}, ${gpsData.lng} (±${gpsData.acc}m)`);
-    },
-    err => {
-      setGPS("err", "Localização bloqueada — habilite o GPS");
-      gpsData = null;
-    },
-    { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
-  );
-}
-
-function setGPS(status, txt) {
-  const dot = document.getElementById("gps-dot");
-  dot.className = "gps-dot " + status;
-  document.getElementById("gps-txt").textContent = txt;
-}
-
-// ── CÂMERA ──────────────────────────────────────────
-// ── CÂMERA ──────────────────────────────────────────
-var facingMode = "environment"; // traseira por padrão
-
-function iniciarCamera() {
-  var idle = document.getElementById("cam-idle");
-  if (idle) {
-    idle.innerHTML = '<div class="cam-idle-icon">⏳</div>' +
-      '<div class="cam-idle-txt">Aguardando permissão...</div>';
-  }
-
-  var constraints = {
-    audio: false,
-    video: {
-      facingMode: { ideal: facingMode },
-      width:  { ideal: 1920 },
-      height: { ideal: 1440 }
-    }
-  };
-
-  // Para o stream anterior se existir
-  if (streamV) {
-    streamV.getTracks().forEach(function(t){ t.stop(); });
-    streamV = null;
-  }
-
-  navigator.mediaDevices.getUserMedia(constraints)
-    .then(function(stream) {
-      streamV = stream;
-      var video = document.getElementById("video");
-
-      // Atributos obrigatórios para iOS Safari
-      video.setAttribute("autoplay", "");
-      video.setAttribute("muted",    "");
-      video.setAttribute("playsinline", "");
-      video.srcObject = stream;
-
-      video.play().then(function() {
-        // Mostra viewfinder ativo
-        document.getElementById("cam-idle").style.display    = "none";
-        // Espelha vídeo se câmera frontal
-        video.style.transform = facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
-        document.getElementById("cam-guide").style.display   = "block";
-        document.getElementById("cam-guide-b").style.display = "block";
-        document.getElementById("cam-crosshair").style.display = "block";
-        document.getElementById("cam-controls").classList.add("visible");
-        document.getElementById("cam-quality").style.display = "block";
-        document.getElementById("cam-zoom").style.display    = "block";
-        video.style.display = "block";
-        camAtiva = true;
-
-        // Detecta resolução real
-        setTimeout(function() {
-          var w = video.videoWidth, h = video.videoHeight;
-          var qual = (w >= 1920) ? "4K" : (w >= 1280) ? "HD" : "SD";
-          var qEl = document.getElementById("cam-quality");
-          if (qEl) qEl.textContent = qual + " " + w + "×" + h;
-        }, 500);
-
-      }).catch(function() {
-        // iOS: precisa de segundo toque para play
-        var idle2 = document.getElementById("cam-idle");
-        idle2.innerHTML = '<div class="cam-idle-icon">▶️</div>' +
-          '<div class="cam-idle-txt">Toque para iniciar</div>';
-        idle2.style.display = "flex";
-        idle2.onclick = function() {
-          video.play();
-          idle2.style.display = "none";
-          document.getElementById("cam-controls").classList.add("visible");
-          video.style.display = "block";
-          camAtiva = true;
-          idle2.onclick = iniciarCamera;
-        };
-      });
-    })
-    .catch(function(err) {
-      var msgs = {
-        "NotAllowedError":    "Permissão negada. Ajustes → Safari → Câmera → Permitir.",
-        "PermissionDeniedError":"Permissão negada. Ajustes → Safari → Câmera → Permitir.",
-        "NotFoundError":      "Câmera não encontrada.",
-        "NotReadableError":   "Câmera em uso por outro app. Feche-o e tente novamente.",
-        "NotSupportedError":  "Use o Safari no iPhone para acessar a câmera.",
-        "OverconstrainedError":"Ajustando qualidade...",
-      };
-      var msg = msgs[err.name] || "Câmera indisponível: " + err.name;
-
-      // Se OverConstrained, tenta com qualidade menor
-      if (err.name === "OverconstrainedError") {
-        navigator.mediaDevices.getUserMedia({audio:false,
-          video:{facingMode:{ideal:facingMode}}})
-          .then(function(s){ streamV=s;
-            var v=document.getElementById("video");
-            v.srcObject=s; v.play();
-            document.getElementById("cam-idle").style.display="none";
-            document.getElementById("cam-controls").classList.add("visible");
-            v.style.display="block"; camAtiva=true;
-          }).catch(function(){});
-        return;
-      }
-
-      var idle = document.getElementById("cam-idle");
-      idle.innerHTML = '<div class="cam-idle-icon">❌</div>' +
-        '<div class="cam-idle-txt" style="font-size:12px;padding:0 20px">' + msg + '</div>';
-      showFb("err", msg);
-    });
-}
-
-function virarCamera() {
-  facingMode = facingMode === "environment" ? "user" : "environment";
-  // Espelha vídeo ao vivo na frontal (selfie natural)
-  var video = document.getElementById("video");
-  video.style.transform = facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
-  // Atualiza label e ícone
-  var lbl = document.getElementById("lbl-cam");
-  var btn = document.getElementById("btn-virar");
-  if (lbl) lbl.textContent = facingMode === "user" ? "TRASEIRA" : "SELFIE";
-  if (btn) btn.textContent = facingMode === "user" ? "📷" : "🤳";
-  iniciarCamera();
-}
-
-function fecharCamera() {
-  if (streamV) { streamV.getTracks().forEach(function(t){t.stop();}); streamV=null; }
-  var video = document.getElementById("video");
-  video.srcObject = null; video.style.display = "none";
-  document.getElementById("cam-idle").innerHTML =
-    '<div class="cam-idle-icon">📷</div>' +
-    '<div class="cam-idle-txt">Toque para abrir a câmera</div>' +
-    '<div class="cam-idle-sub">Câmera traseira · Alta resolução</div>';
-  document.getElementById("cam-idle").style.display = "flex";
-  document.getElementById("cam-idle").onclick = iniciarCamera;
-  document.getElementById("cam-guide").style.display   = "none";
-  document.getElementById("cam-guide-b").style.display = "none";
-  document.getElementById("cam-crosshair").style.display = "none";
-  document.getElementById("cam-controls").classList.remove("visible");
-  document.getElementById("cam-quality").style.display = "none";
-  document.getElementById("cam-zoom").style.display    = "none";
-  camAtiva = false;
-}
-
-function tirarFoto() {
-  var video  = document.getElementById("video");
-  var canvas = document.getElementById("canvas");
-  if (!camAtiva || !video.videoWidth) return;
-
-  // Flash visual
-  var flash = document.getElementById("cam-flash");
-  flash.style.opacity = "0.9";
-  setTimeout(function(){ flash.style.opacity = "0"; }, 150);
-
-  // Captura em resolução máxima
-  canvas.width  = video.videoWidth;
-  canvas.height = video.videoHeight;
-  var ctx = canvas.getContext("2d");
-
-  // Espelha câmera frontal (selfie fica no sentido natural)
-  if (facingMode === "user") {
-    ctx.translate(canvas.width, 0);
-    ctx.scale(-1, 1);
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    ctx.setTransform(1,0,0,1,0,0); // reset antes do carimbo
+// ── PERFIL ──
+function renderPerfil() {
+  const av = document.getElementById("perfil-avatar");
+  const info = document.getElementById("perfil-info");
+  if (perfil.nome) {
+    const ini = perfil.nome.split(" ").map(p=>p[0]).slice(0,2).join("").toUpperCase();
+    av.textContent = ini;
+    info.innerHTML = `<div class="perfil-nome">${perfil.nome}</div>
+      <div class="perfil-zona">${perfil.zona||""} ${perfil.lider?"· Líder: "+perfil.lider:""}</div>`;
   } else {
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    av.textContent = "?";
+    info.innerHTML = `<div class="sem-perfil">Configure seu perfil para começar</div>`;
   }
-
-  // Carimbo GPS + hora + candidato
-  var now = new Date().toLocaleString("pt-BR", {
-    day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"
-  });
-  var stamptxt = "📍 Campanha David Almeida · " + now;
-  if (gpsData) stamptxt += " · GPS " + gpsData.lat.toFixed(5)+","+gpsData.lng.toFixed(5);
-
-  ctx.fillStyle = "rgba(0,0,0,0.55)";
-  ctx.fillRect(0, canvas.height-44, canvas.width, 44);
-  ctx.fillStyle = "#fff";
-  ctx.font = "bold " + Math.round(canvas.width/55) + "px Arial";
-  ctx.fillText(stamptxt, 12, canvas.height-14);
-
-  // Salva como JPEG alta qualidade
-  fotoBase64 = canvas.toDataURL("image/jpeg", 0.92);
-
-  // Mostra preview
-  var prev = document.getElementById("foto-preview");
-  prev.src = fotoBase64;
-  prev.style.display = "block";
-
-  // Esconde vídeo, mostra controles de preview
-  video.style.display = "none";
-  document.getElementById("cam-guide").style.display    = "none";
-  document.getElementById("cam-guide-b").style.display  = "none";
-  document.getElementById("cam-crosshair").style.display= "none";
-  document.getElementById("cam-controls").classList.remove("visible");
-  document.getElementById("cam-preview-controls").classList.add("visible");
-  document.getElementById("cam-quality").style.display  = "none";
-
-  // Carimbo visual no preview
-  var stamp = document.getElementById("foto-stamp");
-  stamp.textContent = stamptxt;
-  stamp.style.display = "block";
-
-  camAtiva = false;
+}
+function abrirPerfil() {
+  document.getElementById("p-nome").value = perfil.nome || "";
+  document.getElementById("p-zona").value = perfil.zona || "";
+  document.getElementById("p-lider").value = perfil.lider || "";
+  document.getElementById("modal-perfil").classList.add("open");
+}
+function fecharPerfil() { document.getElementById("modal-perfil").classList.remove("open"); }
+function salvarPerfil() {
+  const nome = document.getElementById("p-nome").value.trim();
+  const zona = document.getElementById("p-zona").value;
+  if (!nome || !zona) { toast("Preencha nome e zona!", "vermelho"); return; }
+  perfil = { nome, zona, lider: document.getElementById("p-lider").value.trim() };
+  localStorage.setItem("perfil_ativista", JSON.stringify(perfil));
+  fecharPerfil();
+  renderPerfil();
+  toast("✅ Perfil salvo!");
 }
 
-function confirmarFoto() {
-  document.getElementById("cam-preview-controls").classList.remove("visible");
-  showFb("ok", "✅ Foto confirmada! " + Math.round(fotoBase64.length/1024) + "KB");
+// ── GPS ──
+function iniciarGPS() {
+  if (!navigator.geolocation) { setGPS(false, "GPS não disponível"); return; }
+  navigator.geolocation.watchPosition(pos => {
+    gpsPos = pos.coords;
+    setGPS(true, `${gpsPos.latitude.toFixed(5)}, ${gpsPos.longitude.toFixed(5)} (±${Math.round(gpsPos.accuracy)}m)`);
+  }, () => setGPS(false, "GPS indisponível — verifique permissões"));
+}
+function setGPS(ok, txt) {
+  const el = document.getElementById("gps-info");
+  const tx = document.getElementById("gps-texto");
+  el.className = "gps-info" + (ok ? " ok" : " erro");
+  tx.textContent = txt;
 }
 
-function toggleCamera() { iniciarCamera(); }
+// ── CÂMERA ──
+async function ativarCamera() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode, width:{ideal:1920}, height:{ideal:1080} },
+      audio: false
+    });
+    const vid = document.getElementById("preview-video");
+    vid.srcObject = stream;
+    vid.className = facingMode === "user" ? "" : "traseira";
+    vid.style.display = "block";
+    document.getElementById("camera-placeholder").style.display = "none";
+    document.getElementById("btn-flip").style.display = "flex";
+    document.getElementById("btn-capturar-overlay").style.display = "block";
+    document.getElementById("camera-controls").style.display = "none";
+  } catch(e) {
+    toast("Câmera negada — use a galeria", "vermelho");
+  }
+}
 
-function tirarFoto() {
-  const video  = document.getElementById("video");
-  const canvas = document.getElementById("canvas");
-  canvas.width  = video.videoWidth  || 640;
-  canvas.height = video.videoHeight || 480;
+async function flipCamera() {
+  facingMode = facingMode === "user" ? "environment" : "user";
+  if (stream) { stream.getTracks().forEach(t=>t.stop()); }
+  await ativarCamera();
+}
+
+function capturarFoto() {
+  const vid = document.getElementById("preview-video");
+  const canvas = document.getElementById("foto-canvas");
+  const MAX = 1000;
+  let w = vid.videoWidth, h = vid.videoHeight;
+  if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+  canvas.width = w; canvas.height = h;
   const ctx = canvas.getContext("2d");
+  if (facingMode === "user") { ctx.translate(w,0); ctx.scale(-1,1); }
+  ctx.drawImage(vid, 0, 0, w, h);
 
-  // Espelhar se câmera frontal
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-  // Carimbo GPS + hora
-  const now = new Date().toLocaleString("pt-BR");
-  const gpsStr = gpsData ? `GPS: ${gpsData.lat}, ${gpsData.lng}` : "GPS: sem sinal";
+  // Carimbo de data/hora e GPS
+  const agora = new Date();
+  const stamp = agora.toLocaleString("pt-BR") +
+    (gpsPos ? `\n${gpsPos.latitude.toFixed(5)}, ${gpsPos.longitude.toFixed(5)}` : "");
+  ctx.setTransform(1,0,0,1,0,0);
   ctx.fillStyle = "rgba(0,0,0,0.55)";
-  ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
-  ctx.fillStyle = "#FFFFFF";
-  ctx.font = "bold 14px Arial";
-  ctx.fillText(`${now}  |  ${gpsStr}`, 10, canvas.height - 16);
+  ctx.fillRect(0, h-42, w, 42);
+  ctx.fillStyle = "white";
+  ctx.font = "bold 13px monospace";
+  ctx.fillText(agora.toLocaleString("pt-BR"), 8, h-24);
+  if (gpsPos) ctx.fillText(`GPS: ${gpsPos.latitude.toFixed(4)}, ${gpsPos.longitude.toFixed(4)}`, 8, h-8);
 
-  // Watermark campanha
-  ctx.font = "bold 12px Arial";
-  ctx.fillStyle = "rgba(255,255,255,0.7)";
-  ctx.fillText("Campanha David Almeida 2026", 10, 20);
+  const dataURL = canvas.toDataURL("image/jpeg", 0.82);
+  fotoBase64 = dataURL.split(",")[1];
+  fotoConfirmada = false;
 
-  fotoBase64 = canvas.toDataURL("image/jpeg", 0.8);
+  // Para o stream
+  if (stream) stream.getTracks().forEach(t=>t.stop());
+  vid.style.display = "none";
+  document.getElementById("btn-flip").style.display = "none";
+  document.getElementById("btn-capturar-overlay").style.display = "none";
 
   // Mostra preview
-  const prev = document.getElementById("foto-preview");
-  prev.src = fotoBase64;
-  prev.style.display = "block";
-  document.getElementById("video").style.display = "none";
-  document.getElementById("foto-info").textContent =
-    `📍 ${gpsData ? gpsData.lat+", "+gpsData.lng : "sem GPS"}  ·  ${new Date().toLocaleTimeString("pt-BR")}`;
-  document.getElementById("foto-info").style.display = "block";
+  const pw = document.getElementById("foto-preview-wrap");
+  document.getElementById("foto-preview-img").src = dataURL;
+  document.getElementById("foto-stamp").textContent = stamp.split("\n")[0];
+  pw.style.display = "block";
 
-  // Para stream
-  if (streamV) streamV.getTracks().forEach(t => t.stop());
-  camAtiva = false;
-  document.getElementById("btn-cam").style.display = "none";
-  document.getElementById("btn-retake").style.display = "block";
+  document.getElementById("camera-controls").style.display = "none";
+  document.getElementById("camera-controls-2").style.display = "flex";
 }
 
-function usarFotoFallback(input) {
-  if (!input.files || !input.files[0]) return;
-  var file = input.files[0];
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    fotoBase64 = e.target.result;
-    var prev = document.getElementById("foto-preview");
-    prev.src = fotoBase64;
-    prev.style.display = "block";
-    document.getElementById("cam-overlay").style.display = "none";
-    var info = document.getElementById("foto-info");
-    var now = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-    if (info) {
-      info.style.display = "block";
-      info.textContent = "📷 Foto selecionada · " + now +
-        (gpsData ? " · GPS " + gpsData.lat.toFixed(4) + "," + gpsData.lng.toFixed(4) : "");
-    }
-    document.getElementById("btn-cam").innerHTML = "✅ Foto selecionada";
-    document.getElementById("btn-fallback").style.display = "none";
-    document.getElementById("btn-retake").style.display = "block";
-    camAtiva = false;
-    showFb("ok", "✅ Foto carregada com sucesso!");
+function usarFotoGaleria(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    const dataURL = await comprimirImagem(e.target.result, 1000, 0.82);
+    fotoBase64 = dataURL.split(",")[1];
+    fotoConfirmada = false;
+
+    const pw = document.getElementById("foto-preview-wrap");
+    document.getElementById("foto-preview-img").src = dataURL;
+    document.getElementById("foto-stamp").textContent = new Date().toLocaleString("pt-BR");
+    pw.style.display = "block";
+    document.getElementById("camera-placeholder").style.display = "none";
+    document.getElementById("camera-controls").style.display = "none";
+    document.getElementById("camera-controls-2").style.display = "flex";
   };
   reader.readAsDataURL(file);
 }
 
-function retake() {
-  fotoBase64 = null;
-  document.getElementById("foto-preview").style.display = "none";
-  document.getElementById("foto-info").style.display = "none";
-  document.getElementById("video").style.display = "block";
-  document.getElementById("btn-cam").style.display = "block";
-  document.getElementById("btn-cam").innerHTML = "📷 Ativar câmera";
-  document.getElementById("btn-retake").style.display = "none";
-  document.getElementById("cam-overlay").style.display = "flex";
-  camAtiva = false;
+function comprimirImagem(dataURL, maxW, qualidade) {
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      let w = img.width, h = img.height;
+      if (w > maxW) { h = Math.round(h*maxW/w); w = maxW; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      res(canvas.toDataURL("image/jpeg", qualidade));
+    };
+    img.src = dataURL;
+  });
 }
 
-// ── TIPO DE AÇÃO ────────────────────────────────────
-function selTipo(btn) {
-  // Remove seleção de todos
-  document.querySelectorAll(".tipo-btn").forEach(function(b) {
-    b.classList.remove("sel");
-    b.style.borderColor = "#ddd";
-    b.style.background  = "#fff";
-    b.style.color       = "#666";
-    b.style.fontWeight  = "500";
-    b.style.borderWidth = "1.5px";
-  });
-  // Aplica seleção no clicado
-  btn.classList.add("sel");
-  btn.style.borderColor = "#1B4F8A";
-  btn.style.background  = "#D6EAF8";
-  btn.style.color       = "#1B4F8A";
-  btn.style.fontWeight  = "700";
-  btn.style.borderWidth = "2px";
+async function confirmarFoto() {
+  fotoConfirmada = true;
+  document.getElementById("camera-controls-2").style.display = "none";
+  // Sobe imediatamente pro ImgBB
+  await uploadImgBB();
+}
+
+function resetarCamera() {
+  fotoBase64 = ""; fotoUrl = ""; fotoConfirmada = false;
+  document.getElementById("foto-preview-wrap").style.display = "none";
+  document.getElementById("camera-placeholder").style.display = "flex";
+  document.getElementById("camera-controls").style.display = "flex";
+  document.getElementById("camera-controls-2").style.display = "none";
+  setUploadStatus("", "");
+}
+
+async function uploadImgBB() {
+  if (!fotoBase64) return;
+  setUploadStatus("enviando", "⏳ Enviando foto...");
+  try {
+    const fd = new FormData();
+    fd.append("key", IMGBB_KEY);
+    fd.append("image", fotoBase64);
+    const resp = await fetch("https://api.imgbb.com/1/upload", { method:"POST", body:fd });
+    const json = await resp.json();
+    if (json.success) {
+      fotoUrl = json.data.url;
+      setUploadStatus("ok", "✅ Foto enviada com sucesso!");
+    } else {
+      throw new Error(json.error?.message || "Falha");
+    }
+  } catch(e) {
+    setUploadStatus("erro", "❌ Erro no upload — a foto ficará pendente");
+    fotoUrl = "";
+  }
+}
+
+function setUploadStatus(tipo, msg) {
+  const el = document.getElementById("upload-status");
+  el.className = "upload-status" + (tipo ? " "+tipo : "");
+  document.getElementById("upload-msg").textContent = msg;
+}
+
+// ── FORM ──
+function selecionarTipo(btn) {
+  document.querySelectorAll(".tipo-btn").forEach(b=>b.classList.remove("ativo"));
+  btn.classList.add("ativo");
   tipoSel = btn.dataset.tipo;
 }
+function ajustarEleit(delta) {
+  eleit = Math.max(0, eleit + delta);
+  document.getElementById("eleit-count").textContent = eleit;
+}
 
-// ── ENVIAR CHECK-IN ─────────────────────────────────
-function enviarCheckin() {
-  if (!perfil || !perfil.nome) { showFb("err", "Configure seu perfil primeiro."); return; }
-  if (!fotoBase64)             { showFb("err", "Tire uma foto antes de enviar."); return; }
-  if (!gpsData)                { showFb("err", "Aguarde o GPS localizar você."); return; }
+// ── ENVIAR CHECK-IN ──
+async function enviarCheckin() {
+  if (!perfil.nome) { abrirPerfil(); toast("Configure seu perfil primeiro!", "vermelho"); return; }
+  if (!tipoSel) { toast("Selecione o tipo de atividade!", "vermelho"); return; }
+  if (!fotoBase64) { toast("Tire ou selecione uma foto!", "vermelho"); return; }
+  if (!fotoConfirmada) { toast("Confirme a foto antes de enviar!", "vermelho"); return; }
 
-  var btn = document.getElementById("btn-checkin-send");
-  if (btn) { btn.disabled = true; btn.textContent = "⏳ Salvando..."; }
+  const btn = document.getElementById("btn-enviar");
+  btn.disabled = true;
+  btn.textContent = "⏳ Enviando...";
 
-  // Monta objeto do check-in
-  var checkin = {
-    id:       Date.now(),
-    dia:      hoje,
-    hora:     new Date().toLocaleTimeString("pt-BR", {hour:"2-digit",minute:"2-digit"}),
-    ts:       new Date().toISOString(),
-    nome:     perfil.nome,
-    zona:     perfil.zona,
-    lider:    perfil.lider || "",
-    tipo:     tipoSel,
-    eleit:    parseInt(document.getElementById("f-eleit").value) || 0,
-    obs:      document.getElementById("f-obs").value.trim(),
-    lat:      gpsData.lat,
-    lng:      gpsData.lng,
-    acc:      gpsData.acc,
-    foto:     fotoBase64,
-    maps_url: "https://maps.google.com/?q=" + gpsData.lat + "," + gpsData.lng,
+  // Se ainda não fez upload, tenta agora
+  if (!fotoUrl) {
+    await uploadImgBB();
+  }
+
+  const agora = new Date();
+  const checkin = {
+    id: Date.now(),
+    dia: agora.toLocaleDateString("pt-BR"),
+    hora: agora.toLocaleTimeString("pt-BR", {hour:"2-digit",minute:"2-digit"}),
+    nome: perfil.nome,
+    zona: perfil.zona,
+    lider: perfil.lider || "",
+    tipo: tipoSel,
+    eleit: eleit,
+    obs: document.getElementById("obs-field").value.trim(),
+    lat: gpsPos ? gpsPos.latitude.toFixed(6) : "",
+    lng: gpsPos ? gpsPos.longitude.toFixed(6) : "",
+    acc: gpsPos ? Math.round(gpsPos.accuracy) : "",
+    foto_url: fotoUrl,
   };
 
-  // 1. Salva localmente (sem a foto para não estourar quota)
-  var checkinSemFoto = Object.assign({}, checkin);
-  delete checkinSemFoto.foto; // foto não vai pro localStorage
-  checkins.push(checkinSemFoto);
+  // Salva local
+  checkins.push(checkin);
+  localStorage.setItem("checkins_hoje", JSON.stringify(checkins));
+  renderCheckins();
+  atualizarStats();
+
+  // Envia ao Sheets via webhook (no-cors)
   try {
-    localStorage.setItem("checkins_hoje", JSON.stringify(checkins));
-  } catch(qe) {
-    // Quota exceeded — limpa checkins antigos e tenta de novo
-    checkins = [checkinSemFoto];
-    localStorage.setItem("checkins_hoje", JSON.stringify(checkins));
-  }
+    const params = new URLSearchParams({ acao:"checkin", token:TOKEN, ...Object.fromEntries(
+      Object.entries(checkin).map(([k,v])=>[k,String(v)])
+    )});
+    new Image().src = WEBHOOK + "?" + params.toString();
+  } catch(e) {}
 
-  // 2. Libera UI imediatamente
-  if(btn){btn.disabled = false; btn.textContent = "✅ Enviar check-in";}
-  showFb("ok", "✅ Check-in #" + checkins.length + " salvo! " +
-    checkin.hora + " · " + tipoSel);
-  atualizarContadores();
-  renderHistorico();
+  // Reset
+  tipoSel = ""; eleit = 0; fotoBase64 = ""; fotoUrl = ""; fotoConfirmada = false;
+  document.querySelectorAll(".tipo-btn").forEach(b=>b.classList.remove("ativo"));
+  document.getElementById("eleit-count").textContent = "0";
+  document.getElementById("obs-field").value = "";
+  resetarCamera();
 
-  // 3. Envia ao Google Sheets em background (não bloqueia nada)
-  var p = "acao=checkin" +
-    "&token=avante70-am-2026-token-secreto" +
-    "&id=" + checkin.id +
-    "&dia=" + encodeURIComponent(checkin.dia) +
-    "&hora=" + encodeURIComponent(checkin.hora) +
-    "&nome=" + encodeURIComponent(checkin.nome) +
-    "&zona=" + encodeURIComponent(checkin.zona) +
-    "&lider=" + encodeURIComponent(checkin.lider) +
-    "&tipo=" + encodeURIComponent(checkin.tipo) +
-    "&eleit=" + checkin.eleit +
-    "&obs=" + encodeURIComponent(checkin.obs) +
-    "&lat=" + checkin.lat +
-    "&lng=" + checkin.lng +
-    "&acc=" + checkin.acc;
-
-  // Envia dados sem foto via GET (rápido)
-  var img = new Image();
-  img.src = "https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec?" + p;
-
-  // ── ENVIA FOTO PARA IMGBB (alta qualidade) ──
-  if (fotoBase64) {
-    enviarFotoImgBB(fotoBase64, checkin.id, checkin.nome);
-  }
-
-  // 4. Limpa campos após 1 segundo
-  setTimeout(function() {
-    document.getElementById("f-eleit").value = "";
-    document.getElementById("f-obs").value   = "";
-    retake();
-  }, 1200);
+  btn.disabled = false;
+  btn.textContent = "✅ Enviar check-in";
+  toast("✅ Check-in enviado!", "verde");
 }
 
-
-// ── CONTADORES ──────────────────────────────────────
-function atualizarContadores() {
-  const hojeCheckins = checkins.filter(c => c.dia === hoje);
-  document.getElementById("cnt-total").textContent = hojeCheckins.length;
-  document.getElementById("cnt-campo").textContent =
-    hojeCheckins.filter(c => ["Visita domiciliar","Abordagem de rua"].includes(c.tipo)).length;
-  document.getElementById("cnt-eleit").textContent =
-    hojeCheckins.reduce((a,c) => a + (c.eleit||0), 0);
-}
-
-// ── HISTÓRICO ───────────────────────────────────────
-function renderHistorico() {
-  const el    = document.getElementById("historico-list");
-  const lista = checkins.filter(c => c.dia === hoje).reverse();
-  if (!lista.length) {
-    el.innerHTML = `<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">
-      Nenhum check-in ainda hoje.<br/>Faça o primeiro registro!</div>`;
+// ── RENDERIZAR LISTA ──
+function renderCheckins() {
+  const el = document.getElementById("lista-checkins");
+  if (!checkins.length) {
+    el.innerHTML = `<div style="text-align:center;padding:24px;color:var(--cinza3);font-size:13px">
+      Nenhum check-in ainda hoje.<br>Faça o primeiro registro!</div>`;
     return;
   }
-  const badges = {
-    "Visita domiciliar":       ["🏠","badge-blue"],
-    "Abordagem de rua":        ["🗣️","badge-green"],
-    "Distribuição de material":["📦","badge-amber"],
-    "Evento ou ação":          ["🎤","badge-green"],
-    "Reunião com liderança":   ["🤝","badge-blue"],
-    "Outro":                   ["📝","badge-amber"],
-  };
-  el.innerHTML = lista.map(c => {
-    const [ico, cls] = badges[c.tipo] || ["📍","badge-blue"];
-    const thumb = c.foto && c.foto !== "[foto_local]"
-      ? `<img class="hist-thumb" src="${c.foto}" alt="foto"/>`
-      : `<div class="hist-thumb-placeholder">${ico}</div>`;
-    return `<div class="hist-item">
-      ${thumb}
-      <div class="hist-info">
-        <div class="hist-tipo">${ico} ${escHtml(c.tipo)}</div>
-        <div class="hist-hora">⏰ ${c.hora} · ${c.eleit ? c.eleit+" eleitores" : "sem contagem"}</div>
-        <div class="hist-loc">
-          <a href="${c.maps_url}" target="_blank" style="color:var(--blue);text-decoration:none">
-            📍 ${c.lat}, ${c.lng} (±${c.acc}m)
-          </a>
-        </div>
-        ${c.obs ? `<div style="font-size:10px;color:var(--muted);margin-top:3px">${escHtml(c.obs)}</div>` : ""}
-        <span class="hist-badge ${cls}">${c.hora}</span>
+  el.innerHTML = [...checkins].reverse().map(c => `
+    <div class="checkin-item">
+      <div class="ci-header">
+        <div class="ci-tipo-badge">${c.tipo}</div>
+        <div class="ci-hora">${c.hora}</div>
       </div>
-    </div>`;
-  }).join("");
+      ${c.foto_url
+        ? `<img class="ci-foto" src="${c.foto_url}" loading="lazy" onerror="this.style.display='none'">`
+        : c.foto_url === ""
+          ? `<div class="ci-foto-enviando">⏳ Foto sendo processada...</div>`
+          : ""}
+      <div class="ci-body">
+        <div class="ci-eleit">👥 ${c.eleit} eleitores</div>
+        ${c.obs ? `<div class="ci-obs">📝 ${c.obs}</div>` : ""}
+        ${c.lat ? `<div class="ci-gps">📍 ${c.lat}, ${c.lng}</div>` : ""}
+      </div>
+    </div>
+  `).join("");
 }
 
-// ── PERFIL ──────────────────────────────────────────
-function atualizarPerfil() {
-  if (!perfil) return;
-  const ini = perfil.nome.split(" ").slice(0,2).map(p=>p[0]).join("").toUpperCase();
-  document.getElementById("av-initials").textContent = ini;
-  document.getElementById("perfil-nome").textContent = perfil.nome;
-  document.getElementById("perfil-zona").textContent = "📍 " + perfil.zona + (perfil.lider ? " · 👤 " + perfil.lider : "");
-  const total = checkins.filter(c=>c.dia===hoje).length;
-  document.getElementById("perfil-status").innerHTML =
-    total > 0
-      ? `<span style="color:var(--green);font-size:10px">✅ ${total} check-in(s) hoje</span>`
-      : `<span style="color:var(--muted);font-size:10px">Nenhum check-in ainda</span>`;
+function atualizarStats() {
+  document.getElementById("stat-hoje").textContent = checkins.length;
+  const totalEleit = checkins.reduce((a,c)=>a+Number(c.eleit),0);
+  document.getElementById("stat-eleit").textContent = totalEleit;
+  const all = JSON.parse(localStorage.getItem("checkins_total") || "0");
+  document.getElementById("stat-total").textContent = checkins.length + Number(all);
 }
 
-function abrirModal() {
-  if (perfil) {
-    document.getElementById("m-nome").value  = perfil.nome  || "";
-    document.getElementById("m-zona").value  = perfil.zona  || "";
-    document.getElementById("m-lider").value = perfil.lider || "";
-  }
-  document.getElementById("modal-bg").classList.add("open");
-}
-
-function fecharModal(e) {
-  if (!e || e.target === document.getElementById("modal-bg"))
-    document.getElementById("modal-bg").classList.remove("open");
-}
-
-function salvarPerfil() {
-  const nome = document.getElementById("m-nome").value.trim();
-  const zona = document.getElementById("m-zona").value;
-  if (!nome || !zona) { alert("Nome e zona são obrigatórios."); return; }
-  perfil = { nome, zona, lider: document.getElementById("m-lider").value.trim() };
-  localStorage.setItem("perfil_ativista", JSON.stringify(perfil));
-  document.getElementById("modal-bg").classList.remove("open");
-  atualizarPerfil();
-  showFb("ok", `✅ Perfil de ${nome} configurado!`);
-}
-
-function showFb(type, msg) {
-  const el = document.getElementById("fb");
-  el.className = "fb " + type;
+// ── TOAST ──
+function toast(msg, tipo="") {
+  const el = document.getElementById("toast");
   el.textContent = msg;
-  if (type === "ok") setTimeout(() => el.className = "fb", 4000);
+  el.className = "toast" + (tipo?" "+tipo:"") + " show";
+  setTimeout(()=>el.classList.remove("show"), 2800);
 }
 
-// ── LGPD — CONSENTIMENTO ────────────────────────────
-function verificarConsentimento() {
-  // Usa sessionStorage para garantir que aparece a cada sessão nova
-  // e localStorage para registro permanente do aceite
-  const aceito = localStorage.getItem("lgpd_consent");
-  const modal  = document.getElementById("lgpd-modal");
-  if (!modal) { iniciarApp(); return; }
-  if (!aceito) {
-    modal.style.cssText = "display:flex!important;flex-direction:column;" +
-      "justify-content:flex-end;position:fixed;inset:0;" +
-      "background:rgba(0,0,0,.85);z-index:99999;" +
-      "font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif";
-    document.body.style.overflow = "hidden";
-  } else {
-    iniciarApp();
-  }
-}
-
-function aceitarLGPD() {
-  const checks = ["lgpd-c1","lgpd-c2","lgpd-c3"];
-  const todos  = checks.every(id => document.getElementById(id).checked);
-  if (!todos) {
-    document.getElementById("lgpd-err").style.display = "block";
-    return;
-  }
-  const registro = {
-    aceito: true,
-    data:   new Date().toISOString(),
-    ua:     navigator.userAgent,
-    itens: [
-      "Coleta de localização GPS durante check-ins",
-      "Registro de fotos com carimbo de data/hora/coordenadas",
-      "Armazenamento dos dados pela Campanha David Almeida 2026",
-    ]
-  };
-  localStorage.setItem("lgpd_consent", JSON.stringify(registro));
-  document.getElementById("lgpd-modal").style.display = "none";
-  document.body.style.overflow = "";
-  iniciarApp();
-}
-
-function recusarLGPD() {
-  document.getElementById("lgpd-recusa").style.display = "block";
-  document.getElementById("lgpd-form").style.display   = "none";
-}
-
-function iniciarApp() {
-  iniciarGPS();
-  if (!perfil) abrirModal();
-  atualizarPerfil();
-  atualizarContadores();
-  renderHistorico();
-}
-
-
-// ── COMPRIMIR FOTO ────────────────────────────────────
-function comprimirFoto(base64, maxWidth, qualidade) {
-  try {
-    if (!base64) return "";
-    // Cria canvas para redimensionar
-    var img = new window.Image();
-    var canvas = document.createElement("canvas");
-    var ctx = canvas.getContext("2d");
-    img.src = base64;
-    // Calcula dimensões mantendo proporção
-    var ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
-    if (ratio >= 1) return base64; // já é pequena
-    canvas.width  = Math.round(img.width  * ratio);
-    canvas.height = Math.round(img.height * ratio);
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    return canvas.toDataURL("image/jpeg", qualidade||0.6);
-  } catch(e) {
-    return base64; // fallback sem compressão
-  }
-}
-
-
-// ── UPLOAD DE FOTO PARA IMGBB ─────────────────────────
-function enviarFotoImgBB(base64Foto, checkinId, nomeAtivista) {
-  showFb("loading", "📤 Enviando foto...");
-  try {
-    var img = new window.Image();
-    img.onload = function() {
-      var canvas = document.createElement("canvas");
-      var maxDim = 1000;
-      var ratio  = Math.min(maxDim/img.width, maxDim/img.height, 1);
-      canvas.width  = Math.round(img.width  * ratio);
-      canvas.height = Math.round(img.height * ratio);
-      canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
-      var jpeg   = canvas.toDataURL("image/jpeg", 0.75);
-      var base64 = jpeg.split(",")[1];
-
-      var fd = new FormData();
-      fd.append("key", "fa0fb4b7023a56777344127963e3b826");
-      fd.append("image", base64);
-
-      fetch("https://api.imgbb.com/1/upload", { method:"POST", body:fd })
-        .then(function(r){ return r.json(); })
-        .then(function(d){
-          if (d && d.success && d.data && d.data.url) {
-            var url = d.data.url;
-            showFb("ok", "✅ Foto enviada com sucesso!");
-            // Salva URL na planilha
-            var params = "acao=salvar_foto_url" +
-              "&token=avante70-am-2026-token-secreto" +
-              "&id=" + encodeURIComponent(checkinId) +
-              "&foto_url=" + encodeURIComponent(url);
-            var ping = new Image();
-            ping.src = "https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec?" + params;
-          } else {
-            var msg = (d && d.error && d.error.message) ? d.error.message : "resposta inválida";
-            showFb("err", "⚠️ Foto não enviada: " + msg);
-          }
-        })
-        .catch(function(e){
-          showFb("err", "⚠️ Erro de conexão ao enviar foto");
-        });
-    };
-    img.onerror = function(){ showFb("err", "⚠️ Erro ao processar foto"); };
-    img.src = base64Foto;
-  } catch(e) {
-    showFb("err", "⚠️ Erro: " + e.message);
-  }
-}
-
-// ── INIT ────────────────────────────────────────────
-// Garante que o DOM está completamente carregado antes de rodar
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", verificarConsentimento);
-} else {
-  verificarConsentimento();
-}
-</script>
-
-<!-- ══ MODAL LGPD ══════════════════════════════════ -->
-<div id="lgpd-modal">
-
-  <div style="background:#fff;border-radius:20px 20px 0 0;
-    width:100%;max-height:92vh;overflow-y:auto;
-    padding:0 0 env(safe-area-inset-bottom)">
-
-    <!-- Header -->
-    <div style="background:#0D1F3C;border-radius:20px 20px 0 0;
-      padding:20px 16px 16px;text-align:center">
-      <div style="font-size:36px;margin-bottom:8px">🔒</div>
-      <h2 style="color:#C8F0DC;font-size:17px;font-weight:700;margin:0;
-        font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif">
-        Termo de Uso e Consentimento
-      </h2>
-      <p style="color:#5DCAA5;font-size:11px;margin-top:6px;
-        font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif">
-        Lei Geral de Proteção de Dados — Lei 13.709/2020
-      </p>
-    </div>
-
-    <!-- Corpo -->
-    <div id="lgpd-form" style="padding:18px 16px;
-      font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif">
-
-      <!-- Controlador -->
-      <div style="background:#EFF6FF;border-radius:10px;padding:12px 14px;margin-bottom:14px">
-        <div style="font-size:10px;font-weight:700;color:#1B4F8A;
-          text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">
-          Controlador dos dados
-        </div>
-        <p style="font-size:12px;color:#1C1C1C;line-height:1.7;margin:0">
-          <strong>Campanha David Almeida 2026</strong><br>
-          Coordenadora Geral: Dulce Almeida<br>
-          Responsável jurídico: Dr. Paulo Lima<br>
-          Finalidade: controle de atividades eleitorais de campo
-        </p>
-      </div>
-
-      <!-- O que coleta -->
-      <div style="margin-bottom:14px">
-        <div style="font-size:12px;font-weight:700;color:#2D3748;margin-bottom:8px">
-          O que este app coleta:
-        </div>
-
-        <div style="background:#F7F8FA;border-radius:8px;padding:10px 12px;
-          margin-bottom:6px;display:flex;gap:10px;align-items:flex-start">
-          <span style="font-size:20px;flex-shrink:0">📍</span>
-          <div>
-            <div style="font-size:12px;font-weight:600;color:#1C1C1C">Localização GPS</div>
-            <div style="font-size:11px;color:#718096;margin-top:2px;line-height:1.5">
-              Latitude, longitude e precisão em metros no momento de cada check-in
-            </div>
-          </div>
-        </div>
-
-        <div style="background:#F7F8FA;border-radius:8px;padding:10px 12px;
-          margin-bottom:6px;display:flex;gap:10px;align-items:flex-start">
-          <span style="font-size:20px;flex-shrink:0">📷</span>
-          <div>
-            <div style="font-size:12px;font-weight:600;color:#1C1C1C">Foto com carimbo</div>
-            <div style="font-size:11px;color:#718096;margin-top:2px;line-height:1.5">
-              Imagem capturada com data, hora e coordenadas gravadas na própria foto
-            </div>
-          </div>
-        </div>
-
-        <div style="background:#F7F8FA;border-radius:8px;padding:10px 12px;
-          margin-bottom:6px;display:flex;gap:10px;align-items:flex-start">
-          <span style="font-size:20px;flex-shrink:0">👤</span>
-          <div>
-            <div style="font-size:12px;font-weight:600;color:#1C1C1C">Dados do ativista</div>
-            <div style="font-size:11px;color:#718096;margin-top:2px;line-height:1.5">
-              Nome, zona eleitoral e líder responsável informados por você
-            </div>
-          </div>
-        </div>
-
-        <div style="background:#F7F8FA;border-radius:8px;padding:10px 12px;
-          display:flex;gap:10px;align-items:flex-start">
-          <span style="font-size:20px;flex-shrink:0">⏱️</span>
-          <div>
-            <div style="font-size:12px;font-weight:600;color:#1C1C1C">Histórico de atividades</div>
-            <div style="font-size:11px;color:#718096;margin-top:2px;line-height:1.5">
-              Tipo de ação, eleitores abordados e observações de cada check-in
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Direitos -->
-      <div style="background:#C8F0DC;border-radius:10px;padding:12px 14px;margin-bottom:14px">
-        <div style="font-size:10px;font-weight:700;color:#1A7A4A;
-          text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">
-          ✅ Seus direitos garantidos pela LGPD
-        </div>
-        <ul style="margin:0;padding-left:16px;font-size:12px;color:#1C1C1C;line-height:2">
-          <li>Acessar seus dados a qualquer momento</li>
-          <li>Solicitar correção de dados incorretos</li>
-          <li>Revogar este consentimento quando quiser</li>
-          <li>Solicitar exclusão dos seus dados</li>
-          <li>Saber com quem seus dados são compartilhados</li>
-        </ul>
-      </div>
-
-      <!-- Compartilhamento -->
-      <div style="background:#FFF3CD;border-radius:10px;padding:12px 14px;margin-bottom:14px">
-        <div style="font-size:10px;font-weight:700;color:#856404;
-          text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">
-          ⚠️ Compartilhamento e armazenamento
-        </div>
-        <p style="font-size:12px;color:#1C1C1C;line-height:1.7;margin:0">
-          Seus dados são compartilhados <strong>apenas</strong> com a coordenação
-          da Campanha David Almeida 2026 (articulador político e coordenadora Dulce Almeida)
-          para fins de controle de atividades eleitorais.<br><br>
-          Os dados são armazenados no dispositivo e no Google Sheets da campanha.
-          Serão excluídos após o encerramento do processo eleitoral de 2026.
-          <strong>Não serão vendidos ou cedidos a terceiros.</strong>
-        </p>
-      </div>
-
-      <!-- Checkboxes -->
-      <div style="margin-bottom:14px">
-        <div style="font-size:12px;font-weight:700;color:#2D3748;margin-bottom:10px">
-          Para continuar, confirme que entendeu e concorda:
-        </div>
-
-        <label style="display:flex;gap:12px;align-items:flex-start;
-          background:#F7F8FA;border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer">
-          <input type="checkbox" id="lgpd-c1"
-            style="width:20px;height:20px;flex-shrink:0;margin-top:1px;
-            cursor:pointer;accent-color:#1A7A4A"/>
-          <span style="font-size:12px;color:#1C1C1C;line-height:1.6">
-            Entendo que este app coletará minha
-            <strong>localização GPS e fotos</strong>
-            durante os check-ins de campo.
-          </span>
-        </label>
-
-        <label style="display:flex;gap:12px;align-items:flex-start;
-          background:#F7F8FA;border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer">
-          <input type="checkbox" id="lgpd-c2"
-            style="width:20px;height:20px;flex-shrink:0;margin-top:1px;
-            cursor:pointer;accent-color:#1A7A4A"/>
-          <span style="font-size:12px;color:#1C1C1C;line-height:1.6">
-            Consinto com o uso dos meus dados pela
-            <strong>Campanha David Almeida 2026</strong>
-            exclusivamente para controle de atividades eleitorais.
-          </span>
-        </label>
-
-        <label style="display:flex;gap:12px;align-items:flex-start;
-          background:#F7F8FA;border-radius:8px;padding:12px;cursor:pointer">
-          <input type="checkbox" id="lgpd-c3"
-            style="width:20px;height:20px;flex-shrink:0;margin-top:1px;
-            cursor:pointer;accent-color:#1A7A4A"/>
-          <span style="font-size:12px;color:#1C1C1C;line-height:1.6">
-            Sei que posso <strong>revogar este consentimento</strong>
-            a qualquer momento solicitando ao responsável jurídico da campanha.
-          </span>
-        </label>
-      </div>
-
-      <!-- Erro -->
-      <div id="lgpd-err" style="display:none;background:#FDDCDC;border-radius:8px;
-        padding:10px 12px;font-size:12px;color:#7B241C;margin-bottom:12px;font-weight:500">
-        ⚠️ Marque todas as caixas acima para continuar.
-      </div>
-
-      <!-- Data/hora do aceite -->
-      <div style="font-size:10px;color:#718096;text-align:center;margin-bottom:14px;line-height:1.6">
-        Ao aceitar, registramos data, hora e dispositivo como prova de consentimento.<br>
-        <strong id="lgpd-ts"></strong>
-      </div>
-
-      <!-- Botão aceitar -->
-      <button onclick="aceitarLGPD()" style="
-        background:#1A7A4A;color:#fff;border:none;border-radius:12px;
-        padding:16px;font-size:15px;font-weight:700;cursor:pointer;
-        width:100%;margin-bottom:10px;letter-spacing:.3px;
-        font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif">
-        ✅ Li e aceito os termos
-      </button>
-
-      <!-- Botão recusar -->
-      <button onclick="recusarLGPD()" style="
-        background:transparent;color:#718096;
-        border:0.5px solid #E2E8F0;border-radius:12px;
-        padding:13px;font-size:13px;cursor:pointer;width:100%;
-        font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif">
-        Não aceito — não quero usar o app
-      </button>
-
-      <p style="font-size:10px;color:#718096;text-align:center;
-        margin-top:14px;line-height:1.6">
-        Dúvidas sobre seus dados:<br>
-        <strong>Dr. Paulo Lima — paulo@juridico.com</strong>
-      </p>
-    </div>
-
-    <!-- Tela de recusa -->
-    <div id="lgpd-recusa" style="display:none;padding:36px 16px;text-align:center;
-      font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif">
-      <div style="font-size:48px;margin-bottom:14px">🔒</div>
-      <h3 style="color:#2D3748;margin-bottom:10px;font-size:16px">
-        Consentimento não concedido
-      </h3>
-      <p style="font-size:13px;color:#718096;line-height:1.7;margin-bottom:20px">
-        Sem o consentimento, não é possível usar o app de check-in,
-        pois ele requer localização GPS e foto para comprovar presença em campo.<br><br>
-        Se mudar de ideia, feche e abra o app novamente.
-      </p>
-      <p style="font-size:11px;color:#718096">
-        Contato: <strong>Dr. Paulo Lima — paulo@juridico.com</strong>
-      </p>
-    </div>
-
-  </div>
-</div>
-
-<script>
-document.getElementById("lgpd-ts").textContent =
-  new Date().toLocaleString("pt-BR",{
-    day:"2-digit",month:"2-digit",year:"numeric",
-    hour:"2-digit",minute:"2-digit",second:"2-digit"
-  });
+// ── INIT ──
+renderPerfil();
+iniciarGPS();
+renderCheckins();
+atualizarStats();
+if (!perfil.nome) setTimeout(abrirPerfil, 800);
 </script>
 </body>
 </html>
