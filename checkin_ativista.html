@@ -1049,10 +1049,10 @@ function comprimirFoto(base64, maxWidth, qualidade) {
 
 // ── UPLOAD DE FOTO PARA IMGBB ─────────────────────────
 function enviarFotoImgBB(base64Foto, checkinId, nomeAtivista) {
+  showFb("loading", "📤 Enviando foto...");
   try {
     var img = new window.Image();
     img.onload = function() {
-      // Alta qualidade: até 1000px, 75% — bom para feed visual
       var canvas = document.createElement("canvas");
       var maxDim = 1000;
       var ratio  = Math.min(maxDim/img.width, maxDim/img.height, 1);
@@ -1060,7 +1060,7 @@ function enviarFotoImgBB(base64Foto, checkinId, nomeAtivista) {
       canvas.height = Math.round(img.height * ratio);
       canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
       var jpeg   = canvas.toDataURL("image/jpeg", 0.75);
-      var base64 = jpeg.split(",")[1]; // remove o prefixo data:image
+      var base64 = jpeg.split(",")[1];
 
       var fd = new FormData();
       fd.append("key", "fa0fb4b7023a56777344127963e3b826");
@@ -1071,24 +1071,27 @@ function enviarFotoImgBB(base64Foto, checkinId, nomeAtivista) {
         .then(function(d){
           if (d && d.success && d.data && d.data.url) {
             var url = d.data.url;
-            console.log("✅ Foto no ImgBB:", url);
-            // Salva a URL na planilha via GET
+            showFb("ok", "✅ Foto enviada com sucesso!");
+            // Salva URL na planilha
             var params = "acao=salvar_foto_url" +
               "&token=avante70-am-2026-token-secreto" +
               "&id=" + encodeURIComponent(checkinId) +
               "&foto_url=" + encodeURIComponent(url);
-            var pingImg = new Image();
-            pingImg.src = "https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec?" + params;
+            var ping = new Image();
+            ping.src = "https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec?" + params;
           } else {
-            console.log("❌ ImgBB falhou:", JSON.stringify(d));
+            var msg = (d && d.error && d.error.message) ? d.error.message : "resposta inválida";
+            showFb("err", "⚠️ Foto não enviada: " + msg);
           }
         })
-        .catch(function(e){ console.log("❌ Erro ImgBB:", e); });
+        .catch(function(e){
+          showFb("err", "⚠️ Erro de conexão ao enviar foto");
+        });
     };
-    img.onerror = function(){ console.log("❌ Erro ao carregar foto para compressão"); };
+    img.onerror = function(){ showFb("err", "⚠️ Erro ao processar foto"); };
     img.src = base64Foto;
   } catch(e) {
-    console.log("❌ Exceção enviarFotoImgBB:", e);
+    showFb("err", "⚠️ Erro: " + e.message);
   }
 }
 
