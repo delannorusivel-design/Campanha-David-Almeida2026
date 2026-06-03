@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Teste ImgBB</title>
+<style>
+body{font-family:-apple-system,Arial,sans-serif;padding:20px;background:#f0f0f0}
+h1{font-size:18px}
+button{background:#1A7A4A;color:#fff;border:none;padding:16px;border-radius:12px;
+  font-size:16px;font-weight:700;width:100%;margin:10px 0;cursor:pointer}
+#log{background:#1A1A1A;color:#0f0;padding:14px;border-radius:10px;
+  font-family:monospace;font-size:12px;white-space:pre-wrap;word-break:break-all;
+  min-height:200px;margin-top:14px}
+input{margin:10px 0}
+img{max-width:100%;border-radius:10px;margin-top:10px}
+</style>
+</head>
+<body>
+<h1>🧪 Teste de Upload ImgBB</h1>
+<p>Tire uma foto ou escolha da galeria para testar se o ImgBB funciona:</p>
+
+<input type="file" id="file" accept="image/*" capture="environment"/>
+<button onclick="testar()">📤 Testar upload</button>
+
+<div id="log">Aguardando...</div>
+<div id="resultado"></div>
+
+<script>
+function log(msg) {
+  var el = document.getElementById("log");
+  el.textContent += "\n" + new Date().toLocaleTimeString() + " — " + msg;
+}
+
+function testar() {
+  var file = document.getElementById("file").files[0];
+  if (!file) { log("❌ Selecione uma foto primeiro!"); return; }
+
+  document.getElementById("log").textContent = "Iniciando teste...";
+  log("Arquivo: " + file.name + " (" + Math.round(file.size/1024) + "KB)");
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    log("Foto carregada, comprimindo...");
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement("canvas");
+      var ratio = Math.min(1000/img.width, 1000/img.height, 1);
+      canvas.width = Math.round(img.width*ratio);
+      canvas.height = Math.round(img.height*ratio);
+      canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+      var jpeg = canvas.toDataURL("image/jpeg", 0.75);
+      var base64 = jpeg.split(",")[1];
+      log("Comprimida: " + Math.round(base64.length/1024) + "KB. Enviando ao ImgBB...");
+
+      var fd = new FormData();
+      fd.append("key", "fa0fb4b7023a56777344127963e3b826");
+      fd.append("image", base64);
+
+      fetch("https://api.imgbb.com/1/upload", {method:"POST", body:fd})
+        .then(function(r){
+          log("Resposta HTTP: " + r.status);
+          return r.json();
+        })
+        .then(function(d){
+          log("JSON recebido:");
+          log(JSON.stringify(d).slice(0,300));
+          if (d.success && d.data && d.data.url) {
+            log("✅✅✅ SUCESSO! URL: " + d.data.url);
+            document.getElementById("resultado").innerHTML =
+              '<p>✅ Foto no ImgBB:</p><img src="'+d.data.url+'"/>';
+          } else {
+            log("❌ Falhou: " + JSON.stringify(d.error||d));
+          }
+        })
+        .catch(function(err){
+          log("❌ ERRO DE REDE: " + err.message);
+        });
+    };
+    img.onerror = function(){ log("❌ Erro ao carregar imagem"); };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+</script>
+</body>
+</html>
