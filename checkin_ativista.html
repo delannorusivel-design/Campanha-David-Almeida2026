@@ -1,891 +1,585 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0D1F3C">
-<title>Check-in — Campanha David Almeida 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  --azul: #0D1F3C;
-  --verde: #00A859;
-  --verde2: #00C96A;
-  --amarelo: #FFD600;
-  --branco: #FFFFFF;
-  --cinza1: #F4F6FA;
-  --cinza2: #E2E8F0;
-  --cinza3: #94A3B8;
-  --vermelho: #EF4444;
-  --card-bg: #FFFFFF;
-  --shadow: 0 2px 16px rgba(13,31,60,0.10);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--cinza1);
-  color: var(--azul);
-  min-height: 100vh;
-  padding-bottom: 32px;
+// ============================================================
+// CRM ELEITORAL AVANTE 70 — Amazonas 2026
+// ============================================================
+
+const WEBHOOK_SECRET = "avante70-am-2026-token-secreto";
+
+function sanitizar(val) {
+  if (!val) return "";
+  var s = String(val).trim();
+  if (s.length > 0 && ["=","@","+","-","|","%"].indexOf(s[0]) >= 0) s = "'" + s;
+  s = s.replace(/<[^>]*>/g, "");
+  return s.slice(0, 500);
 }
 
-/* HEADER */
-.header {
-  background: var(--azul);
-  color: white;
-  padding: 14px 16px 12px;
-  display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
-}
-.header-logo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 20px;
-  letter-spacing: 1px;
-  color: var(--amarelo);
-}
-.header-sub { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 1px; }
-.header-right { display: flex; align-items: center; gap: 10px; }
-.btn-perfil {
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.2);
-  color: white;
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-}
-.hora-display { font-size: 13px; color: var(--amarelo); font-weight: 600; }
+const CANDIDATOS_CFG = [
+  { nome:"Aryel Almeida",  slug:"aryel",  cargo:"Deputada Federal",  numero:"7070",  genero:"F", aba:"📋 Aryel — Eleitores",  cor:"#E87722" },
+  { nome:"Daniel Almeida", slug:"daniel", cargo:"Deputado Estadual", numero:"70070", genero:"M", aba:"📋 Daniel — Eleitores", cor:"#C49A00" },
+  { nome:"David Almeida",  slug:"david",  cargo:"Governador",        numero:"70",    genero:"M", aba:"📋 David — Eleitores",  cor:"#A04000" },
+];
 
-/* PERFIL BANNER */
-.perfil-banner {
-  background: linear-gradient(135deg, #0D1F3C 60%, #1a3a6e);
-  color: white;
-  padding: 12px 16px;
-  display: flex; align-items: center; gap: 12px;
-}
-.perfil-avatar {
-  width: 42px; height: 42px; border-radius: 50%;
-  background: var(--verde); display: flex; align-items: center;
-  justify-content: center; font-weight: 700; font-size: 17px;
-  flex-shrink: 0; color: white;
-}
-.perfil-info { flex: 1; min-width: 0; }
-.perfil-nome { font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.perfil-zona { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 2px; }
-.sem-perfil { color: rgba(255,255,255,0.55); font-size: 13px; font-style: italic; }
+const HEADERS_ELEITOR = [
+  "ID","Data","Hora","Candidato","Cargo","Número",
+  "Ativista","Zona Ativista","Tipo Local","Nome do Eleitor",
+  "WhatsApp","Zona","Bairro","Município","Distrito","Localidade",
+  "Faixa Etária","Gênero","Interesse","Intenção de Voto","Observação",
+  "Consentimento","Status","Data Disparo","Resposta","Convertido"
+];
 
-/* STATS BAR */
-.stats-bar {
-  display: flex; background: white;
-  border-bottom: 1px solid var(--cinza2);
-}
-.stat-item {
-  flex: 1; text-align: center; padding: 10px 4px;
-  border-right: 1px solid var(--cinza2);
-}
-.stat-item:last-child { border-right: none; }
-.stat-num { font-size: 22px; font-weight: 700; color: var(--verde); font-family: 'Bebas Neue', sans-serif; }
-.stat-label { font-size: 10px; color: var(--cinza3); text-transform: uppercase; letter-spacing: 0.5px; }
-
-/* SEÇÃO */
-.section { padding: 16px; }
-.section-title {
-  font-size: 13px; font-weight: 700; color: var(--azul);
-  text-transform: uppercase; letter-spacing: 0.8px;
-  margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+// ─────────────────────────────────────────────────────────
+// ETAPA 1
+// ─────────────────────────────────────────────────────────
+function etapa1_criarAbas() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  CANDIDATOS_CFG.forEach(c => {
+    let ws = ss.getSheetByName(c.aba) || ss.insertSheet(c.aba);
+    ws.clear();
+    ws.getRange(1,1,1,HEADERS_ELEITOR.length).setValues([HEADERS_ELEITOR])
+      .setBackground("#1A1A1A").setFontColor("#F5C000").setFontWeight("bold").setFontSize(10);
+    ws.setFrozenRows(1);
+    ws.autoResizeColumns(1, HEADERS_ELEITOR.length);
+    const rule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(["Novo","Enviado","Respondeu","Convertido","Sem resposta","Opt-out"]).build();
+    ws.getRange("V2:V5000").setDataValidation(rule);
+    const cores = {"Novo":"#D6EAF8","Enviado":"#FFF3CD","Respondeu":"#C8F0DC","Convertido":"#A9DFBF","Sem resposta":"#FDDCDC","Opt-out":"#F2F3F4"};
+    const regras = Object.entries(cores).map(([s,cor]) =>
+      SpreadsheetApp.newConditionalFormatRule().whenFormulaSatisfied(`=$V2="${s}"`).setBackground(cor)
+        .setRanges([ws.getRange("A2:Y5000")]).build());
+    ws.setConditionalFormatRules(regras);
+  });
+  let wsG = ss.getSheetByName("📊 Geral — Todos") || ss.insertSheet("📊 Geral — Todos");
+  wsG.clear();
+  wsG.getRange(1,1,1,HEADERS_ELEITOR.length).setValues([HEADERS_ELEITOR])
+    .setBackground("#1A1A1A").setFontColor("#F5C000").setFontWeight("bold");
+  wsG.setFrozenRows(1);
+  let wsD = ss.getSheetByName("📨 Disparos") || ss.insertSheet("📨 Disparos");
+  wsD.clear();
+  wsD.getRange("A1:H1").setValues([["Timestamp","Candidato","Eleitor","WhatsApp","Zona/Município","Interesse","Template","Status Envio"]])
+    .setBackground("#1A1A1A").setFontColor("#F5C000").setFontWeight("bold");
+  wsD.setFrozenRows(1);
+  _criarAbaTemplates(ss);
+  let wsCfg = ss.getSheetByName("⚙️ Config") || ss.insertSheet("⚙️ Config");
+  wsCfg.clear();
+  wsCfg.getRange("A1:C1").setValues([["Chave","Valor","Descrição"]])
+    .setBackground("#1A1A1A").setFontColor("#F5C000").setFontWeight("bold");
+  wsCfg.getRange(2,1,8,3).setValues([
+    ["email_articulador","articulador@campanha.com","Seu e-mail"],
+    ["email_coordenador","coordenador@campanha.com","E-mail do coordenador"],
+    ["zapi_instance","SUA_INSTANCE","Z-API Instance ID"],
+    ["zapi_token","SEU_TOKEN","Z-API Token"],
+    ["zapi_client","SEU_CLIENT_TOKEN","Z-API Client Token"],
+    ["estado","Amazonas","Estado da campanha"],
+    ["partido","Avante 70","Partido"],
+    ["data_eleicao","04/10/2026","Data da eleição"],
+  ]);
+  wsCfg.autoResizeColumns(1,3);
+  _criarAbaTemperatura(ss);
+  SpreadsheetApp.getUi().alert("✅ ETAPA 1 concluída!\n\n→ Execute: etapa2_implantarWebhook()");
 }
 
-/* CÂMERA */
-.camera-card {
-  background: var(--card-bg);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  margin-bottom: 16px;
-}
-.camera-area {
-  position: relative;
-  background: #111;
-  min-height: 260px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  overflow: hidden;
-}
-#preview-video {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  display: none;
-  transform: scaleX(-1); /* selfie espelhado */
-}
-#preview-video.traseira { transform: scaleX(1); }
-.camera-placeholder {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 10px; color: rgba(255,255,255,0.6);
-}
-.camera-placeholder .icon { font-size: 48px; }
-.camera-placeholder p { font-size: 13px; text-align: center; padding: 0 20px; }
-.foto-preview-wrap {
-  position: relative; width: 100%; display: none;
-}
-.foto-preview-wrap img {
-  width: 100%; display: block;
-  max-height: 340px; object-fit: cover;
-}
-.foto-stamp {
-  position: absolute; bottom: 8px; left: 8px;
-  background: rgba(0,0,0,0.65);
-  color: white; font-size: 10px;
-  padding: 4px 8px; border-radius: 6px;
-  font-family: monospace;
+function _criarAbaTemplates(ss) {
+  let ws = ss.getSheetByName("📝 Templates") || ss.insertSheet("📝 Templates");
+  ws.clear();
+  ws.getRange("A1:E1").setValues([["Candidato","Interesse","Nome do Template","Mensagem","Ativo"]])
+    .setBackground("#1A1A1A").setFontColor("#F5C000").setFontWeight("bold");
+  ws.setColumnWidth(4, 480);
+  ws.setFrozenRows(1);
 }
 
-/* STATUS upload */
-.upload-status {
-  padding: 8px 14px; font-size: 12px; font-weight: 600;
-  display: none; align-items: center; gap: 8px;
-  border-top: 1px solid var(--cinza2);
-}
-.upload-status.enviando { display: flex; color: #F59E0B; background: #FFFBEB; }
-.upload-status.ok { display: flex; color: var(--verde); background: #F0FDF4; }
-.upload-status.erro { display: flex; color: var(--vermelho); background: #FEF2F2; }
-
-.camera-controls {
-  padding: 12px 14px;
-  display: flex; gap: 10px; align-items: center;
-  background: white;
-}
-.btn-cam {
-  flex: 1; padding: 11px;
-  border-radius: 10px; border: none; cursor: pointer;
-  font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif;
-  transition: all .15s;
-}
-.btn-cam.primary { background: var(--verde); color: white; }
-.btn-cam.primary:active { background: #009348; }
-.btn-cam.secondary { background: var(--cinza2); color: var(--azul); }
-.btn-cam.secondary:active { background: #cbd5e1; }
-.btn-cam.danger { background: #FEE2E2; color: var(--vermelho); }
-.btn-flip {
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.25);
-  color: white; border-radius: 50%;
-  width: 38px; height: 38px; display: flex;
-  align-items: center; justify-content: center;
-  cursor: pointer; position: absolute; top: 12px; right: 12px;
-  font-size: 18px;
-}
-.btn-capturar-overlay {
-  position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
-  width: 64px; height: 64px; border-radius: 50%;
-  background: white; border: 4px solid rgba(255,255,255,0.5);
-  cursor: pointer; display: none;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
-}
-.btn-capturar-overlay::after {
-  content: ''; position: absolute; inset: 6px;
-  background: white; border-radius: 50%;
-}
-canvas#foto-canvas { display: none; }
-
-/* FORM */
-.form-card {
-  background: var(--card-bg);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  padding: 16px;
-  display: flex; flex-direction: column; gap: 14px;
-  margin-bottom: 16px;
+function etapa2_implantarWebhook() {
+  SpreadsheetApp.getUi().alert("📋 COMO IMPLANTAR O WEBHOOK:\n\n1. Implantar → Nova implantação\n2. Tipo: App da Web\n3. Executar como: Eu mesmo\n4. Quem tem acesso: Qualquer pessoa\n5. Clique em Implantar → copie a URL\n\n→ Execute: etapa3_configurarGatilhos()");
 }
 
-.gps-info {
-  background: var(--cinza1);
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 12px; color: var(--cinza3);
-  display: flex; align-items: center; gap: 8px;
-}
-.gps-info.ok { color: var(--verde); background: #F0FDF4; }
-.gps-info.erro { color: var(--vermelho); background: #FEF2F2; }
-
-.tipo-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-}
-.tipo-btn {
-  border: 2px solid var(--cinza2);
-  background: white; border-radius: 10px;
-  padding: 10px 6px; cursor: pointer;
-  text-align: center; font-size: 11px; font-weight: 600;
-  color: var(--azul); transition: all .15s;
-  font-family: 'Inter', sans-serif;
-}
-.tipo-btn .emoji { font-size: 20px; display: block; margin-bottom: 4px; }
-.tipo-btn.ativo { border-color: var(--verde); background: #F0FDF4; color: var(--verde); }
-
-.input-wrap { display: flex; flex-direction: column; gap: 6px; }
-.input-label { font-size: 12px; font-weight: 600; color: var(--azul); }
-.input-field {
-  padding: 11px 14px; border-radius: 10px;
-  border: 2px solid var(--cinza2);
-  font-size: 14px; font-family: 'Inter', sans-serif;
-  width: 100%; background: white; color: var(--azul);
-  transition: border-color .15s;
-}
-.input-field:focus { outline: none; border-color: var(--verde); }
-
-.eleit-row { display: flex; align-items: center; gap: 12px; }
-.eleit-count {
-  font-size: 32px; font-weight: 700; color: var(--azul);
-  font-family: 'Bebas Neue', sans-serif; min-width: 60px; text-align: center;
-}
-.eleit-btns { display: flex; gap: 8px; }
-.eleit-btn {
-  width: 44px; height: 44px; border-radius: 50%;
-  border: none; font-size: 22px; cursor: pointer;
-  font-weight: 700; transition: all .15s;
-}
-.eleit-btn.mais { background: var(--verde); color: white; }
-.eleit-btn.mais:active { background: #009348; }
-.eleit-btn.menos { background: var(--cinza2); color: var(--azul); }
-.eleit-btn.menos:active { background: #cbd5e1; }
-
-.btn-enviar {
-  width: 100%; padding: 16px;
-  background: var(--verde); color: white;
-  border: none; border-radius: 14px;
-  font-size: 16px; font-weight: 700;
-  cursor: pointer; font-family: 'Inter', sans-serif;
-  transition: all .15s;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-}
-.btn-enviar:active { background: #009348; transform: scale(0.98); }
-.btn-enviar:disabled { background: var(--cinza3); cursor: not-allowed; }
-
-/* CHECKINS LISTA */
-.checkin-item {
-  background: white; border-radius: 14px;
-  box-shadow: var(--shadow);
-  overflow: hidden; margin-bottom: 12px;
-}
-.ci-header {
-  padding: 12px 14px;
-  display: flex; align-items: center; gap: 10px;
-  border-bottom: 1px solid var(--cinza2);
-}
-.ci-tipo-badge {
-  background: var(--cinza1); border-radius: 8px;
-  padding: 4px 8px; font-size: 11px; font-weight: 600;
-  color: var(--azul);
-}
-.ci-hora { font-size: 12px; color: var(--cinza3); margin-left: auto; }
-.ci-foto { width: 100%; display: block; max-height: 200px; object-fit: cover; }
-.ci-body { padding: 10px 14px; }
-.ci-eleit { font-size: 13px; color: var(--verde); font-weight: 700; }
-.ci-obs { font-size: 12px; color: var(--cinza3); margin-top: 4px; }
-.ci-gps { font-size: 11px; color: var(--cinza3); margin-top: 4px; }
-.ci-foto-enviando {
-  background: #FFFBEB; padding: 10px 14px;
-  font-size: 12px; color: #F59E0B;
-  display: flex; align-items: center; gap: 6px;
-}
-.ci-foto-ok {
-  background: #F0FDF4; padding: 6px 14px;
-  font-size: 11px; color: var(--verde);
+function etapa3_configurarGatilhos() {
+  ScriptApp.getProjectTriggers()
+    .filter(t => ["relatorioDiario","atualizarDashboard"].includes(t.getHandlerFunction()))
+    .forEach(t => ScriptApp.deleteTrigger(t));
+  ScriptApp.newTrigger("relatorioDiario").timeBased().everyDays(1).atHour(21).create();
+  ScriptApp.newTrigger("atualizarDashboard").timeBased().everyHours(1).create();
+  SpreadsheetApp.getUi().alert("✅ ETAPA 3 concluída!\n\n→ Execute: etapa4_finalizar()");
 }
 
-/* MODAL PERFIL */
-.modal-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.55); z-index: 200;
-  display: none; align-items: flex-end;
-}
-.modal-overlay.open { display: flex; }
-.modal-box {
-  background: white; width: 100%;
-  border-radius: 20px 20px 0 0;
-  padding: 20px 16px 32px;
-  max-height: 80vh; overflow-y: auto;
-}
-.modal-title {
-  font-size: 17px; font-weight: 700; color: var(--azul);
-  margin-bottom: 16px;
-  display: flex; align-items: center; gap: 8px;
-}
-.modal-close {
-  margin-left: auto; background: var(--cinza2);
-  border: none; border-radius: 50%;
-  width: 32px; height: 32px; cursor: pointer; font-size: 16px;
-}
-.btn-salvar {
-  width: 100%; padding: 14px;
-  background: var(--azul); color: white;
-  border: none; border-radius: 12px;
-  font-size: 15px; font-weight: 700; cursor: pointer;
-  margin-top: 16px; font-family: 'Inter', sans-serif;
+function etapa4_finalizar() {
+  SpreadsheetApp.getUi().alert("🎉 SISTEMA AVANTE 70 COMPLETO!");
 }
 
-/* TOAST */
-.toast {
-  position: fixed; bottom: 24px; left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  background: var(--azul); color: white;
-  padding: 12px 20px; border-radius: 12px;
-  font-size: 13px; font-weight: 600;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
-  z-index: 300; white-space: nowrap;
-}
-.toast.show { transform: translateX(-50%) translateY(0); }
-.toast.verde { background: var(--verde); }
-.toast.vermelho { background: var(--vermelho); }
-
-/* GALERIA fallback */
-.btn-galeria {
-  background: none; border: none; color: var(--cinza3);
-  font-size: 12px; cursor: pointer; padding: 4px 0;
-  font-family: 'Inter', sans-serif; text-decoration: underline;
-}
-#input-galeria { display: none; }
-</style>
-</head>
-<body>
-
-<!-- HEADER -->
-<div class="header">
-  <div>
-    <div class="header-logo">📍 AVANTE 70</div>
-    <div class="header-sub">Campanha David Almeida 2026</div>
-  </div>
-  <div class="header-right">
-    <div class="hora-display" id="hora-display">--:--</div>
-    <button class="btn-perfil" onclick="abrirPerfil()">✏️ Perfil</button>
-  </div>
-</div>
-
-<!-- PERFIL BANNER -->
-<div class="perfil-banner" id="perfil-banner">
-  <div class="perfil-avatar" id="perfil-avatar">?</div>
-  <div class="perfil-info" id="perfil-info">
-    <div class="sem-perfil">Configure seu perfil para começar</div>
-  </div>
-</div>
-
-<!-- STATS -->
-<div class="stats-bar">
-  <div class="stat-item">
-    <div class="stat-num" id="stat-hoje">0</div>
-    <div class="stat-label">Hoje</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num" id="stat-eleit">0</div>
-    <div class="stat-label">Eleitores</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num" id="stat-total">0</div>
-    <div class="stat-label">Total</div>
-  </div>
-</div>
-
-<!-- CÂMERA -->
-<div class="section">
-  <div class="section-title">📷 Foto do campo</div>
-  <div class="camera-card">
-    <div class="camera-area" id="camera-area">
-      <video id="preview-video" autoplay playsinline muted></video>
-      <canvas id="foto-canvas"></canvas>
-
-      <!-- Placeholder inicial -->
-      <div class="camera-placeholder" id="camera-placeholder">
-        <div class="icon">📷</div>
-        <p>Toque para ativar a câmera</p>
-      </div>
-
-      <!-- Preview da foto tirada -->
-      <div class="foto-preview-wrap" id="foto-preview-wrap">
-        <img id="foto-preview-img" src="" alt="Foto capturada">
-        <div class="foto-stamp" id="foto-stamp"></div>
-      </div>
-
-      <!-- Botão flip câmera (aparece quando câmera ativa) -->
-      <button class="btn-flip" id="btn-flip" style="display:none" onclick="flipCamera()">🔄</button>
-
-      <!-- Botão de captura circular sobre o vídeo -->
-      <div class="btn-capturar-overlay" id="btn-capturar-overlay" onclick="capturarFoto()"></div>
-    </div>
-
-    <!-- Status do upload -->
-    <div class="upload-status" id="upload-status">
-      <span id="upload-icon">⏳</span>
-      <span id="upload-msg">Enviando foto...</span>
-    </div>
-
-    <div class="camera-controls" id="camera-controls">
-      <button class="btn-cam secondary" id="btn-ativar-cam" onclick="ativarCamera()">📷 Ativar câmera</button>
-      <button class="btn-galeria" onclick="document.getElementById('input-galeria').click()">📁 Galeria</button>
-      <input type="file" accept="image/*" capture="environment" id="input-galeria" onchange="usarFotoGaleria(this)">
-    </div>
-    <div class="camera-controls" id="camera-controls-2" style="display:none">
-      <button class="btn-cam danger" onclick="resetarCamera()">✕ Descartar</button>
-      <button class="btn-cam primary" onclick="confirmarFoto()">✅ Usar esta foto</button>
-    </div>
-  </div>
-
-  <!-- GPS -->
-  <div class="gps-info" id="gps-info">
-    <span>📍</span> <span id="gps-texto">Aguardando GPS...</span>
-  </div>
-</div>
-
-<!-- FORMULÁRIO -->
-<div class="section" style="padding-top:0">
-  <div class="section-title">📋 Dados do check-in</div>
-  <div class="form-card">
-
-    <!-- Tipo de atividade -->
-    <div>
-      <div class="input-label" style="margin-bottom:8px">Tipo de atividade</div>
-      <div class="tipo-grid">
-        <button class="tipo-btn" data-tipo="Visita domiciliar" onclick="selecionarTipo(this)">
-          <span class="emoji">🏠</span>Visita
-        </button>
-        <button class="tipo-btn" data-tipo="Abordagem de rua" onclick="selecionarTipo(this)">
-          <span class="emoji">🗣️</span>Abordagem
-        </button>
-        <button class="tipo-btn" data-tipo="Distribuição de material" onclick="selecionarTipo(this)">
-          <span class="emoji">📦</span>Material
-        </button>
-        <button class="tipo-btn" data-tipo="Evento" onclick="selecionarTipo(this)">
-          <span class="emoji">🎤</span>Evento
-        </button>
-        <button class="tipo-btn" data-tipo="Reunião de líderes" onclick="selecionarTipo(this)">
-          <span class="emoji">🤝</span>Reunião
-        </button>
-        <button class="tipo-btn" data-tipo="Outro" onclick="selecionarTipo(this)">
-          <span class="emoji">📝</span>Outro
-        </button>
-      </div>
-    </div>
-
-    <!-- Eleitores -->
-    <div>
-      <div class="input-label">Eleitores abordados</div>
-      <div class="eleit-row" style="margin-top:8px">
-        <div class="eleit-btns">
-          <button class="eleit-btn menos" onclick="ajustarEleit(-1)">−</button>
-          <button class="eleit-btn mais" onclick="ajustarEleit(1)">+</button>
-        </div>
-        <div class="eleit-count" id="eleit-count">0</div>
-        <div style="font-size:12px;color:var(--cinza3)">eleitores<br>nesta atividade</div>
-      </div>
-    </div>
-
-    <!-- Obs -->
-    <div class="input-wrap">
-      <label class="input-label">Observação (opcional)</label>
-      <textarea class="input-field" id="obs-field" rows="2" placeholder="Ex: Rua das Flores, 12 casas visitadas..."></textarea>
-    </div>
-
-    <!-- Botão enviar -->
-    <button class="btn-enviar" id="btn-enviar" onclick="enviarCheckin()">
-      ✅ Enviar check-in
-    </button>
-  </div>
-
-  <!-- Lista de hoje -->
-  <div class="section-title" style="margin-top:8px">📋 Meus check-ins de hoje</div>
-  <div id="lista-checkins">
-    <div style="text-align:center;padding:24px;color:var(--cinza3);font-size:13px">
-      Nenhum check-in ainda hoje.<br>Faça o primeiro registro!
-    </div>
-  </div>
-</div>
-
-<!-- MODAL PERFIL -->
-<div class="modal-overlay" id="modal-perfil">
-  <div class="modal-box">
-    <div class="modal-title">
-      👤 Seu perfil
-      <button class="modal-close" onclick="fecharPerfil()">✕</button>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <div class="input-wrap">
-        <label class="input-label">Nome completo *</label>
-        <input class="input-field" id="p-nome" type="text" placeholder="Seu nome">
-      </div>
-      <div class="input-wrap">
-        <label class="input-label">Zona eleitoral *</label>
-        <select class="input-field" id="p-zona">
-          <option value="">Selecionar...</option>
-          <option>Zona Norte</option>
-          <option>Zona Sul</option>
-          <option>Centro</option>
-          <option>Zona Oeste</option>
-          <option>Zona Leste</option>
-          <option>Zona Rural</option>
-        </select>
-      </div>
-      <div class="input-wrap">
-        <label class="input-label">Líder responsável</label>
-        <input class="input-field" id="p-lider" type="text" placeholder="Nome do seu líder">
-      </div>
-    </div>
-    <button class="btn-salvar" onclick="salvarPerfil()">💾 Salvar perfil</button>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<script>
-// ── CONFIG ──
-const WEBHOOK = "https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec";
-const TOKEN   = "avante70-am-2026-token-secreto";
-const IMGBB_KEY = "fa0fb4b7023a56777344127963e3b826";
-
-// ── ESTADO ──
-let perfil   = JSON.parse(localStorage.getItem("perfil_ativista") || "{}");
-let checkins = JSON.parse(localStorage.getItem("checkins_hoje")   || "[]");
-let gpsPos   = null;
-let tipoSel  = "";
-let eleit    = 0;
-let fotoBase64 = "";      // foto atual (base64 sem prefix)
-let fotoUrl    = "";      // URL ImgBB após upload
-let stream     = null;
-let facingMode = "environment";
-let fotoConfirmada = false;
-
-const hojeKey = new Date().toLocaleDateString("pt-BR");
-if (localStorage.getItem("checkins_dia") !== hojeKey) {
-  checkins = [];
-  localStorage.setItem("checkins_dia", hojeKey);
-  localStorage.setItem("checkins_hoje", "[]");
-}
-
-// ── HORA ──
-function atualizarHora() {
-  const h = new Date().toLocaleTimeString("pt-BR", {hour:"2-digit",minute:"2-digit"});
-  document.getElementById("hora-display").textContent = h;
-}
-atualizarHora();
-setInterval(atualizarHora, 1000);
-
-// ── PERFIL ──
-function renderPerfil() {
-  const av = document.getElementById("perfil-avatar");
-  const info = document.getElementById("perfil-info");
-  if (perfil.nome) {
-    const ini = perfil.nome.split(" ").map(p=>p[0]).slice(0,2).join("").toUpperCase();
-    av.textContent = ini;
-    info.innerHTML = `<div class="perfil-nome">${perfil.nome}</div>
-      <div class="perfil-zona">${perfil.zona||""} ${perfil.lider?"· Líder: "+perfil.lider:""}</div>`;
-  } else {
-    av.textContent = "?";
-    info.innerHTML = `<div class="sem-perfil">Configure seu perfil para começar</div>`;
-  }
-}
-function abrirPerfil() {
-  document.getElementById("p-nome").value = perfil.nome || "";
-  document.getElementById("p-zona").value = perfil.zona || "";
-  document.getElementById("p-lider").value = perfil.lider || "";
-  document.getElementById("modal-perfil").classList.add("open");
-}
-function fecharPerfil() { document.getElementById("modal-perfil").classList.remove("open"); }
-function salvarPerfil() {
-  const nome = document.getElementById("p-nome").value.trim();
-  const zona = document.getElementById("p-zona").value;
-  if (!nome || !zona) { toast("Preencha nome e zona!", "vermelho"); return; }
-  perfil = { nome, zona, lider: document.getElementById("p-lider").value.trim() };
-  localStorage.setItem("perfil_ativista", JSON.stringify(perfil));
-  fecharPerfil();
-  renderPerfil();
-  toast("✅ Perfil salvo!");
-}
-
-// ── GPS ──
-function iniciarGPS() {
-  if (!navigator.geolocation) { setGPS(false, "GPS não disponível"); return; }
-  navigator.geolocation.watchPosition(pos => {
-    gpsPos = pos.coords;
-    setGPS(true, `${gpsPos.latitude.toFixed(5)}, ${gpsPos.longitude.toFixed(5)} (±${Math.round(gpsPos.accuracy)}m)`);
-  }, () => setGPS(false, "GPS indisponível — verifique permissões"));
-}
-function setGPS(ok, txt) {
-  const el = document.getElementById("gps-info");
-  const tx = document.getElementById("gps-texto");
-  el.className = "gps-info" + (ok ? " ok" : " erro");
-  tx.textContent = txt;
-}
-
-// ── CÂMERA ──
-async function ativarCamera() {
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode, width:{ideal:1920}, height:{ideal:1080} },
-      audio: false
+function _criarAbaTemperatura(ss) {
+  let ws = ss.getSheetByName("🌡️ Temperatura") || ss.insertSheet("🌡️ Temperatura");
+  ws.clear();
+  ws.getRange("A1:H1").setValues([["Candidato","Zona / Município","Total","SIM","TALVEZ","NÃO","Não Sabe","% Favorável"]])
+    .setBackground("#1A1A1A").setFontColor("#F5C000").setFontWeight("bold");
+  ws.setFrozenRows(1);
+  const zonas = ["Zona Norte","Zona Sul","Centro","Zona Oeste","Zona Leste","Interior"];
+  let linha = 2;
+  CANDIDATOS_CFG.forEach(cand => {
+    zonas.forEach(zona => {
+      const aba = `'${cand.aba}'`;
+      ws.getRange(linha,1).setValue(cand.nome);
+      ws.getRange(linha,2).setValue(zona);
+      ws.getRange(linha,3).setFormula(`=COUNTIFS(${aba}!L:L,"${zona}")`);
+      ws.getRange(linha,4).setFormula(`=COUNTIFS(${aba}!L:L,"${zona}",${aba}!T:T,"SIM")`);
+      ws.getRange(linha,5).setFormula(`=COUNTIFS(${aba}!L:L,"${zona}",${aba}!T:T,"TALVEZ")`);
+      ws.getRange(linha,6).setFormula(`=COUNTIFS(${aba}!L:L,"${zona}",${aba}!T:T,"NAO")`);
+      ws.getRange(linha,7).setFormula(`=COUNTIFS(${aba}!L:L,"${zona}",${aba}!T:T,"NAO_SABE")`);
+      ws.getRange(linha,8).setFormula(`=IFERROR(D${linha}/C${linha},0)`);
+      ws.getRange(linha,8).setNumberFormat("0%");
+      linha++;
     });
-    const vid = document.getElementById("preview-video");
-    vid.srcObject = stream;
-    vid.className = facingMode === "user" ? "" : "traseira";
-    vid.style.display = "block";
-    document.getElementById("camera-placeholder").style.display = "none";
-    document.getElementById("btn-flip").style.display = "flex";
-    document.getElementById("btn-capturar-overlay").style.display = "block";
-    document.getElementById("camera-controls").style.display = "none";
-  } catch(e) {
-    toast("Câmera negada — use a galeria", "vermelho");
-  }
-}
-
-async function flipCamera() {
-  facingMode = facingMode === "user" ? "environment" : "user";
-  if (stream) { stream.getTracks().forEach(t=>t.stop()); }
-  await ativarCamera();
-}
-
-function capturarFoto() {
-  const vid = document.getElementById("preview-video");
-  const canvas = document.getElementById("foto-canvas");
-  const MAX = 1000;
-  let w = vid.videoWidth, h = vid.videoHeight;
-  if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
-  canvas.width = w; canvas.height = h;
-  const ctx = canvas.getContext("2d");
-  if (facingMode === "user") { ctx.translate(w,0); ctx.scale(-1,1); }
-  ctx.drawImage(vid, 0, 0, w, h);
-
-  // Carimbo de data/hora e GPS
-  const agora = new Date();
-  const stamp = agora.toLocaleString("pt-BR") +
-    (gpsPos ? `\n${gpsPos.latitude.toFixed(5)}, ${gpsPos.longitude.toFixed(5)}` : "");
-  ctx.setTransform(1,0,0,1,0,0);
-  ctx.fillStyle = "rgba(0,0,0,0.55)";
-  ctx.fillRect(0, h-42, w, 42);
-  ctx.fillStyle = "white";
-  ctx.font = "bold 13px monospace";
-  ctx.fillText(agora.toLocaleString("pt-BR"), 8, h-24);
-  if (gpsPos) ctx.fillText(`GPS: ${gpsPos.latitude.toFixed(4)}, ${gpsPos.longitude.toFixed(4)}`, 8, h-8);
-
-  const dataURL = canvas.toDataURL("image/jpeg", 0.82);
-  fotoBase64 = dataURL.split(",")[1];
-  fotoConfirmada = false;
-
-  // Para o stream
-  if (stream) stream.getTracks().forEach(t=>t.stop());
-  vid.style.display = "none";
-  document.getElementById("btn-flip").style.display = "none";
-  document.getElementById("btn-capturar-overlay").style.display = "none";
-
-  // Mostra preview
-  const pw = document.getElementById("foto-preview-wrap");
-  document.getElementById("foto-preview-img").src = dataURL;
-  document.getElementById("foto-stamp").textContent = stamp.split("\n")[0];
-  pw.style.display = "block";
-
-  document.getElementById("camera-controls").style.display = "none";
-  document.getElementById("camera-controls-2").style.display = "flex";
-}
-
-function usarFotoGaleria(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = async e => {
-    const dataURL = await comprimirImagem(e.target.result, 1000, 0.82);
-    fotoBase64 = dataURL.split(",")[1];
-    fotoConfirmada = false;
-
-    const pw = document.getElementById("foto-preview-wrap");
-    document.getElementById("foto-preview-img").src = dataURL;
-    document.getElementById("foto-stamp").textContent = new Date().toLocaleString("pt-BR");
-    pw.style.display = "block";
-    document.getElementById("camera-placeholder").style.display = "none";
-    document.getElementById("camera-controls").style.display = "none";
-    document.getElementById("camera-controls-2").style.display = "flex";
-  };
-  reader.readAsDataURL(file);
-}
-
-function comprimirImagem(dataURL, maxW, qualidade) {
-  return new Promise(res => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      let w = img.width, h = img.height;
-      if (w > maxW) { h = Math.round(h*maxW/w); w = maxW; }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-      res(canvas.toDataURL("image/jpeg", qualidade));
-    };
-    img.src = dataURL;
   });
 }
 
-async function confirmarFoto() {
-  fotoConfirmada = true;
-  document.getElementById("camera-controls-2").style.display = "none";
-  // Sobe imediatamente pro ImgBB
-  await uploadImgBB();
-}
+// ─────────────────────────────────────────────────────────
+// WEBHOOK PRINCIPAL — doGet ÚNICO
+// ─────────────────────────────────────────────────────────
+function doGet(e) {
+  // Health check
+  if (!e.parameter || Object.keys(e.parameter).length === 0) {
+    return ContentService.createTextOutput(
+      JSON.stringify({ok:true, msg:"webhook_ativo", versao:"4.0"})
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
 
-function resetarCamera() {
-  fotoBase64 = ""; fotoUrl = ""; fotoConfirmada = false;
-  document.getElementById("foto-preview-wrap").style.display = "none";
-  document.getElementById("camera-placeholder").style.display = "flex";
-  document.getElementById("camera-controls").style.display = "flex";
-  document.getElementById("camera-controls-2").style.display = "none";
-  setUploadStatus("", "");
-}
+  var acao = e.parameter.acao || "";
 
-async function uploadImgBB() {
-  if (!fotoBase64) return;
-  setUploadStatus("enviando", "⏳ Enviando foto...");
-  try {
-    const fd = new FormData();
-    fd.append("key", IMGBB_KEY);
-    fd.append("image", fotoBase64);
-    const resp = await fetch("https://api.imgbb.com/1/upload", { method:"POST", body:fd });
-    const json = await resp.json();
-    if (json.success) {
-      fotoUrl = json.data.url;
-      setUploadStatus("ok", "✅ Foto enviada com sucesso!");
-    } else {
-      throw new Error(json.error?.message || "Falha");
+  // Teste
+  if (acao === "teste") {
+    return ContentService.createTextOutput(
+      JSON.stringify({ok:true, msg:"webhook_ativo", versao:"4.0"})
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // ── LISTAR CHECK-INS PARA O PAINEL ──
+  if (acao === "listar_checkins") {
+    if (!e.parameter.token || e.parameter.token !== WEBHOOK_SECRET)
+      return _jsonErr("token_invalido");
+    return listarCheckins(e.parameter.dia || "");
+  }
+
+  // ── SALVAR URL DA FOTO ──
+  if (acao === "salvar_foto_url") {
+    if (!e.parameter.token || e.parameter.token !== WEBHOOK_SECRET)
+      return _ok("token_invalido");
+    try {
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var ws = ss.getSheetByName("📍 Check-ins");
+      if (ws && ws.getLastRow() > 1) {
+        var ids = ws.getRange(2,1,ws.getLastRow()-1,1).getValues().flat().map(String);
+        var idx = ids.indexOf(String(e.parameter.id || ""));
+        if (idx >= 0) {
+          ws.getRange(idx+2, 13).setValue(e.parameter.foto_url || "");
+          Logger.log("Foto URL salva na linha " + (idx+2) + ": " + e.parameter.foto_url);
+        }
+      }
+      return _ok("foto_url_salva");
+    } catch(err) {
+      return _ok("erro: " + err.toString());
     }
-  } catch(e) {
-    setUploadStatus("erro", "❌ Erro no upload — a foto ficará pendente");
-    fotoUrl = "";
-  }
-}
-
-function setUploadStatus(tipo, msg) {
-  const el = document.getElementById("upload-status");
-  el.className = "upload-status" + (tipo ? " "+tipo : "");
-  document.getElementById("upload-msg").textContent = msg;
-}
-
-// ── FORM ──
-function selecionarTipo(btn) {
-  document.querySelectorAll(".tipo-btn").forEach(b=>b.classList.remove("ativo"));
-  btn.classList.add("ativo");
-  tipoSel = btn.dataset.tipo;
-}
-function ajustarEleit(delta) {
-  eleit = Math.max(0, eleit + delta);
-  document.getElementById("eleit-count").textContent = eleit;
-}
-
-// ── ENVIAR CHECK-IN ──
-async function enviarCheckin() {
-  if (!perfil.nome) { abrirPerfil(); toast("Configure seu perfil primeiro!", "vermelho"); return; }
-  if (!tipoSel) { toast("Selecione o tipo de atividade!", "vermelho"); return; }
-  if (!fotoBase64) { toast("Tire ou selecione uma foto!", "vermelho"); return; }
-  if (!fotoConfirmada) { toast("Confirme a foto antes de enviar!", "vermelho"); return; }
-
-  const btn = document.getElementById("btn-enviar");
-  btn.disabled = true;
-  btn.textContent = "⏳ Enviando...";
-
-  // Se ainda não fez upload, tenta agora
-  if (!fotoUrl) {
-    await uploadImgBB();
   }
 
-  const agora = new Date();
-  const checkin = {
-    id: Date.now(),
-    dia: agora.toLocaleDateString("pt-BR"),
-    hora: agora.toLocaleTimeString("pt-BR", {hour:"2-digit",minute:"2-digit"}),
-    nome: perfil.nome,
-    zona: perfil.zona,
-    lider: perfil.lider || "",
-    tipo: tipoSel,
-    eleit: eleit,
-    obs: document.getElementById("obs-field").value.trim(),
-    lat: gpsPos ? gpsPos.latitude.toFixed(6) : "",
-    lng: gpsPos ? gpsPos.longitude.toFixed(6) : "",
-    acc: gpsPos ? Math.round(gpsPos.accuracy) : "",
-    foto_url: fotoUrl,
-  };
+  // ── SALVAR CHECK-IN ──
+  if (acao === "checkin") {
+    if (!e.parameter.token || e.parameter.token !== WEBHOOK_SECRET)
+      return _ok("token_invalido");
+    return salvarCheckin(e.parameter);
+  }
 
-  // Salva local
-  checkins.push(checkin);
-  localStorage.setItem("checkins_hoje", JSON.stringify(checkins));
-  renderCheckins();
-  atualizarStats();
+  // ── CADASTRO DE ELEITOR ──
+  if (e.parameter.nome) {
+    if (!e.parameter.token || e.parameter.token !== WEBHOOK_SECRET)
+      return _ok("token_invalido");
+    try {
+      const ss   = SpreadsheetApp.getActiveSpreadsheet();
+      const p    = e.parameter;
+      const cand = CANDIDATOS_CFG.find(c => c.nome === p.candidato || c.slug === (p.candidato||"").toLowerCase()) || CANDIDATOS_CFG[0];
+      const ws   = ss.getSheetByName(cand.aba);
+      if (!ws) return _ok("aba_nao_encontrada");
+      const tel = (p.whats||"").replace(/\D/g,"");
+      if (ws.getLastRow() > 1) {
+        const whs = ws.getRange(2,11,ws.getLastRow()-1,1).getValues().flat();
+        if (whs.some(w => (w||"").toString().replace(/\D/g,"") === tel && tel.length > 0))
+          return _ok("ja_cadastrado");
+      }
+      const linha = ws.getLastRow() + 1;
+      ws.getRange(linha,1,1,23).setValues([[
+        p.id||Date.now(), p.dia||"", p.hora||"",
+        sanitizar(p.candidato||cand.nome), sanitizar(p.cargo||cand.cargo), p.numero||cand.numero,
+        sanitizar(p.ativista||""), sanitizar(p.zona_atv||""), sanitizar(p.tipo_local||"capital"),
+        sanitizar(p.nome||""), sanitizar(p.whats||""), sanitizar(p.zona||""), sanitizar(p.bairro||""),
+        sanitizar(p.municipio||""), sanitizar(p.distrito||""), sanitizar(p.localidade||""),
+        sanitizar(p.idade||""), sanitizar(p.genero||""), sanitizar(p.interesse||""),
+        sanitizar(p.intencao_voto||""), sanitizar(p.obs||""), p.consentimento||"SIM", "Novo"
+      ]]);
+      const wsG = ss.getSheetByName("📊 Geral — Todos");
+      if (wsG) {
+        wsG.getRange(wsG.getLastRow()+1,1,1,23).setValues([[
+          p.id||Date.now(), p.dia||"", p.hora||"",
+          sanitizar(p.candidato||cand.nome), sanitizar(p.cargo||cand.cargo), p.numero||cand.numero,
+          sanitizar(p.ativista||""), sanitizar(p.zona_atv||""), sanitizar(p.tipo_local||"capital"),
+          sanitizar(p.nome||""), sanitizar(p.whats||""), sanitizar(p.zona||""), sanitizar(p.bairro||""),
+          sanitizar(p.municipio||""), sanitizar(p.distrito||""), sanitizar(p.localidade||""),
+          sanitizar(p.idade||""), sanitizar(p.genero||""), sanitizar(p.interesse||""),
+          sanitizar(p.intencao_voto||""), sanitizar(p.obs||""), p.consentimento||"SIM", "Novo"
+        ]]);
+      }
+      return _ok("cadastrado");
+    } catch(err) {
+      Logger.log(err.toString());
+      return _ok("erro: " + err.toString());
+    }
+  }
 
-  // Envia ao Sheets via webhook (no-cors)
+  return _ok("ok");
+}
+
+// ─────────────────────────────────────────────────────────
+// LISTAR CHECK-INS — lê até coluna 13 (M = foto_url)
+// ─────────────────────────────────────────────────────────
+function listarCheckins(dia) {
   try {
-    const params = new URLSearchParams({ acao:"checkin", token:TOKEN, ...Object.fromEntries(
-      Object.entries(checkin).map(([k,v])=>[k,String(v)])
-    )});
-    new Image().src = WEBHOOK + "?" + params.toString();
-  } catch(e) {}
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ws = ss.getSheetByName("📍 Check-ins");
+    if (!ws || ws.getLastRow() < 2) {
+      return ContentService.createTextOutput(
+        JSON.stringify({checkins:[]})
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
 
-  // Reset
-  tipoSel = ""; eleit = 0; fotoBase64 = ""; fotoUrl = ""; fotoConfirmada = false;
-  document.querySelectorAll(".tipo-btn").forEach(b=>b.classList.remove("ativo"));
-  document.getElementById("eleit-count").textContent = "0";
-  document.getElementById("obs-field").value = "";
-  resetarCamera();
+    // ← CORRIGIDO: 13 colunas para incluir a coluna M (foto_url)
+    var dados = ws.getRange(2, 1, ws.getLastRow()-1, 13).getValues();
+    var checkins = [];
 
-  btn.disabled = false;
-  btn.textContent = "✅ Enviar check-in";
-  toast("✅ Check-in enviado!", "verde");
+    dados.forEach(function(r) {
+      if (!r[0]) return;
+      var diaCi = r[1] ? r[1].toString().slice(0,10) : "";
+      if (dia && diaCi && diaCi !== dia) return;
+      checkins.push({
+        id:       String(r[0]),
+        dia:      diaCi,
+        hora:     r[2]  || "",
+        nome:     r[3]  || "",
+        zona:     r[4]  || "",
+        lider:    r[5]  || "",
+        tipo:     r[6]  || "",
+        eleit:    parseInt(r[7]) || 0,
+        obs:      r[8]  || "",
+        lat:      String(r[9]  || ""),
+        lng:      String(r[10] || ""),
+        acc:      String(r[11] || ""),
+        foto_url: String(r[12] || ""),   // ← coluna M
+        maps_url: r[9] && r[10] ? "https://maps.google.com/?q=" + r[9] + "," + r[10] : ""
+      });
+    });
+
+    return ContentService.createTextOutput(
+      JSON.stringify({checkins: checkins})
+    ).setMimeType(ContentService.MimeType.JSON);
+
+  } catch(err) {
+    Logger.log("Erro listarCheckins: " + err.toString());
+    return ContentService.createTextOutput(
+      JSON.stringify({checkins:[], erro: err.toString()})
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
 }
 
-// ── RENDERIZAR LISTA ──
-function renderCheckins() {
-  const el = document.getElementById("lista-checkins");
-  if (!checkins.length) {
-    el.innerHTML = `<div style="text-align:center;padding:24px;color:var(--cinza3);font-size:13px">
-      Nenhum check-in ainda hoje.<br>Faça o primeiro registro!</div>`;
+// ─────────────────────────────────────────────────────────
+// SALVAR CHECK-IN
+// ─────────────────────────────────────────────────────────
+function salvarCheckin(p) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ws = ss.getSheetByName("📍 Check-ins");
+    if (!ws) {
+      ws = ss.insertSheet("📍 Check-ins");
+      ws.getRange("A1:M1").setValues([[
+        "ID","Data","Hora","Ativista","Zona","Líder",
+        "Tipo","Eleitores","Observação","GPS Lat","GPS Lng","GPS Acc","Foto URL"
+      ]]).setBackground("#1A1A1A").setFontColor("#F5C000").setFontWeight("bold");
+      ws.setFrozenRows(1);
+      ws.autoResizeColumns(1,13);
+    }
+    if (ws.getLastRow() > 1) {
+      var ids = ws.getRange(2,1,ws.getLastRow()-1,1).getValues().flat().map(String);
+      if (ids.indexOf(String(p.id||"")) >= 0) return _ok("duplicata");
+    }
+    ws.appendRow([
+      String(p.id || Date.now()),
+      p.dia  || "",
+      p.hora || "",
+      sanitizar(p.nome  || ""),
+      sanitizar(p.zona  || ""),
+      sanitizar(p.lider || ""),
+      sanitizar(p.tipo  || ""),
+      parseInt(p.eleit) || 0,
+      sanitizar(p.obs   || ""),
+      p.lat || "",
+      p.lng || "",
+      p.acc || "",
+      ""  // foto_url — preenchida depois via salvar_foto_url
+    ]);
+    var cores = {
+      "Visita domiciliar":      "#FEF0E6",
+      "Abordagem de rua":       "#FFF8DC",
+      "Distribuição de material":"#E8F5E9",
+      "Evento":                 "#E3F2FD",
+      "Reunião de líderes":     "#F3E5F5"
+    };
+    ws.getRange(ws.getLastRow(), 1, 1, 13).setBackground(cores[p.tipo] || "#FFFFFF");
+    return _ok("checkin_salvo");
+  } catch(err) {
+    Logger.log("Erro salvarCheckin: " + err.toString());
+    return _ok("erro: " + err.toString());
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// doPost — recebe foto em base64 e salva no Drive
+// ─────────────────────────────────────────────────────────
+function doPost(e) {
+  try {
+    var body = {};
+    var type = e.postData ? e.postData.type : "";
+    var raw  = e.postData ? e.postData.contents : "";
+    try {
+      body = (type && type.indexOf("application/json") >= 0)
+        ? JSON.parse(raw)
+        : (e.parameter || {});
+    } catch(pe) { body = e.parameter || {}; }
+
+    if (!body || !body.token) return _ok("sem_dados");
+    if (body.token !== WEBHOOK_SECRET) return _ok("token_invalido");
+
+    if (body.acao === "salvar_foto") return salvarFotoDrive(body);
+    if (body.acao === "checkin")     return salvarCheckin(body);
+
+    // Cadastro de eleitores via POST
+    if (body.acao === "cadastrarEleitor") {
+      var ss = SpreadsheetApp.openById("1-ZB1vIckJMGQhim0RsBSJFYvEpTLQU0r2eHsxsWXivs");
+      var ABA_NOME = "Apoiadores";
+      var planilha = ss;
+      var aba = planilha.getSheetByName(ABA_NOME);
+      var CABECALHOS = ["Data/Hora","Nome Completo","CPF","Telefone","Título de Eleitor","Zona Eleitoral","Seção Eleitoral","Observações"];
+      if (!aba) {
+        aba = planilha.insertSheet(ABA_NOME);
+        var hRange = aba.getRange(1,1,1,CABECALHOS.length);
+        hRange.setValues([CABECALHOS]).setFontWeight("bold").setBackground("#e07840").setFontColor("#ffffff").setFontSize(11);
+        aba.setFrozenRows(1);
+        var larguras = [140,220,130,130,160,110,110,200];
+        larguras.forEach(function(w,i){ aba.setColumnWidth(i+1,w); });
+      }
+      if (aba.getLastRow() === 0) {
+        var hRange2 = aba.getRange(1,1,1,CABECALHOS.length);
+        hRange2.setValues([CABECALHOS]).setFontWeight("bold").setBackground("#e07840").setFontColor("#ffffff").setFontSize(11);
+        aba.setFrozenRows(1);
+      }
+      aba.appendRow([
+        new Date(),
+        body.nome || "",
+        body.cpf  || "",
+        body.telefone || "",
+        body.titulo   || "",
+        body.zona     || "",
+        body.secao    || "",
+        body.observacoes || ""
+      ]);
+      var ultimaLinha = aba.getLastRow();
+      var cor = ultimaLinha % 2 === 0 ? "#fff8f3" : "#ffffff";
+      aba.getRange(ultimaLinha, 1, 1, CABECALHOS.length).setBackground(cor).setFontSize(11).setVerticalAlignment("middle");
+      aba.setRowHeight(ultimaLinha, 28);
+      return ContentService.createTextOutput(JSON.stringify({ok:true, linha:ultimaLinha}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    return _ok("acao_desconhecida");
+  } catch(err) {
+    Logger.log("Erro doPost: " + err.toString());
+    return _ok("erro: " + err.toString());
+  }
+}
+
+function salvarFotoDrive(body) {
+  try {
+    var drive    = DriveApp;
+    var nomePasta = "Campanha Avante 70 — Check-ins";
+    var pastas   = drive.getFoldersByName(nomePasta);
+    var pasta    = pastas.hasNext() ? pastas.next() : drive.createFolder(nomePasta);
+    var base64   = body.foto.replace(/^data:image\/\w+;base64,/, "");
+    var bytes    = Utilities.base64Decode(base64);
+    var blob     = Utilities.newBlob(bytes, "image/jpeg",
+      "checkin_" + body.id + "_" + (body.nome||"ativista").replace(/\s/g,"_") + ".jpg");
+    var arquivo  = pasta.createFile(blob);
+    arquivo.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    var urlFoto  = "https://drive.google.com/uc?id=" + arquivo.getId();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ws = ss.getSheetByName("📍 Check-ins");
+    if (ws && ws.getLastRow() > 1) {
+      var ids = ws.getRange(2,1,ws.getLastRow()-1,1).getValues().flat().map(String);
+      var idx = ids.indexOf(String(body.id||""));
+      if (idx >= 0) ws.getRange(idx+2, 13).setValue(urlFoto);
+    }
+    Logger.log("Foto salva: " + urlFoto);
+    return _ok("foto_salva:" + urlFoto);
+  } catch(err) {
+    Logger.log("Erro salvarFotoDrive: " + err.toString());
+    return _ok("erro_foto: " + err.toString());
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// DISPAROS WHATSAPP
+// ─────────────────────────────────────────────────────────
+function dispararAryel()  { _menuDisparar("Aryel Almeida"); }
+function dispararDaniel() { _menuDisparar("Daniel Almeida"); }
+function dispararDavid()  { _menuDisparar("David Almeida"); }
+function dispararTodos()  { CANDIDATOS_CFG.forEach(c => _dispararCandidato(c, "Boas-vindas")); }
+
+function _menuDisparar(nomeCand) {
+  const ui   = SpreadsheetApp.getUi();
+  const cand = CANDIDATOS_CFG.find(c => c.nome === nomeCand);
+  const resp = ui.alert(`Disparar — ${nomeCand}`, "1 — Boas-vindas\n2 — Por interesse\n3 — Mobilização", ui.ButtonSet.YES_NO);
+  if (resp !== ui.Button.YES) return;
+  const tipo = ui.prompt("Digite 1, 2 ou 3:");
+  if (tipo.getSelectedButton() !== ui.Button.OK) return;
+  const n = tipo.getResponseText().trim();
+  if (n === "1") _dispararCandidato(cand, "Boas-vindas");
+  else if (n === "2") {
+    const int = ui.prompt("Qual interesse?");
+    if (int.getSelectedButton() === ui.Button.OK) _dispararCandidato(cand, int.getResponseText().trim());
+  } else if (n === "3") _dispararCandidato(cand, "Mobilização");
+}
+
+function _dispararCandidato(cand, tipoTemplate) {
+  const ss     = SpreadsheetApp.getActiveSpreadsheet();
+  const wsEl   = ss.getSheetByName(cand.aba);
+  const wsTemp = ss.getSheetByName("📝 Templates");
+  const wsDisp = ss.getSheetByName("📨 Disparos");
+  const wsCfg  = ss.getSheetByName("⚙️ Config");
+  if (!wsEl||!wsTemp||!wsDisp||!wsCfg) return;
+  const cfg = {};
+  wsCfg.getDataRange().getValues().slice(1).forEach(r => { cfg[r[0]] = r[1]; });
+  const temps = wsTemp.getDataRange().getValues().slice(1);
+  let tmpl = temps.find(t => t[0]===cand.nome && (t[2].toLowerCase().includes(tipoTemplate.toLowerCase()) || t[1].toLowerCase().includes(tipoTemplate.toLowerCase())) && t[4]==="SIM");
+  if (!tmpl) { SpreadsheetApp.getUi().alert(`Template "${tipoTemplate}" não encontrado.`); return; }
+  if (wsEl.getLastRow() < 2) { SpreadsheetApp.getUi().alert("Nenhum eleitor cadastrado."); return; }
+  const rows = wsEl.getRange(2,1,wsEl.getLastRow()-1,25).getValues();
+  const alvo = rows.map((r,i)=>({row:i+2,d:r})).filter(({d}) => d[21]==="Novo" && d[20]==="SIM");
+  if (!alvo.length) { SpreadsheetApp.getUi().alert("Nenhum eleitor com status Novo."); return; }
+  const conf = SpreadsheetApp.getUi().alert("Confirmar", `Enviar "${tmpl[2]}" para ${alvo.length} eleitores?`, SpreadsheetApp.getUi().ButtonSet.YES_NO);
+  if (conf !== SpreadsheetApp.getUi().Button.YES) return;
+  let ok=0, err=0;
+  alvo.forEach(({row,d}) => {
+    const nome = d[9], whats = d[10].replace(/\D/g,"");
+    const local = d[8]==="interior" ? (d[13]||d[11]||"seu município") : (d[11]||"seu bairro");
+    const municipio = d[13]||"", interesse = d[18]||"";
+    const msg = tmpl[3].replace(/\[NOME\]/g,nome.split(" ")[0]).replace(/\[LOCAL\]/g,local)
+      .replace(/\[MUNICIPIO\]/g,municipio||local).replace(/\[INTERESSE\]/g,interesse)
+      .replace(/\[DATA_ELEICAO\]/g,cfg.data_eleicao||"4 de outubro de 2026");
+    const r = _enviarZAPI(cfg, whats, msg);
+    if (r.ok) { wsEl.getRange(row,22).setValue("Enviado"); wsEl.getRange(row,23).setValue(_hoje()); ok++; }
+    else { wsEl.getRange(row,22).setValue("Erro"); err++; }
+    wsDisp.appendRow([new Date(), cand.nome, nome, d[10], local, interesse, tmpl[2], r.ok?"✅ Enviado":"❌ Erro"]);
+    if (alvo.length>1) Utilities.sleep(3000);
+  });
+  SpreadsheetApp.getUi().alert(`✅ Concluído!\nEnviados: ${ok}\nErros: ${err}`);
+}
+
+function _enviarZAPI(cfg, numero, msg) {
+  const inst = cfg.zapi_instance||"", token = cfg.zapi_token||"", client = cfg.zapi_client||"";
+  if (!inst||inst==="SUA_INSTANCE") { Logger.log(`[SIMULAÇÃO] ${numero}: ${msg.slice(0,60)}`); return {ok:true,msg:"simulado"}; }
+  try {
+    const url  = `https://api.z-api.io/instances/${inst}/token/${token}/send-text`;
+    const resp = UrlFetchApp.fetch(url,{method:"post",contentType:"application/json",headers:{"Client-Token":client},payload:JSON.stringify({phone:numero,message:msg}),muteHttpExceptions:true});
+    const j    = JSON.parse(resp.getContentText());
+    return {ok:j.zaapId!==undefined, msg:j.error||"ok"};
+  } catch(e) { return {ok:false, msg:e.toString()}; }
+}
+
+// ─────────────────────────────────────────────────────────
+// RELATÓRIO DIÁRIO
+// ─────────────────────────────────────────────────────────
+function relatorioDiario() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const cfg = {};
+  const wsCfg = ss.getSheetByName("⚙️ Config");
+  if (!wsCfg) return;
+  wsCfg.getDataRange().getValues().slice(1).forEach(r=>{cfg[r[0]]=r[1];});
+  const email = cfg.email_articulador;
+  if (!email) return;
+  const hoje = _hoje();
+  const resumo = CANDIDATOS_CFG.map(cand => {
+    const ws = ss.getSheetByName(cand.aba);
+    if (!ws||ws.getLastRow()<2) return {cand,total:0,hoje:0,inter:0,env:0};
+    const rows = ws.getDataRange().getValues().slice(1);
+    return {cand, total:rows.length, hoje:rows.filter(r=>r[1]===hoje).length, inter:rows.filter(r=>r[8]==="interior").length, env:rows.filter(r=>r[21]==="Enviado"||r[21]==="Respondeu").length};
+  });
+  const totalHoje = resumo.reduce((a,r)=>a+r.hoje,0);
+  const totalBase = resumo.reduce((a,r)=>a+r.total,0);
+  MailApp.sendEmail({
+    to: email,
+    subject: `🟡 Avante 70 — ${totalHoje} cadastros hoje | ${hoje}`,
+    htmlBody: `<div style="font-family:Arial;max-width:560px"><h2>Avante 70 — Relatório ${hoje}</h2><p>Total hoje: ${totalHoje} | Base total: ${totalBase}</p></div>`
+  });
+}
+
+function atualizarDashboard() { Logger.log("Dashboard atualizado: " + new Date()); }
+
+function _hoje() { return Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "dd/MM/yyyy"); }
+
+function _ok(msg) {
+  return ContentService.createTextOutput(JSON.stringify({ok:true,msg:msg}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function _jsonErr(msg) {
+  return ContentService.createTextOutput(JSON.stringify({checkins:[], erro:msg}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ─────────────────────────────────────────────────────────
+// MENU
+// ─────────────────────────────────────────────────────────
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu("🟡 Avante 70")
+    .addSubMenu(SpreadsheetApp.getUi().createMenu("⚙️ Instalação")
+      .addItem("ETAPA 1 — Criar abas",          "etapa1_criarAbas")
+      .addItem("ETAPA 2 — Webhook (instruções)", "etapa2_implantarWebhook")
+      .addItem("ETAPA 3 — Configurar gatilhos",  "etapa3_configurarGatilhos")
+      .addItem("ETAPA 4 — Finalizar",            "etapa4_finalizar"))
+    .addSeparator()
+    .addSubMenu(SpreadsheetApp.getUi().createMenu("📨 Disparar WhatsApp")
+      .addItem("🟠 Aryel Almeida — 7070",   "dispararAryel")
+      .addItem("🟡 Daniel Almeida — 70070", "dispararDaniel")
+      .addItem("🔴 David Almeida — 70",     "dispararDavid")
+      .addSeparator()
+      .addItem("⚡ Todos — Boas-vindas",     "dispararTodos"))
+    .addSeparator()
+    .addItem("📊 Relatório diário agora", "relatorioDiario")
+    .addToUi();
+}
+
+// ─────────────────────────────────────────────────────────
+// LGPD
+// ─────────────────────────────────────────────────────────
+function arquivarDadosLGPD() {
+  var agora = new Date();
+  if (agora < new Date("2027-01-01")) {
+    SpreadsheetApp.getUi().alert("⏳ Ainda dentro do período de retenção (até 01/01/2027).");
     return;
   }
-  el.innerHTML = [...checkins].reverse().map(c => `
-    <div class="checkin-item">
-      <div class="ci-header">
-        <div class="ci-tipo-badge">${c.tipo}</div>
-        <div class="ci-hora">${c.hora}</div>
-      </div>
-      ${c.foto_url
-        ? `<img class="ci-foto" src="${c.foto_url}" loading="lazy" onerror="this.style.display='none'">`
-        : c.foto_url === ""
-          ? `<div class="ci-foto-enviando">⏳ Foto sendo processada...</div>`
-          : ""}
-      <div class="ci-body">
-        <div class="ci-eleit">👥 ${c.eleit} eleitores</div>
-        ${c.obs ? `<div class="ci-obs">📝 ${c.obs}</div>` : ""}
-        ${c.lat ? `<div class="ci-gps">📍 ${c.lat}, ${c.lng}</div>` : ""}
-      </div>
-    </div>
-  `).join("");
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var abas = ["📋 Aryel — Eleitores","📋 Daniel — Eleitores","📋 David — Eleitores","📊 Geral — Todos"];
+  var arquivadas = 0;
+  abas.forEach(function(nome) {
+    var ws = ss.getSheetByName(nome);
+    if (ws && ws.getLastRow() > 1) {
+      var nomeArq = nome + " [ARQUIVADO " + Utilities.formatDate(agora, Session.getScriptTimeZone(), "yyyy-MM-dd") + "]";
+      var wsArq = ss.insertSheet(nomeArq);
+      var dados = ws.getDataRange().getValues();
+      wsArq.getRange(1,1,dados.length,dados[0].length).setValues(dados);
+      if (ws.getLastRow() > 1) ws.getRange(2,1,ws.getLastRow()-1,ws.getLastColumn()).clearContent();
+      arquivadas++;
+    }
+  });
+  SpreadsheetApp.getUi().alert("✅ " + arquivadas + " abas arquivadas conforme LGPD.");
 }
-
-function atualizarStats() {
-  document.getElementById("stat-hoje").textContent = checkins.length;
-  const totalEleit = checkins.reduce((a,c)=>a+Number(c.eleit),0);
-  document.getElementById("stat-eleit").textContent = totalEleit;
-  const all = JSON.parse(localStorage.getItem("checkins_total") || "0");
-  document.getElementById("stat-total").textContent = checkins.length + Number(all);
-}
-
-// ── TOAST ──
-function toast(msg, tipo="") {
-  const el = document.getElementById("toast");
-  el.textContent = msg;
-  el.className = "toast" + (tipo?" "+tipo:"") + " show";
-  setTimeout(()=>el.classList.remove("show"), 2800);
-}
-
-// ── INIT ──
-renderPerfil();
-iniciarGPS();
-renderCheckins();
-atualizarStats();
-if (!perfil.nome) setTimeout(abrirPerfil, 800);
-</script>
-</body>
-</html>
