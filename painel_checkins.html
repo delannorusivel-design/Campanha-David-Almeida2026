@@ -3,632 +3,661 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#0D1F3C">
-<title>Painel de Campo — Campanha David Almeida 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#f97316">
+<title>Painel de Campo · David Almeida 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
-  --azul: #0D1F3C;
-  --verde: #00A859;
-  --verde2: #00C96A;
-  --amarelo: #FFD600;
-  --branco: #FFFFFF;
-  --cinza1: #F4F6FA;
-  --cinza2: #E2E8F0;
-  --cinza3: #94A3B8;
-  --card: #FFFFFF;
-  --shadow: 0 2px 20px rgba(13,31,60,0.09);
-  --shadow-hover: 0 8px 32px rgba(13,31,60,0.16);
+  --o1: #f97316;   /* laranja principal */
+  --o2: #ea580c;   /* laranja escuro */
+  --o3: #fed7aa;   /* laranja claro */
+  --o4: #fff7ed;   /* laranja palido */
+  --o5: #ffedd5;   /* laranja suave */
+  --dark: #1c0a00; /* marrom escuro quase preto */
+  --mid:  #78350f; /* marrom medio */
+  --soft: #d97706; /* ambar */
+  --text: #292524;
+  --sub:  #78716c;
+  --bg:   #fafaf9;
+  --card: #ffffff;
+  --border: #e7e5e4;
+  --shadow: 0 1px 12px rgba(249,115,22,0.08);
+  --shadow-lg: 0 8px 32px rgba(249,115,22,0.15);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: 'Inter', sans-serif;
-  background: var(--cinza1);
-  color: var(--azul);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg); color: var(--text);
   min-height: 100vh;
 }
 
-/* HEADER */
-.header {
-  background: var(--azul);
-  padding: 0 24px;
-  height: 60px;
+/* ── TOP NAV ─────────────────────────── */
+.topnav {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  height: 56px;
   display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top:0; z-index: 100;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: 0 1px 0 var(--border);
 }
-.header-brand { display: flex; align-items: center; gap: 12px; }
-.header-logo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 24px; letter-spacing: 1.5px;
-  color: var(--amarelo);
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
 }
-.header-sub { font-size: 12px; color: rgba(255,255,255,0.55); }
-.header-right { display: flex; align-items: center; gap: 16px; }
-.btn-refresh {
-  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
-  color: white; border-radius: 10px; padding: 8px 16px;
-  font-size: 13px; font-weight: 600; cursor: pointer;
-  font-family: 'Inter', sans-serif; transition: all .15s;
-  display: flex; align-items: center; gap: 6px;
-}
-.btn-refresh:hover { background: rgba(255,255,255,0.2); }
-.status-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--verde2);
-  box-shadow: 0 0 6px var(--verde2);
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-@keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.4} }
-.ultima-atualizacao { font-size: 11px; color: rgba(255,255,255,0.45); }
-
-/* STATS BANNER */
-.stats-banner {
-  background: linear-gradient(135deg, #0D1F3C 0%, #1a3a6e 100%);
-  padding: 20px 24px;
-  display: flex; gap: 0;
-  overflow-x: auto;
-}
-.stat-card {
-  flex-shrink: 0; min-width: 120px;
-  padding: 0 24px; text-align: center;
-  border-right: 1px solid rgba(255,255,255,0.12);
-}
-.stat-card:last-child { border-right: none; }
-.stat-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 40px; line-height: 1;
-  color: var(--amarelo);
-}
-.stat-label { font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.8px; }
-
-/* FILTROS */
-.filtros-bar {
-  background: white; padding: 12px 24px;
-  border-bottom: 1px solid var(--cinza2);
-  display: flex; gap: 8px; overflow-x: auto;
-  align-items: center;
-}
-.filtros-bar::-webkit-scrollbar { display: none; }
-.filtro-btn {
-  flex-shrink: 0; padding: 6px 14px; border-radius: 20px;
-  border: 2px solid var(--cinza2); background: white;
-  font-size: 12px; font-weight: 600; cursor: pointer;
-  color: var(--cinza3); font-family: 'Inter', sans-serif;
-  transition: all .15s; white-space: nowrap;
-}
-.filtro-btn.ativo { border-color: var(--verde); background: #F0FDF4; color: var(--verde); }
-.filtros-label { font-size: 12px; color: var(--cinza3); font-weight: 600; margin-right: 4px; flex-shrink: 0; }
-
-/* MAIN LAYOUT */
-.main { padding: 24px; max-width: 1200px; margin: 0 auto; }
-.main-title {
-  font-size: 13px; font-weight: 700; color: var(--cinza3);
-  text-transform: uppercase; letter-spacing: 1px;
-  margin-bottom: 16px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.count-badge {
-  background: var(--cinza2); color: var(--azul);
-  border-radius: 20px; padding: 2px 10px;
-  font-size: 12px; font-weight: 700;
-}
-
-/* FEED GRID */
-.feed-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
-}
-@media (max-width: 600px) {
-  .feed-grid { grid-template-columns: 1fr; gap: 14px; }
-  .main { padding: 14px; }
-  .stats-banner { padding: 14px; }
-  .stat-card { min-width: 90px; padding: 0 16px; }
-  .stat-num { font-size: 32px; }
-}
-
-/* FEED CARD */
-.feed-card {
-  background: var(--card);
-  border-radius: 18px;
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  transition: box-shadow .2s, transform .2s;
-}
-.feed-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
-
-.feed-header {
-  padding: 14px 16px;
-  display: flex; align-items: center; gap: 12px;
-  border-bottom: 1px solid var(--cinza2);
-}
-.feed-avatar {
-  width: 44px; height: 44px; border-radius: 50%;
+.nav-logo {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--o1), var(--o2));
+  border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 16px; color: white;
-  flex-shrink: 0;
+  font-weight: 900; font-size: 15px; color: #fff;
+  box-shadow: 0 3px 10px rgba(249,115,22,0.4);
 }
-.feed-user { flex: 1; min-width: 0; }
-.feed-nome { font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.feed-meta { font-size: 12px; color: var(--cinza3); margin-top: 2px; }
-.feed-hora {
-  font-size: 11px; color: var(--cinza3);
-  flex-shrink: 0; text-align: right;
+.nav-title { font-size: 15px; font-weight: 800; color: var(--text); }
+.nav-sub { font-size: 11px; color: var(--sub); }
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.nav-live {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; color: var(--o1);
+  background: var(--o5); padding: 4px 10px; border-radius: 999px;
 }
-.feed-tipo-badge {
-  display: inline-block; font-size: 10px; font-weight: 700;
-  padding: 2px 8px; border-radius: 10px;
-  background: var(--cinza1); color: var(--azul);
-  margin-top: 2px;
+.live-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--o1);
+  animation: blink 1.4s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+.btn-refresh {
+  background: var(--o1); color: #fff; border: none;
+  border-radius: 9px; padding: 7px 14px; font-size: 12px;
+  font-weight: 700; cursor: pointer; font-family: inherit;
+  display: flex; align-items: center; gap: 5px;
+  transition: background .15s, transform .15s;
+}
+.btn-refresh:hover { background: var(--o2); transform: translateY(-1px); }
+.hora-texto { font-size: 11px; color: var(--sub); }
+
+/* ── PIN OVERLAY ─────────────────────── */
+.pin-overlay {
+  position: fixed; inset: 0;
+  background: linear-gradient(145deg, #1c0a00 0%, #431407 100%);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+}
+.pin-box {
+  width: 340px; text-align: center; padding: 40px 36px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(249,115,22,0.3);
+  border-radius: 24px;
+  backdrop-filter: blur(12px);
+}
+.pin-icon {
+  width: 68px; height: 68px; border-radius: 20px; margin: 0 auto 16px;
+  background: linear-gradient(135deg, var(--o1), var(--o2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; box-shadow: 0 8px 24px rgba(249,115,22,0.5);
+}
+.pin-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+.pin-sub { font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 28px; }
+.pin-input {
+  width: 100%; padding: 14px; text-align: center;
+  font-size: 26px; letter-spacing: 0.5em;
+  border-radius: 14px; border: 2px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08); color: #fff;
+  font-family: inherit; outline: none; margin-bottom: 14px;
+  transition: border-color .2s;
+}
+.pin-input:focus { border-color: var(--o1); }
+.pin-btn {
+  width: 100%; padding: 14px; border-radius: 14px; border: none;
+  background: linear-gradient(135deg, var(--o1), var(--o2));
+  color: #fff; font-weight: 800; font-size: 15px;
+  cursor: pointer; font-family: inherit;
+  box-shadow: 0 6px 20px rgba(249,115,22,0.5);
+  transition: transform .15s;
+}
+.pin-btn:hover { transform: translateY(-2px); }
+.pin-erro { color: #fca5a5; font-size: 13px; margin-top: 12px; display: none; font-weight: 600; }
+
+/* ── STORIES / ATIVISTAS ─────────────── */
+.stories-bar {
+  background: #fff; border-bottom: 1px solid var(--border);
+  padding: 14px 20px; overflow-x: auto; display: flex; gap: 16px;
+}
+.stories-bar::-webkit-scrollbar { display: none; }
+.story-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0; }
+.story-ring {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--o1), var(--o2));
+  padding: 2.5px; box-shadow: 0 2px 8px rgba(249,115,22,0.3);
+}
+.story-ring.visto {
+  background: linear-gradient(135deg, #d4d4d4, #a8a29e);
+  box-shadow: none;
+}
+.story-avatar {
+  width: 100%; height: 100%; border-radius: 50%;
+  background: var(--o5); border: 2px solid #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 16px; color: var(--o2);
+}
+.story-nome { font-size: 10px; font-weight: 600; color: var(--sub); max-width: 60px; text-align: center; line-height: 1.2; }
+.story-checkins { font-size: 10px; font-weight: 800; color: var(--o1); }
+
+/* ── STATS BAR ───────────────────────── */
+.stats-bar {
+  background: linear-gradient(135deg, var(--o2) 0%, var(--o1) 100%);
+  padding: 16px 20px; display: flex; gap: 0; overflow-x: auto;
+}
+.stats-bar::-webkit-scrollbar { display: none; }
+.stat-item {
+  flex: 1; min-width: 80px; text-align: center;
+  padding: 0 16px; border-right: 1px solid rgba(255,255,255,0.2);
+}
+.stat-item:last-child { border-right: none; }
+.stat-n { font-size: 28px; font-weight: 900; color: #fff; line-height: 1; }
+.stat-l { font-size: 10px; color: rgba(255,255,255,0.7); margin-top: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ── FILTROS ─────────────────────────── */
+.filtros {
+  background: #fff; border-bottom: 1px solid var(--border);
+  padding: 10px 20px; display: flex; gap: 6px; overflow-x: auto;
+}
+.filtros::-webkit-scrollbar { display: none; }
+.ftag {
+  flex-shrink: 0; padding: 5px 14px; border-radius: 999px;
+  border: 1.5px solid var(--border); background: #fff;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  color: var(--sub); font-family: inherit; transition: all .15s;
+  white-space: nowrap;
+}
+.ftag.on { border-color: var(--o1); background: var(--o5); color: var(--o2); }
+
+/* ── LAYOUT ──────────────────────────── */
+.layout {
+  max-width: 1100px; margin: 0 auto; padding: 20px;
+  display: flex; gap: 20px; align-items: flex-start;
+}
+.feed { flex: 1; min-width: 0; }
+.sidebar { width: 300px; flex-shrink: 0; }
+@media (max-width: 900px) { .layout { flex-direction: column; } .sidebar { width: 100%; } }
+@media (max-width: 600px) { .layout { padding: 12px; } }
+
+/* ── FEED HEADER ─────────────────────── */
+.feed-header-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.feed-label { font-size: 12px; font-weight: 800; color: var(--sub); text-transform: uppercase; letter-spacing: 0.8px; }
+.feed-count-badge {
+  background: var(--o5); color: var(--o2);
+  border-radius: 999px; padding: 3px 10px;
+  font-size: 11px; font-weight: 800;
 }
 
-/* FOTO */
-.feed-foto-wrap {
-  position: relative;
-  background: #111;
-  overflow: hidden;
-  cursor: zoom-in;
+/* ── POST CARD (estilo Instagram) ────── */
+.post-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; margin-bottom: 16px; overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: box-shadow .2s;
 }
-.feed-foto {
-  width: 100%; display: block;
-  max-height: 340px; object-fit: cover;
-  transition: transform .3s ease;
+.post-card:hover { box-shadow: var(--shadow-lg); }
+
+.post-header {
+  padding: 12px 14px;
+  display: flex; align-items: center; gap: 10px;
 }
-.feed-foto-wrap:hover .feed-foto { transform: scale(1.03); }
-.feed-foto-erro {
-  padding: 24px; text-align: center;
-  color: var(--cinza3); font-size: 13px;
-  background: var(--cinza1);
+.post-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 14px; color: #fff; flex-shrink: 0;
+  border: 2px solid var(--o3);
 }
-.feed-foto-pendente {
-  padding: 20px; text-align: center;
-  color: #F59E0B; font-size: 13px;
-  background: #FFFBEB;
-  border-top: 1px solid #FDE68A;
+.post-user { flex: 1; min-width: 0; }
+.post-nome { font-weight: 700; font-size: 14px; line-height: 1.2; }
+.post-meta { font-size: 11px; color: var(--sub); margin-top: 2px; }
+.post-hora { font-size: 11px; color: var(--sub); flex-shrink: 0; text-align: right; }
+
+.post-tipo {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 700; padding: 2px 8px;
+  border-radius: 6px; background: var(--o5); color: var(--o2);
+  margin-top: 3px;
 }
+
+/* FOTO QUADRADA (estilo Instagram) */
+.post-foto-wrap {
+  position: relative; overflow: hidden;
+  background: #1c0a00; cursor: zoom-in;
+  aspect-ratio: 1 / 1;
+}
+.post-foto-wrap.paisagem { aspect-ratio: 4 / 3; }
+.post-foto {
+  width: 100%; height: 100%; object-fit: cover;
+  display: block; transition: transform .4s ease;
+}
+.post-foto-wrap:hover .post-foto { transform: scale(1.04); }
+.post-no-foto {
+  aspect-ratio: 1 / 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--o5); color: var(--o1);
+  font-size: 32px; gap: 8px;
+}
+.post-no-foto span { font-size: 12px; font-weight: 600; color: var(--soft); }
+
+/* AÇÕES (curtir estilo IG) */
+.post-actions {
+  padding: 10px 14px 4px;
+  display: flex; align-items: center; gap: 14px;
+}
+.post-action {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 700; color: var(--sub);
+  cursor: default;
+}
+.post-action.destaque { color: var(--o1); }
 
 /* BODY */
-.feed-body { padding: 12px 16px 16px; }
-.feed-eleit {
-  font-size: 22px; font-weight: 800;
-  font-family: 'Bebas Neue', sans-serif;
-  color: var(--verde); display: flex; align-items: center; gap: 6px;
-}
-.feed-eleit span { font-size: 13px; font-weight: 500; color: var(--cinza3); font-family: 'Inter', sans-serif; }
-.feed-obs { font-size: 13px; color: #475569; margin-top: 8px; line-height: 1.5; }
-.feed-gps { font-size: 11px; color: var(--cinza3); margin-top: 8px; display: flex; align-items: center; gap: 4px; }
-.feed-gps a { color: var(--verde); text-decoration: none; }
+.post-body { padding: 4px 14px 14px; }
+.post-eleit { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.post-eleit em { color: var(--o1); font-style: normal; }
+.post-obs { font-size: 13px; color: var(--sub); line-height: 1.55; margin-top: 4px; }
+.post-gps { font-size: 11px; color: var(--sub); margin-top: 8px; display: flex; align-items: center; gap: 4px; }
+.post-gps a { color: var(--o1); text-decoration: none; font-weight: 700; }
 
-/* ZONA TAG */
-.zona-tag {
-  display: inline-flex; align-items: center;
-  font-size: 11px; font-weight: 700; padding: 3px 10px;
-  border-radius: 10px; margin-left: auto;
+/* ── SIDEBAR CARDS ───────────────────── */
+.side-card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden; margin-bottom: 16px;
+  box-shadow: var(--shadow);
 }
+.side-title {
+  padding: 12px 16px; font-size: 12px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--o2), var(--o1));
+  display: flex; align-items: center; gap: 7px;
+}
+.rank-item {
+  padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.rank-item:last-child { border-bottom: none; }
+.rank-pos { font-size: 18px; font-weight: 900; color: var(--sub); width: 22px; text-align: center; flex-shrink: 0; }
+.rank-pos.g { color: #f59e0b; } .rank-pos.s { color: #94a3b8; } .rank-pos.b { color: #cd7c52; }
+.rank-av { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; color: #fff; flex-shrink: 0; }
+.rank-info { flex: 1; min-width: 0; }
+.rank-nome { font-weight: 700; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rank-sub { font-size: 11px; color: var(--sub); }
+.rank-n { font-size: 20px; font-weight: 900; color: var(--o1); }
 
-/* LIGHTBOX */
+.zona-item { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.zona-item:last-child { border-bottom: none; }
+.zona-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.zona-nome { font-size: 12px; font-weight: 700; }
+.zona-count { font-size: 11px; color: var(--sub); }
+.zona-bar { height: 5px; border-radius: 999px; background: var(--border); overflow: hidden; }
+.zona-fill { height: 100%; border-radius: 999px; transition: width .5s ease; }
+.zona-eleit { font-size: 11px; color: var(--sub); margin-top: 3px; }
+
+/* ── LIGHTBOX ────────────────────────── */
 .lightbox {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.92); z-index: 500;
-  display: none; align-items: center; justify-content: center;
-  flex-direction: column;
+  position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+  z-index: 500; display: none; align-items: center;
+  justify-content: center; flex-direction: column;
 }
 .lightbox.open { display: flex; }
-.lightbox img {
-  max-width: 95vw; max-height: 85vh;
-  border-radius: 12px;
-  object-fit: contain;
-}
-.lightbox-close {
-  position: absolute; top: 16px; right: 20px;
-  color: white; font-size: 32px; cursor: pointer;
-  background: rgba(255,255,255,0.15); border: none;
-  border-radius: 50%; width: 44px; height: 44px;
+.lb-img { max-width: 95vw; max-height: 85vh; border-radius: 12px; object-fit: contain; }
+.lb-close {
+  position: absolute; top: 16px; right: 16px; width: 40px; height: 40px;
+  border-radius: 50%; background: rgba(255,255,255,0.15); border: none;
+  color: #fff; font-size: 20px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
 }
-.lightbox-caption {
-  color: rgba(255,255,255,0.7); font-size: 13px;
-  margin-top: 12px; text-align: center;
-}
+.lb-caption { color: rgba(255,255,255,0.6); font-size: 13px; margin-top: 12px; }
 
-/* EMPTY STATE */
-.empty-state {
-  grid-column: 1/-1; text-align: center;
-  padding: 48px 24px; color: var(--cinza3);
-}
+/* ── EMPTY / LOADING ─────────────────── */
+.empty { text-align: center; padding: 60px 20px; color: var(--sub); }
 .empty-icon { font-size: 48px; margin-bottom: 12px; }
-.empty-msg { font-size: 15px; }
-
-/* LOADING */
-.loading {
-  grid-column: 1/-1; text-align: center;
-  padding: 48px; color: var(--cinza3);
-}
+.empty-msg { font-size: 15px; font-weight: 600; }
+.empty-sub { font-size: 13px; margin-top: 4px; }
+.loading { text-align: center; padding: 60px; color: var(--sub); }
 .spinner {
   width: 36px; height: 36px; border-radius: 50%;
-  border: 3px solid var(--cinza2);
-  border-top-color: var(--verde);
-  animation: spin .8s linear infinite;
-  margin: 0 auto 12px;
+  border: 3px solid var(--o3); border-top-color: var(--o1);
+  animation: spin .7s linear infinite; margin: 0 auto 12px;
 }
-@keyframes spin { to{transform:rotate(360deg)} }
-
-/* RANKING SIDEBAR */
-.layout { display: flex; gap: 24px; align-items: flex-start; }
-.feed-area { flex: 1; min-width: 0; }
-.sidebar { width: 280px; flex-shrink: 0; }
-@media (max-width: 900px) { .layout { flex-direction: column; } .sidebar { width: 100%; } }
-
-.ranking-card {
-  background: var(--card); border-radius: 18px;
-  box-shadow: var(--shadow); overflow: hidden;
-  margin-bottom: 20px;
-}
-.ranking-title {
-  background: var(--azul); color: white;
-  padding: 14px 16px;
-  font-size: 13px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.8px;
-  display: flex; align-items: center; gap: 8px;
-}
-.ranking-item {
-  padding: 12px 16px;
-  display: flex; align-items: center; gap: 10px;
-  border-bottom: 1px solid var(--cinza2);
-}
-.ranking-item:last-child { border-bottom: none; }
-.rank-pos {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 20px; color: var(--cinza3);
-  width: 24px; text-align: center; flex-shrink: 0;
-}
-.rank-pos.gold { color: #F59E0B; }
-.rank-pos.silver { color: #94A3B8; }
-.rank-pos.bronze { color: #CD7C52; }
-.rank-avatar {
-  width: 36px; height: 36px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 13px; color: white; flex-shrink: 0;
-}
-.rank-info { flex: 1; min-width: 0; }
-.rank-nome { font-weight: 600; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rank-sub { font-size: 11px; color: var(--cinza3); }
-.rank-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 22px; color: var(--verde);
-}
-
-/* Cores por zona */
-.zona-Norte  { background: #3B82F6; }
-.zona-Sul    { background: #EF4444; }
-.zona-Centro { background: #8B5CF6; }
-.zona-Oeste  { background: #F59E0B; }
-.zona-Leste  { background: #10B981; }
-.zona-Rural  { background: #84CC16; }
-.zona-       { background: #94A3B8; }
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="header-brand">
+<!-- PIN -->
+<div class="pin-overlay" id="pinOverlay">
+  <div class="pin-box">
+    <div class="pin-icon">📍</div>
+    <div class="pin-title">Campo · Avante 70</div>
+    <div class="pin-sub">David Almeida 2026 · Acesso restrito</div>
+    <input class="pin-input" type="password" id="pinInput" maxlength="8" placeholder="••••"
+      onkeydown="if(event.key==='Enter') verificarPin()" autofocus />
+    <button class="pin-btn" onclick="verificarPin()">Entrar</button>
+    <div class="pin-erro" id="pinErro">PIN incorreto. Tente novamente.</div>
+  </div>
+</div>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="nav-brand">
+    <div class="nav-logo">70</div>
     <div>
-      <div class="header-logo">📍 AVANTE 70 — CAMPO</div>
-      <div class="header-sub">Campanha David Almeida 2026 · Painel em tempo real</div>
+      <div class="nav-title">Campo · David Almeida 2026</div>
+      <div class="nav-sub" id="hora-texto">Carregando...</div>
     </div>
   </div>
-  <div class="header-right">
-    <div class="status-dot"></div>
-    <div class="ultima-atualizacao" id="ultima-atualiz">Carregando...</div>
+  <div class="nav-right">
+    <div class="nav-live"><div class="live-dot"></div> AO VIVO</div>
     <button class="btn-refresh" onclick="carregar()">🔄 Atualizar</button>
   </div>
+</nav>
+
+<!-- STORIES -->
+<div class="stories-bar" id="storiesBar">
+  <div style="display:flex;align-items:center;color:#d4d4d4;font-size:12px;padding:8px 0">Carregando ativistas...</div>
 </div>
 
 <!-- STATS -->
-<div class="stats-banner">
-  <div class="stat-card">
-    <div class="stat-num" id="s-total">0</div>
-    <div class="stat-label">Check-ins hoje</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-num" id="s-ativistas">0</div>
-    <div class="stat-label">Ativistas em campo</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-num" id="s-eleit">0</div>
-    <div class="stat-label">Eleitores abordados</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-num" id="s-fotos">0</div>
-    <div class="stat-label">Fotos registradas</div>
-  </div>
+<div class="stats-bar">
+  <div class="stat-item"><div class="stat-n" id="s-total">—</div><div class="stat-l">Check-ins</div></div>
+  <div class="stat-item"><div class="stat-n" id="s-ativistas">—</div><div class="stat-l">Ativistas</div></div>
+  <div class="stat-item"><div class="stat-n" id="s-eleit">—</div><div class="stat-l">Eleitores</div></div>
+  <div class="stat-item"><div class="stat-n" id="s-fotos">—</div><div class="stat-l">Fotos</div></div>
 </div>
 
 <!-- FILTROS -->
-<div class="filtros-bar">
-  <span class="filtros-label">Filtrar:</span>
-  <button class="filtro-btn ativo" data-filtro="" onclick="filtrar(this)">Todos</button>
-  <button class="filtro-btn" data-filtro="Zona Norte" onclick="filtrar(this)">🔵 Norte</button>
-  <button class="filtro-btn" data-filtro="Zona Sul" onclick="filtrar(this)">🔴 Sul</button>
-  <button class="filtro-btn" data-filtro="Centro" onclick="filtrar(this)">🟣 Centro</button>
-  <button class="filtro-btn" data-filtro="Zona Oeste" onclick="filtrar(this)">🟡 Oeste</button>
-  <button class="filtro-btn" data-filtro="Zona Leste" onclick="filtrar(this)">🟢 Leste</button>
-  <button class="filtro-btn" data-filtro="Zona Rural" onclick="filtrar(this)">🌿 Rural</button>
+<div class="filtros">
+  <button class="ftag on" data-z="" onclick="filtrar(this)">Todos</button>
+  <button class="ftag" data-z="Zona Norte" onclick="filtrar(this)">🔵 Norte</button>
+  <button class="ftag" data-z="Zona Sul" onclick="filtrar(this)">🔴 Sul</button>
+  <button class="ftag" data-z="Centro" onclick="filtrar(this)">🟣 Centro</button>
+  <button class="ftag" data-z="Zona Oeste" onclick="filtrar(this)">🟡 Oeste</button>
+  <button class="ftag" data-z="Zona Leste" onclick="filtrar(this)">🟢 Leste</button>
+  <button class="ftag" data-z="Zona Rural" onclick="filtrar(this)">🌿 Rural</button>
 </div>
 
-<!-- MAIN -->
-<div class="main">
-  <div class="layout">
-    <div class="feed-area">
-      <div class="main-title">
-        <span>📸 Feed de campo</span>
-        <span class="count-badge" id="feed-count">0 registros</span>
-      </div>
-      <div class="feed-grid" id="feed-grid">
-        <div class="loading">
-          <div class="spinner"></div>
-          Carregando check-ins...
-        </div>
-      </div>
+<!-- LAYOUT -->
+<div class="layout">
+  <div class="feed">
+    <div class="feed-header-row">
+      <div class="feed-label">📸 Feed de campo</div>
+      <div class="feed-count-badge" id="feed-count">—</div>
     </div>
+    <div id="feed-area">
+      <div class="loading"><div class="spinner"></div>Aguardando autenticação...</div>
+    </div>
+  </div>
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-      <div class="ranking-card">
-        <div class="ranking-title">🏆 Ranking de ativistas</div>
-        <div id="ranking-lista">
-          <div style="padding:16px;color:var(--cinza3);font-size:13px;text-align:center">Carregando...</div>
-        </div>
-      </div>
-
-      <div class="ranking-card">
-        <div class="ranking-title">📊 Por zona</div>
-        <div id="zonas-lista">
-          <div style="padding:16px;color:var(--cinza3);font-size:13px;text-align:center">Carregando...</div>
-        </div>
-      </div>
+  <div class="sidebar">
+    <div class="side-card">
+      <div class="side-title">🏆 Ranking</div>
+      <div id="ranking-lista"><div style="padding:16px;font-size:13px;color:#a8a29e;text-align:center">—</div></div>
+    </div>
+    <div class="side-card">
+      <div class="side-title">📊 Por zona</div>
+      <div id="zonas-lista"><div style="padding:16px;font-size:13px;color:#a8a29e;text-align:center">—</div></div>
     </div>
   </div>
 </div>
 
 <!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox" onclick="fecharLightbox()">
-  <button class="lightbox-close" onclick="fecharLightbox()">✕</button>
-  <img id="lightbox-img" src="" alt="">
-  <div class="lightbox-caption" id="lightbox-caption"></div>
+<div class="lightbox" id="lightbox" onclick="fecharLb()">
+  <button class="lb-close" onclick="fecharLb()">✕</button>
+  <img class="lb-img" id="lb-img" src="" alt="">
+  <div class="lb-caption" id="lb-cap"></div>
 </div>
 
 <script>
 const WEBHOOK = "https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec";
 const TOKEN   = "avante70-am-2026-token-secreto";
+const PIN_HASH = "7a3ed03b12b784c2581ae5308e31f2a80248b481d8b0d369ee2193dcc3c1c4c5";
 
-// Cores por zona
 const ZCORS = {
-  "Zona Norte": "#3B82F6",
-  "Zona Sul":   "#EF4444",
-  "Centro":     "#8B5CF6",
-  "Zona Oeste": "#F59E0B",
-  "Zona Leste": "#10B981",
-  "Zona Rural": "#84CC16",
+  "Zona Norte":"#3b82f6","Zona Sul":"#ef4444","Centro":"#8b5cf6",
+  "Zona Oeste":"#f59e0b","Zona Leste":"#10b981","Zona Rural":"#84cc16",
 };
 
-let todosCheckins = [];
-let filtroAtivo = "";
+let checkins  = [];
+let filtroZ   = "";
+let autenticado = false;
 
-// ── BUSCAR DADOS ──
+// ── PIN ───────────────────────────────────────────────────
+async function verificarPin() {
+  const pin = document.getElementById("pinInput").value;
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(pin));
+  const hash = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+  if (hash === PIN_HASH) {
+    autenticado = true;
+    document.getElementById("pinOverlay").style.display = "none";
+    carregar();
+  } else {
+    document.getElementById("pinErro").style.display = "block";
+    document.getElementById("pinInput").value = "";
+  }
+}
+
+// ── CARREGAR ──────────────────────────────────────────────
 async function carregar() {
-  const grid = document.getElementById("feed-grid");
-  grid.innerHTML = `<div class="loading"><div class="spinner"></div>Carregando check-ins...</div>`;
+  if (!autenticado) return;
+  document.getElementById("feed-area").innerHTML = `<div class="loading"><div class="spinner"></div>Buscando check-ins...</div>`;
 
   try {
-    // Tenta buscar do Apps Script
-    const url = `${WEBHOOK}?acao=listar&token=${TOKEN}&t=${Date.now()}`;
+    const url  = `${WEBHOOK}?acao=listar_checkins&token=${TOKEN}&t=${Date.now()}`;
     const resp = await fetch(url);
     const json = await resp.json();
 
-    if (json.checkins && Array.isArray(json.checkins)) {
-      todosCheckins = json.checkins;
+    if (json.checkins && Array.isArray(json.checkins) && json.checkins.length > 0) {
+      checkins = json.checkins;
     } else {
-      throw new Error("Sem dados");
+      // Sem dados reais — mostra estado vazio (sem demo)
+      checkins = [];
     }
   } catch(e) {
-    // Fallback: dados locais (localStorage do checkin_ativista)
-    const local = JSON.parse(localStorage.getItem("checkins_hoje") || "[]");
-    todosCheckins = local;
-
-    if (!todosCheckins.length) {
-      // Demo data para mostrar o layout
-      todosCheckins = gerarDemoData();
-    }
+    console.warn("Erro ao buscar:", e.message);
+    checkins = [];
   }
 
   renderTudo();
   atualizarHora();
 }
 
-function gerarDemoData() {
-  const nomes = ["Maria Silva", "João Pereira", "Ana Costa", "Carlos Lima", "Fernanda Souza"];
-  const zonas = ["Zona Norte", "Zona Sul", "Centro", "Zona Oeste", "Zona Leste"];
-  const tipos = ["Visita domiciliar", "Abordagem de rua", "Distribuição de material", "Reunião de líderes"];
-  return nomes.map((nome, i) => ({
-    id: Date.now() + i,
-    dia: new Date().toLocaleDateString("pt-BR"),
-    hora: `${9+i}:${String(i*10).padStart(2,"0")}`,
-    nome, zona: zonas[i], lider: "Coord. Principal",
-    tipo: tipos[i % tipos.length],
-    eleit: (i+1)*7,
-    obs: i === 0 ? "Rua das Flores — ótima receptividade!" : "",
-    lat: "", lng: "",
-    foto_url: "", // sem foto no demo
-  }));
+function filtrar(btn) {
+  document.querySelectorAll(".ftag").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on");
+  filtroZ = btn.dataset.z;
+  renderFeed();
 }
 
-function filtrar(btn) {
-  document.querySelectorAll(".filtro-btn").forEach(b=>b.classList.remove("ativo"));
-  btn.classList.add("ativo");
-  filtroAtivo = btn.dataset.filtro;
-  renderFeed();
+function filtrados() {
+  return filtroZ ? checkins.filter(c=>c.zona===filtroZ) : checkins;
 }
 
 function renderTudo() {
+  renderStories();
+  renderStats();
   renderFeed();
   renderRanking();
   renderZonas();
-  renderStats();
 }
 
-function checkinsFiltrados() {
-  if (!filtroAtivo) return todosCheckins;
-  return todosCheckins.filter(c => c.zona === filtroAtivo);
+// ── STORIES ───────────────────────────────────────────────
+function renderStories() {
+  const bar  = document.getElementById("storiesBar");
+  const cont = {};
+  checkins.forEach(c => {
+    if (!cont[c.nome]) cont[c.nome] = { checkins:0, zona:c.zona };
+    cont[c.nome].checkins++;
+  });
+  const sorted = Object.entries(cont).sort((a,b)=>b[1].checkins-a[1].checkins);
+  if (!sorted.length) {
+    bar.innerHTML = `<div style="display:flex;align-items:center;color:#a8a29e;font-size:12px;padding:8px 0">Nenhum ativista em campo</div>`;
+    return;
+  }
+  bar.innerHTML = sorted.map(([nome, d]) => {
+    const cor = ZCORS[d.zona] || "#f97316";
+    const ini = nome.split(" ").map(p=>p[0]).slice(0,2).join("").toUpperCase();
+    return `<div class="story-item">
+      <div class="story-ring">
+        <div class="story-avatar" style="background:${cor};color:#fff">${ini}</div>
+      </div>
+      <div class="story-nome">${esc(nome.split(" ")[0])}</div>
+      <div class="story-checkins">${d.checkins}×</div>
+    </div>`;
+  }).join("");
 }
 
-// ── FEED ──
+// ── STATS ─────────────────────────────────────────────────
+function renderStats() {
+  document.getElementById("s-total").textContent    = checkins.length;
+  document.getElementById("s-ativistas").textContent = new Set(checkins.map(c=>c.nome)).size;
+  document.getElementById("s-eleit").textContent    = checkins.reduce((a,c)=>a+Number(c.eleit||0),0);
+  document.getElementById("s-fotos").textContent    = checkins.filter(c=>c.foto_url&&c.foto_url.startsWith("http")).length;
+}
+
+// ── FEED ──────────────────────────────────────────────────
 function renderFeed() {
-  const lista = checkinsFiltrados();
-  const grid  = document.getElementById("feed-grid");
+  const lista = filtrados();
+  const area  = document.getElementById("feed-area");
   document.getElementById("feed-count").textContent = `${lista.length} registro${lista.length!==1?"s":""}`;
 
   if (!lista.length) {
-    grid.innerHTML = `<div class="empty-state">
+    area.innerHTML = `<div class="empty">
       <div class="empty-icon">📭</div>
-      <div class="empty-msg">Nenhum check-in encontrado</div>
+      <div class="empty-msg">${filtroZ ? "Nenhum check-in nessa zona" : "Nenhum check-in registrado ainda"}</div>
+      <div class="empty-sub">Os check-ins aparecerão aqui em tempo real</div>
     </div>`;
     return;
   }
 
-  grid.innerHTML = [...lista].reverse().map(c => {
-    const cor = ZCORS[c.zona] || "#94A3B8";
-    const zonaKey = (c.zona || "").replace("Zona ","");
+  area.innerHTML = [...lista].reverse().map(c => {
+    const cor = ZCORS[c.zona] || "#f97316";
     const ini = (c.nome||"A").split(" ").map(p=>p[0]).slice(0,2).join("").toUpperCase();
+    const temFoto = c.foto_url && c.foto_url.startsWith("http");
+    const mapsUrl = c.lat && c.lng ? `https://maps.google.com/?q=${c.lat},${c.lng}` : "";
+    const fotoEsc = temFoto ? esc(c.foto_url) : "";
 
-    let fotoHtml = "";
-    if (c.foto_url) {
-      fotoHtml = `<div class="feed-foto-wrap" onclick="abrirLightbox('${c.foto_url}','${esc(c.nome)} · ${esc(c.hora)}')">
-        <img src="${c.foto_url}" class="feed-foto" loading="lazy"
-          onerror="this.closest('.feed-foto-wrap').outerHTML='<div class=feed-foto-erro>📷 Foto indisponível</div>'">
-      </div>`;
-    } else {
-      fotoHtml = `<div class="feed-foto-pendente">⏳ Aguardando foto...</div>`;
-    }
+    const fotoHtml = temFoto
+      ? `<div class="post-foto-wrap" onclick="abrirLb('${fotoEsc}','${esc(c.nome)} · ${esc(c.hora)}')">
+           <img class="post-foto" src="${fotoEsc}" loading="lazy"
+             onerror="this.closest('.post-foto-wrap').outerHTML='<div class=post-no-foto><span style=font-size:32px>📷</span><span>Foto indisponível</span></div>'">
+         </div>`
+      : `<div class="post-no-foto"><span>📷</span><span>Sem foto registrada</span></div>`;
 
-    const mapsUrl = c.lat ? `https://maps.google.com/?q=${c.lat},${c.lng}` : "";
-
-    return `<div class="feed-card">
-      <div class="feed-header">
-        <div class="feed-avatar zona-${zonaKey}" style="background:${cor}">${ini}</div>
-        <div class="feed-user">
-          <div class="feed-nome">${esc(c.nome||"Ativista")}</div>
-          <div class="feed-meta">
-            ${c.zona ? `<span style="color:${cor};font-weight:700">${c.zona}</span>` : ""}
+    return `<div class="post-card">
+      <div class="post-header">
+        <div class="post-avatar" style="background:${cor}">${ini}</div>
+        <div class="post-user">
+          <div class="post-nome">${esc(c.nome||"Ativista")}</div>
+          <div class="post-meta">
+            <span style="color:${cor};font-weight:700">${esc(c.zona||"")}</span>
             ${c.lider ? ` · ${esc(c.lider)}` : ""}
           </div>
-          <div class="feed-tipo-badge">${c.tipo||""}</div>
+          <div class="post-tipo">${esc(c.tipo||"")}</div>
         </div>
-        <div class="feed-hora">${c.hora||""}<br><span style="font-size:10px;color:var(--cinza3)">${c.dia||""}</span></div>
+        <div class="post-hora">${esc(c.hora||"")}<br><span style="font-size:10px">${esc(c.dia||"")}</span></div>
       </div>
+
       ${fotoHtml}
-      <div class="feed-body">
-        <div class="feed-eleit">👥 ${c.eleit||0} <span>eleitores abordados</span></div>
-        ${c.obs ? `<div class="feed-obs">📝 ${esc(c.obs)}</div>` : ""}
-        ${mapsUrl ? `<div class="feed-gps">📍 <a href="${mapsUrl}" target="_blank">Ver no mapa</a> (±${c.acc}m)</div>` : ""}
+
+      <div class="post-actions">
+        <div class="post-action destaque">👥 <strong>${c.eleit||0}</strong></div>
+        ${temFoto ? `<div class="post-action">📸 foto</div>` : ""}
+        ${mapsUrl ? `<div class="post-action">📍 GPS</div>` : ""}
+      </div>
+
+      <div class="post-body">
+        <div class="post-eleit">
+          <em>${c.eleit||0}</em> eleitor${Number(c.eleit)!==1?"es":""} abordado${Number(c.eleit)!==1?"s":""}
+        </div>
+        ${c.obs ? `<div class="post-obs">${esc(c.obs)}</div>` : ""}
+        ${mapsUrl ? `<div class="post-gps">📍 <a href="${mapsUrl}" target="_blank">Ver localização no mapa</a> (±${esc(String(c.acc||""))}m)</div>` : ""}
       </div>
     </div>`;
   }).join("");
 }
 
-// ── STATS ──
-function renderStats() {
-  const lista = todosCheckins;
-  document.getElementById("s-total").textContent = lista.length;
-  const ativistas = new Set(lista.map(c=>c.nome)).size;
-  document.getElementById("s-ativistas").textContent = ativistas;
-  const eleit = lista.reduce((a,c)=>a+Number(c.eleit||0),0);
-  document.getElementById("s-eleit").textContent = eleit;
-  const fotos = lista.filter(c=>c.foto_url).length;
-  document.getElementById("s-fotos").textContent = fotos;
-}
-
-// ── RANKING ──
+// ── RANKING ───────────────────────────────────────────────
 function renderRanking() {
-  const contagem = {};
-  todosCheckins.forEach(c => {
-    if (!contagem[c.nome]) contagem[c.nome] = { checkins:0, eleit:0, zona:c.zona };
-    contagem[c.nome].checkins++;
-    contagem[c.nome].eleit += Number(c.eleit||0);
+  const cont = {};
+  checkins.forEach(c => {
+    if (!cont[c.nome]) cont[c.nome] = {n:0, eleit:0, zona:c.zona};
+    cont[c.nome].n++;
+    cont[c.nome].eleit += Number(c.eleit||0);
   });
-  const sorted = Object.entries(contagem).sort((a,b)=>b[1].eleit-a[1].eleit).slice(0,8);
-  const posClasses = ["gold","silver","bronze"];
+  const sorted = Object.entries(cont).sort((a,b)=>b[1].eleit-a[1].eleit).slice(0,8);
   const el = document.getElementById("ranking-lista");
-  if (!sorted.length) { el.innerHTML = `<div style="padding:16px;color:var(--cinza3);font-size:13px;text-align:center">Sem dados</div>`; return; }
+  if (!sorted.length) { el.innerHTML = `<div style="padding:14px;font-size:13px;color:#a8a29e;text-align:center">Sem dados</div>`; return; }
+  const pc = ["g","s","b"];
   el.innerHTML = sorted.map(([nome,d],i) => {
-    const cor = ZCORS[d.zona] || "#94A3B8";
-    const zonaKey = (d.zona||"").replace("Zona ","");
+    const cor = ZCORS[d.zona]||"#f97316";
     const ini = nome.split(" ").map(p=>p[0]).slice(0,2).join("").toUpperCase();
-    return `<div class="ranking-item">
-      <div class="rank-pos ${posClasses[i]||""}">${i+1}</div>
-      <div class="rank-avatar zona-${zonaKey}" style="background:${cor}">${ini}</div>
+    return `<div class="rank-item">
+      <div class="rank-pos ${pc[i]||""}">${i+1}</div>
+      <div class="rank-av" style="background:${cor}">${ini}</div>
       <div class="rank-info">
         <div class="rank-nome">${esc(nome)}</div>
-        <div class="rank-sub">${d.checkins} check-in${d.checkins!==1?"s":""}</div>
+        <div class="rank-sub">${d.n} check-in${d.n!==1?"s":""}</div>
       </div>
-      <div class="rank-num">${d.eleit}</div>
+      <div class="rank-n">${d.eleit}</div>
     </div>`;
   }).join("");
 }
 
-// ── ZONAS ──
+// ── ZONAS ─────────────────────────────────────────────────
 function renderZonas() {
-  const contagem = {};
-  todosCheckins.forEach(c => {
-    const z = c.zona || "Sem zona";
-    if (!contagem[z]) contagem[z] = { checkins:0, eleit:0 };
-    contagem[z].checkins++;
-    contagem[z].eleit += Number(c.eleit||0);
+  const cont = {};
+  checkins.forEach(c => {
+    const z = c.zona||"Sem zona";
+    if (!cont[z]) cont[z] = {n:0, eleit:0};
+    cont[z].n++;
+    cont[z].eleit += Number(c.eleit||0);
   });
-  const sorted = Object.entries(contagem).sort((a,b)=>b[1].eleit-a[1].eleit);
-  const maxEleit = Math.max(...sorted.map(([,d])=>d.eleit), 1);
-  const el = document.getElementById("zonas-lista");
-  if (!sorted.length) { el.innerHTML = `<div style="padding:16px;color:var(--cinza3);font-size:13px;text-align:center">Sem dados</div>`; return; }
+  const sorted = Object.entries(cont).sort((a,b)=>b[1].eleit-a[1].eleit);
+  const max = Math.max(...sorted.map(([,d])=>d.eleit),1);
+  const el  = document.getElementById("zonas-lista");
+  if (!sorted.length) { el.innerHTML = `<div style="padding:14px;font-size:13px;color:#a8a29e;text-align:center">Sem dados</div>`; return; }
   el.innerHTML = sorted.map(([zona,d]) => {
-    const cor = ZCORS[zona] || "#94A3B8";
-    const pct = Math.round(d.eleit/maxEleit*100);
-    return `<div style="padding:12px 16px;border-bottom:1px solid var(--cinza2)">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <span style="font-size:13px;font-weight:600;color:${cor}">${esc(zona)}</span>
-        <span style="font-size:11px;color:var(--cinza3)">${d.checkins} check-ins</span>
+    const cor = ZCORS[zona]||"#f97316";
+    const pct = Math.round(d.eleit/max*100);
+    return `<div class="zona-item">
+      <div class="zona-row">
+        <div class="zona-nome" style="color:${cor}">${esc(zona)}</div>
+        <div class="zona-count">${d.n} check-ins</div>
       </div>
-      <div style="background:var(--cinza2);border-radius:4px;height:6px;overflow:hidden">
-        <div style="height:100%;width:${pct}%;background:${cor};border-radius:4px;transition:width .5s"></div>
-      </div>
-      <div style="font-size:11px;color:var(--cinza3);margin-top:4px">👥 ${d.eleit} eleitores</div>
+      <div class="zona-bar"><div class="zona-fill" style="width:${pct}%;background:${cor}"></div></div>
+      <div class="zona-eleit">👥 ${d.eleit} eleitores</div>
     </div>`;
   }).join("");
 }
 
-// ── LIGHTBOX ──
-function abrirLightbox(url, caption) {
-  document.getElementById("lightbox-img").src = url;
-  document.getElementById("lightbox-caption").textContent = caption;
+// ── LIGHTBOX ──────────────────────────────────────────────
+function abrirLb(url, cap) {
+  document.getElementById("lb-img").src = url;
+  document.getElementById("lb-cap").textContent = cap;
   document.getElementById("lightbox").classList.add("open");
 }
-function fecharLightbox() { document.getElementById("lightbox").classList.remove("open"); }
-document.addEventListener("keydown", e => { if(e.key==="Escape") fecharLightbox(); });
+function fecharLb() { document.getElementById("lightbox").classList.remove("open"); }
+document.addEventListener("keydown", e => { if(e.key==="Escape") fecharLb(); });
 
-// ── HELPERS ──
+// ── HELPERS ───────────────────────────────────────────────
 function esc(s) {
   if (!s) return "";
   return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 }
 function atualizarHora() {
-  const h = new Date().toLocaleTimeString("pt-BR", {hour:"2-digit",minute:"2-digit"});
-  document.getElementById("ultima-atualiz").textContent = `Atualizado às ${h}`;
+  const h = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+  document.getElementById("hora-texto").textContent = `Atualizado às ${h}`;
 }
 
-// ── INIT ──
-carregar();
-setInterval(carregar, 60000); // auto-refresh a cada 1 min
+// Auto-refresh a cada 60s
+setInterval(() => { if(autenticado) carregar(); }, 60000);
 </script>
 </body>
 </html>
