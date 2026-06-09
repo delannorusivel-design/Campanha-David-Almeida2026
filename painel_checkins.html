@@ -2,662 +2,844 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#f97316">
-<title>Painel de Campo · David Almeida 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campo · David Almeida 2026</title>
 <style>
-:root {
-  --o1: #f97316;   /* laranja principal */
-  --o2: #ea580c;   /* laranja escuro */
-  --o3: #fed7aa;   /* laranja claro */
-  --o4: #fff7ed;   /* laranja palido */
-  --o5: #ffedd5;   /* laranja suave */
-  --dark: #1c0a00; /* marrom escuro quase preto */
-  --mid:  #78350f; /* marrom medio */
-  --soft: #d97706; /* ambar */
-  --text: #292524;
-  --sub:  #78716c;
-  --bg:   #fafaf9;
-  --card: #ffffff;
-  --border: #e7e5e4;
-  --shadow: 0 1px 12px rgba(249,115,22,0.08);
-  --shadow-lg: 0 8px 32px rgba(249,115,22,0.15);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  background: var(--bg); color: var(--text);
-  min-height: 100vh;
-}
+  /* ── Reset & base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --amber-50:  #FAEEDA;
+    --amber-100: #FAC775;
+    --amber-200: #EF9F27;
+    --amber-400: #BA7517;
+    --amber-600: #854F0B;
+    --amber-800: #633806;
+    --amber-900: #412402;
+    --text-main: #412402;
+    --text-mid:  #633806;
+    --text-muted:#854F0B;
+    --border:    #FAC775;
+    --surface:   #FFF8EE;
+    --white:     #ffffff;
+    --radius-sm: 8px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--amber-50);
+    color: var(--text-main);
+    min-height: 100vh;
+  }
+  button { cursor: pointer; font-family: inherit; }
 
-/* ── TOP NAV ─────────────────────────── */
-.topnav {
-  background: #fff;
-  border-bottom: 1px solid var(--border);
-  padding: 0 20px;
-  height: 56px;
-  display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; z-index: 200;
-  box-shadow: 0 1px 0 var(--border);
-}
-.nav-brand {
-  display: flex; align-items: center; gap: 10px;
-}
-.nav-logo {
-  width: 36px; height: 36px;
-  background: linear-gradient(135deg, var(--o1), var(--o2));
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 900; font-size: 15px; color: #fff;
-  box-shadow: 0 3px 10px rgba(249,115,22,0.4);
-}
-.nav-title { font-size: 15px; font-weight: 800; color: var(--text); }
-.nav-sub { font-size: 11px; color: var(--sub); }
-.nav-right { display: flex; align-items: center; gap: 10px; }
-.nav-live {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 11px; font-weight: 700; color: var(--o1);
-  background: var(--o5); padding: 4px 10px; border-radius: 999px;
-}
-.live-dot {
-  width: 6px; height: 6px; border-radius: 50%; background: var(--o1);
-  animation: blink 1.4s ease-in-out infinite;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
-.btn-refresh {
-  background: var(--o1); color: #fff; border: none;
-  border-radius: 9px; padding: 7px 14px; font-size: 12px;
-  font-weight: 700; cursor: pointer; font-family: inherit;
-  display: flex; align-items: center; gap: 5px;
-  transition: background .15s, transform .15s;
-}
-.btn-refresh:hover { background: var(--o2); transform: translateY(-1px); }
-.hora-texto { font-size: 11px; color: var(--sub); }
+  /* ── Header ── */
+  .hdr {
+    background: var(--white);
+    border-bottom: 0.5px solid var(--border);
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 54px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .hdr-logo {
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    background: var(--amber-400);
+    color: #fff;
+    font-size: 14px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .hdr-info { flex: 1; min-width: 0; }
+  .hdr-title { font-size: 14px; font-weight: 600; color: var(--amber-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hdr-sub   { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+  .hdr-actions { display: flex; gap: 6px; align-items: center; }
+  .badge-live {
+    display: flex; align-items: center; gap: 4px;
+    padding: 4px 9px;
+    border-radius: 20px;
+    background: var(--amber-50);
+    border: 0.5px solid var(--border);
+    font-size: 11px; font-weight: 500; color: var(--text-muted);
+  }
+  .live-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--amber-400);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  .btn-refresh {
+    display: flex; align-items: center; gap: 5px;
+    padding: 6px 11px;
+    border-radius: var(--radius-sm);
+    border: 0.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text-mid);
+    font-size: 12px; font-weight: 500;
+  }
+  .btn-refresh:hover { background: var(--amber-50); }
+  .btn-refresh svg { width: 14px; height: 14px; stroke: var(--amber-400); }
 
-/* ── PIN OVERLAY ─────────────────────── */
-.pin-overlay {
-  position: fixed; inset: 0;
-  background: linear-gradient(145deg, #1c0a00 0%, #431407 100%);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 999;
-}
-.pin-box {
-  width: 340px; text-align: center; padding: 40px 36px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(249,115,22,0.3);
-  border-radius: 24px;
-  backdrop-filter: blur(12px);
-}
-.pin-icon {
-  width: 68px; height: 68px; border-radius: 20px; margin: 0 auto 16px;
-  background: linear-gradient(135deg, var(--o1), var(--o2));
-  display: flex; align-items: center; justify-content: center;
-  font-size: 28px; box-shadow: 0 8px 24px rgba(249,115,22,0.5);
-}
-.pin-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px; }
-.pin-sub { font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 28px; }
-.pin-input {
-  width: 100%; padding: 14px; text-align: center;
-  font-size: 26px; letter-spacing: 0.5em;
-  border-radius: 14px; border: 2px solid rgba(255,255,255,0.15);
-  background: rgba(255,255,255,0.08); color: #fff;
-  font-family: inherit; outline: none; margin-bottom: 14px;
-  transition: border-color .2s;
-}
-.pin-input:focus { border-color: var(--o1); }
-.pin-btn {
-  width: 100%; padding: 14px; border-radius: 14px; border: none;
-  background: linear-gradient(135deg, var(--o1), var(--o2));
-  color: #fff; font-weight: 800; font-size: 15px;
-  cursor: pointer; font-family: inherit;
-  box-shadow: 0 6px 20px rgba(249,115,22,0.5);
-  transition: transform .15s;
-}
-.pin-btn:hover { transform: translateY(-2px); }
-.pin-erro { color: #fca5a5; font-size: 13px; margin-top: 12px; display: none; font-weight: 600; }
+  /* ── PIN overlay ── */
+  #pin-overlay {
+    position: fixed; inset: 0;
+    background: var(--amber-50);
+    z-index: 999;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pin-card {
+    background: var(--white);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem 1.5rem;
+    width: 300px;
+    text-align: center;
+  }
+  .pin-logo {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: var(--amber-400);
+    color: #fff;
+    font-size: 20px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px;
+  }
+  .pin-title  { font-size: 16px; font-weight: 600; color: var(--amber-900); margin-bottom: 4px; }
+  .pin-sub    { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+  .pin-input  {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 0.5px solid var(--border);
+    background: var(--surface);
+    font-size: 20px; font-weight: 600;
+    text-align: center; letter-spacing: .3em;
+    color: var(--text-main);
+    outline: none;
+    margin-bottom: 12px;
+  }
+  .pin-input:focus { border-color: var(--amber-400); box-shadow: 0 0 0 3px rgba(186,117,23,.12); }
+  .pin-btn {
+    width: 100%; padding: 11px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: var(--amber-400);
+    color: #fff;
+    font-size: 14px; font-weight: 600;
+  }
+  .pin-btn:hover { background: var(--amber-600); }
+  .pin-error { font-size: 12px; color: #A32D2D; margin-top: 8px; display: none; }
 
-/* ── STORIES / ATIVISTAS ─────────────── */
-.stories-bar {
-  background: #fff; border-bottom: 1px solid var(--border);
-  padding: 14px 20px; overflow-x: auto; display: flex; gap: 16px;
-}
-.stories-bar::-webkit-scrollbar { display: none; }
-.story-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0; }
-.story-ring {
-  width: 56px; height: 56px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--o1), var(--o2));
-  padding: 2.5px; box-shadow: 0 2px 8px rgba(249,115,22,0.3);
-}
-.story-ring.visto {
-  background: linear-gradient(135deg, #d4d4d4, #a8a29e);
-  box-shadow: none;
-}
-.story-avatar {
-  width: 100%; height: 100%; border-radius: 50%;
-  background: var(--o5); border: 2px solid #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 16px; color: var(--o2);
-}
-.story-nome { font-size: 10px; font-weight: 600; color: var(--sub); max-width: 60px; text-align: center; line-height: 1.2; }
-.story-checkins { font-size: 10px; font-weight: 800; color: var(--o1); }
+  /* ── Tabs ── */
+  .tabs {
+    background: var(--white);
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+  }
+  .tab {
+    flex: 1; padding: 10px 4px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    font-size: 11px; color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    transition: all .15s;
+    background: none; border-top: none; border-left: none; border-right: none;
+  }
+  .tab svg { width: 18px; height: 18px; stroke: currentColor; }
+  .tab.active { color: var(--amber-800); border-bottom-color: var(--amber-400); font-weight: 600; }
+  .tab:hover:not(.active) { background: var(--amber-50); }
 
-/* ── STATS BAR ───────────────────────── */
-.stats-bar {
-  background: linear-gradient(135deg, var(--o2) 0%, var(--o1) 100%);
-  padding: 16px 20px; display: flex; gap: 0; overflow-x: auto;
-}
-.stats-bar::-webkit-scrollbar { display: none; }
-.stat-item {
-  flex: 1; min-width: 80px; text-align: center;
-  padding: 0 16px; border-right: 1px solid rgba(255,255,255,0.2);
-}
-.stat-item:last-child { border-right: none; }
-.stat-n { font-size: 28px; font-weight: 900; color: #fff; line-height: 1; }
-.stat-l { font-size: 10px; color: rgba(255,255,255,0.7); margin-top: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  /* ── Zona filters ── */
+  .zonas {
+    background: var(--surface);
+    padding: 10px 12px;
+    display: flex; gap: 6px; flex-wrap: wrap;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .zona-btn {
+    display: flex; align-items: center; gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    border: 0.5px solid transparent;
+    background: transparent;
+    color: var(--text-mid);
+    transition: all .15s;
+  }
+  .zona-btn.active { background: var(--white); border-color: var(--border); font-weight: 600; }
+  .zona-btn:hover:not(.active) { background: var(--amber-50); }
+  .zona-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-/* ── FILTROS ─────────────────────────── */
-.filtros {
-  background: #fff; border-bottom: 1px solid var(--border);
-  padding: 10px 20px; display: flex; gap: 6px; overflow-x: auto;
-}
-.filtros::-webkit-scrollbar { display: none; }
-.ftag {
-  flex-shrink: 0; padding: 5px 14px; border-radius: 999px;
-  border: 1.5px solid var(--border); background: #fff;
-  font-size: 12px; font-weight: 700; cursor: pointer;
-  color: var(--sub); font-family: inherit; transition: all .15s;
-  white-space: nowrap;
-}
-.ftag.on { border-color: var(--o1); background: var(--o5); color: var(--o2); }
+  /* ── Metrics ── */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 8px;
+    padding: 12px;
+  }
+  .metric {
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    border: 0.5px solid var(--border);
+    padding: 10px 12px;
+  }
+  .metric-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+  .metric-value { font-size: 24px; font-weight: 600; color: var(--amber-900); line-height: 1; }
+  .metric-delta { font-size: 11px; color: var(--amber-400); margin-top: 3px; }
 
-/* ── LAYOUT ──────────────────────────── */
-.layout {
-  max-width: 1100px; margin: 0 auto; padding: 20px;
-  display: flex; gap: 20px; align-items: flex-start;
-}
-.feed { flex: 1; min-width: 0; }
-.sidebar { width: 300px; flex-shrink: 0; }
-@media (max-width: 900px) { .layout { flex-direction: column; } .sidebar { width: 100%; } }
-@media (max-width: 600px) { .layout { padding: 12px; } }
+  /* ── Layout body ── */
+  .body-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  @media (min-width: 768px) {
+    .body-grid { grid-template-columns: 1fr 320px; align-items: start; }
+  }
 
-/* ── FEED HEADER ─────────────────────── */
-.feed-header-row {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 14px;
-}
-.feed-label { font-size: 12px; font-weight: 800; color: var(--sub); text-transform: uppercase; letter-spacing: 0.8px; }
-.feed-count-badge {
-  background: var(--o5); color: var(--o2);
-  border-radius: 999px; padding: 3px 10px;
-  font-size: 11px; font-weight: 800;
-}
+  /* ── Section ── */
+  .section { padding: 12px; }
+  .section-hdr {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-size: 12px; font-weight: 600; color: var(--text-mid);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .section-title svg { width: 15px; height: 15px; stroke: var(--amber-400); }
+  .section-link { font-size: 11px; color: var(--amber-400); cursor: pointer; }
 
-/* ── POST CARD (estilo Instagram) ────── */
-.post-card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 16px; margin-bottom: 16px; overflow: hidden;
-  box-shadow: var(--shadow);
-  transition: box-shadow .2s;
-}
-.post-card:hover { box-shadow: var(--shadow-lg); }
+  /* ── Feed cards ── */
+  .checkin-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 0.5px solid var(--border);
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    display: flex; gap: 10px; align-items: flex-start;
+    transition: border-color .15s;
+  }
+  .checkin-card:hover { border-color: var(--amber-200); }
+  .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--amber-50);
+    border: 0.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; color: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .checkin-body { flex: 1; min-width: 0; }
+  .checkin-name { font-size: 13px; font-weight: 600; color: var(--amber-900); }
+  .checkin-meta {
+    font-size: 11px; color: var(--text-muted);
+    margin-top: 2px;
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .checkin-meta span { display: flex; align-items: center; gap: 3px; }
+  .checkin-meta svg { width: 11px; height: 11px; stroke: currentColor; flex-shrink: 0; }
+  .tag-tipo {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-size: 10px; font-weight: 600;
+    background: var(--amber-50);
+    color: var(--text-mid);
+    border: 0.5px solid var(--border);
+    margin-top: 4px;
+  }
+  .checkin-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+  .checkin-time { font-size: 10px; color: var(--amber-200); }
+  .foto-thumb {
+    width: 50px; height: 50px;
+    border-radius: var(--radius-sm);
+    border: 0.5px solid var(--border);
+    object-fit: cover;
+    background: var(--amber-50);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .foto-thumb svg { width: 20px; height: 20px; stroke: var(--border); }
+  .foto-thumb img { width: 100%; height: 100%; object-fit: cover; }
 
-.post-header {
-  padding: 12px 14px;
-  display: flex; align-items: center; gap: 10px;
-}
-.post-avatar {
-  width: 40px; height: 40px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 14px; color: #fff; flex-shrink: 0;
-  border: 2px solid var(--o3);
-}
-.post-user { flex: 1; min-width: 0; }
-.post-nome { font-weight: 700; font-size: 14px; line-height: 1.2; }
-.post-meta { font-size: 11px; color: var(--sub); margin-top: 2px; }
-.post-hora { font-size: 11px; color: var(--sub); flex-shrink: 0; text-align: right; }
+  /* ── Sidebar ── */
+  .sidebar {
+    padding: 12px;
+    border-top: 0.5px solid var(--border);
+  }
+  @media (min-width: 768px) {
+    .sidebar { border-top: none; border-left: 0.5px solid var(--border); }
+  }
 
-.post-tipo {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-size: 10px; font-weight: 700; padding: 2px 8px;
-  border-radius: 6px; background: var(--o5); color: var(--o2);
-  margin-top: 3px;
-}
+  /* ── Ranking ── */
+  .ranking-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px;
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    border: 0.5px solid var(--border);
+    margin-bottom: 6px;
+  }
+  .rank-pos { width: 20px; font-size: 12px; font-weight: 600; color: var(--text-muted); text-align: center; flex-shrink: 0; }
+  .rank-info { flex: 1; min-width: 0; }
+  .rank-name { font-size: 12px; font-weight: 600; color: var(--amber-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rank-zona { font-size: 10px; color: var(--text-muted); }
+  .rank-count { font-size: 13px; font-weight: 600; color: var(--amber-400); flex-shrink: 0; }
 
-/* FOTO QUADRADA (estilo Instagram) */
-.post-foto-wrap {
-  position: relative; overflow: hidden;
-  background: #1c0a00; cursor: zoom-in;
-  aspect-ratio: 1 / 1;
-}
-.post-foto-wrap.paisagem { aspect-ratio: 4 / 3; }
-.post-foto {
-  width: 100%; height: 100%; object-fit: cover;
-  display: block; transition: transform .4s ease;
-}
-.post-foto-wrap:hover .post-foto { transform: scale(1.04); }
-.post-no-foto {
-  aspect-ratio: 1 / 1;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  background: var(--o5); color: var(--o1);
-  font-size: 32px; gap: 8px;
-}
-.post-no-foto span { font-size: 12px; font-weight: 600; color: var(--soft); }
+  /* ── Barras por zona ── */
+  .zona-bar { margin-bottom: 9px; }
+  .zona-bar-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .zona-bar-name { font-size: 12px; color: var(--text-mid); display: flex; align-items: center; gap: 5px; }
+  .zona-bar-count { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+  .zona-bar-track { height: 5px; background: var(--amber-50); border-radius: 3px; overflow: hidden; }
+  .zona-bar-fill { height: 100%; border-radius: 3px; background: var(--amber-400); transition: width .5s ease; }
 
-/* AÇÕES (curtir estilo IG) */
-.post-actions {
-  padding: 10px 14px 4px;
-  display: flex; align-items: center; gap: 14px;
-}
-.post-action {
-  display: flex; align-items: center; gap: 5px;
-  font-size: 12px; font-weight: 700; color: var(--sub);
-  cursor: default;
-}
-.post-action.destaque { color: var(--o1); }
+  /* ── Loading / empty ── */
+  .loading-state {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 2.5rem 1rem; gap: 10px; color: var(--text-muted); font-size: 13px;
+  }
+  .spinner {
+    width: 26px; height: 26px;
+    border: 2px solid var(--border);
+    border-top-color: var(--amber-400);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+  .empty-state {
+    display: none;
+    flex-direction: column; align-items: center;
+    padding: 2rem 1rem; gap: 8px; color: var(--text-muted); font-size: 13px; text-align: center;
+  }
+  .empty-state svg { width: 32px; height: 32px; stroke: var(--border); }
 
-/* BODY */
-.post-body { padding: 4px 14px 14px; }
-.post-eleit { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
-.post-eleit em { color: var(--o1); font-style: normal; }
-.post-obs { font-size: 13px; color: var(--sub); line-height: 1.55; margin-top: 4px; }
-.post-gps { font-size: 11px; color: var(--sub); margin-top: 8px; display: flex; align-items: center; gap: 4px; }
-.post-gps a { color: var(--o1); text-decoration: none; font-weight: 700; }
+  /* ── Toast ── */
+  #toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--amber-900); color: var(--amber-50);
+    padding: 9px 18px; border-radius: 20px; font-size: 13px;
+    transition: transform .3s ease; z-index: 500;
+    pointer-events: none;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
 
-/* ── SIDEBAR CARDS ───────────────────── */
-.side-card {
-  background: #fff; border: 1px solid var(--border);
-  border-radius: 16px; overflow: hidden; margin-bottom: 16px;
-  box-shadow: var(--shadow);
-}
-.side-title {
-  padding: 12px 16px; font-size: 12px; font-weight: 800;
-  text-transform: uppercase; letter-spacing: 0.8px;
-  color: #fff;
-  background: linear-gradient(135deg, var(--o2), var(--o1));
-  display: flex; align-items: center; gap: 7px;
-}
-.rank-item {
-  padding: 10px 14px; display: flex; align-items: center; gap: 10px;
-  border-bottom: 1px solid var(--border);
-}
-.rank-item:last-child { border-bottom: none; }
-.rank-pos { font-size: 18px; font-weight: 900; color: var(--sub); width: 22px; text-align: center; flex-shrink: 0; }
-.rank-pos.g { color: #f59e0b; } .rank-pos.s { color: #94a3b8; } .rank-pos.b { color: #cd7c52; }
-.rank-av { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; color: #fff; flex-shrink: 0; }
-.rank-info { flex: 1; min-width: 0; }
-.rank-nome { font-weight: 700; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rank-sub { font-size: 11px; color: var(--sub); }
-.rank-n { font-size: 20px; font-weight: 900; color: var(--o1); }
+  /* ── Tab pages ── */
+  .tab-page { display: none; }
+  .tab-page.active { display: block; }
 
-.zona-item { padding: 10px 14px; border-bottom: 1px solid var(--border); }
-.zona-item:last-child { border-bottom: none; }
-.zona-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-.zona-nome { font-size: 12px; font-weight: 700; }
-.zona-count { font-size: 11px; color: var(--sub); }
-.zona-bar { height: 5px; border-radius: 999px; background: var(--border); overflow: hidden; }
-.zona-fill { height: 100%; border-radius: 999px; transition: width .5s ease; }
-.zona-eleit { font-size: 11px; color: var(--sub); margin-top: 3px; }
-
-/* ── LIGHTBOX ────────────────────────── */
-.lightbox {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.95);
-  z-index: 500; display: none; align-items: center;
-  justify-content: center; flex-direction: column;
-}
-.lightbox.open { display: flex; }
-.lb-img { max-width: 95vw; max-height: 85vh; border-radius: 12px; object-fit: contain; }
-.lb-close {
-  position: absolute; top: 16px; right: 16px; width: 40px; height: 40px;
-  border-radius: 50%; background: rgba(255,255,255,0.15); border: none;
-  color: #fff; font-size: 20px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-}
-.lb-caption { color: rgba(255,255,255,0.6); font-size: 13px; margin-top: 12px; }
-
-/* ── EMPTY / LOADING ─────────────────── */
-.empty { text-align: center; padding: 60px 20px; color: var(--sub); }
-.empty-icon { font-size: 48px; margin-bottom: 12px; }
-.empty-msg { font-size: 15px; font-weight: 600; }
-.empty-sub { font-size: 13px; margin-top: 4px; }
-.loading { text-align: center; padding: 60px; color: var(--sub); }
-.spinner {
-  width: 36px; height: 36px; border-radius: 50%;
-  border: 3px solid var(--o3); border-top-color: var(--o1);
-  animation: spin .7s linear infinite; margin: 0 auto 12px;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes spin    { to { transform: rotate(360deg); } }
+  @keyframes pulse   { 0%,100%{opacity:1} 50%{opacity:.4} }
+  @keyframes spin-r  { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
-<!-- PIN -->
-<div class="pin-overlay" id="pinOverlay">
-  <div class="pin-box">
-    <div class="pin-icon">📍</div>
-    <div class="pin-title">Campo · Avante 70</div>
-    <div class="pin-sub">David Almeida 2026 · Acesso restrito</div>
-    <input class="pin-input" type="password" id="pinInput" maxlength="8" placeholder="••••"
-      onkeydown="if(event.key==='Enter') verificarPin()" autofocus />
-    <button class="pin-btn" onclick="verificarPin()">Entrar</button>
-    <div class="pin-erro" id="pinErro">PIN incorreto. Tente novamente.</div>
+<!-- ── PIN overlay ── -->
+<div id="pin-overlay">
+  <div class="pin-card">
+    <div class="pin-logo">70</div>
+    <div class="pin-title">Painel de campo</div>
+    <div class="pin-sub">David Almeida 2026 · Avante</div>
+    <input type="password" class="pin-input" id="pin-input" placeholder="••••" maxlength="4"
+      onkeydown="if(event.key==='Enter') checkPin()">
+    <button class="pin-btn" onclick="checkPin()">Entrar</button>
+    <div class="pin-error" id="pin-error">PIN incorreto. Tente novamente.</div>
   </div>
 </div>
 
-<!-- TOP NAV -->
-<nav class="topnav">
-  <div class="nav-brand">
-    <div class="nav-logo">70</div>
-    <div>
-      <div class="nav-title">Campo · David Almeida 2026</div>
-      <div class="nav-sub" id="hora-texto">Carregando...</div>
+<!-- ── App ── -->
+<div id="app" style="display:none">
+
+  <!-- Header -->
+  <header class="hdr">
+    <div class="hdr-logo">70</div>
+    <div class="hdr-info">
+      <div class="hdr-title">Campo · David Almeida 2026</div>
+      <div class="hdr-sub" id="hdr-sub">Carregando...</div>
+    </div>
+    <div class="hdr-actions">
+      <div class="badge-live">
+        <div class="live-dot"></div> Ao vivo
+      </div>
+      <button class="btn-refresh" onclick="loadData(true)" id="btn-refresh">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5M4 9a9 9 0 0115.54-4.46M20 15a9 9 0 01-15.54 4.46"/></svg>
+        Atualizar
+      </button>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="checkins" onclick="setTab(this)">
+      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 9m0 8V9m0 0L9 7"/></svg>
+      Check-ins
+    </button>
+    <button class="tab" data-tab="ativistas" onclick="setTab(this)">
+      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Ativistas
+    </button>
+    <button class="tab" data-tab="eleitores" onclick="setTab(this)">
+      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2"/></svg>
+      Eleitores
+    </button>
+    <button class="tab" data-tab="fotos" onclick="setTab(this)">
+      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Fotos
+    </button>
+  </nav>
+
+  <!-- Filtros de zona -->
+  <div class="zonas">
+    <button class="zona-btn active" onclick="setZona(this,'')">Todos</button>
+    <button class="zona-btn" onclick="setZona(this,'Norte')"><span class="zona-dot" style="background:#378ADD"></span>Norte</button>
+    <button class="zona-btn" onclick="setZona(this,'Sul')"><span class="zona-dot" style="background:#D4537E"></span>Sul</button>
+    <button class="zona-btn" onclick="setZona(this,'Centro')"><span class="zona-dot" style="background:#7F77DD"></span>Centro</button>
+    <button class="zona-btn" onclick="setZona(this,'Oeste')"><span class="zona-dot" style="background:#EF9F27"></span>Oeste</button>
+    <button class="zona-btn" onclick="setZona(this,'Leste')"><span class="zona-dot" style="background:#1D9E75"></span>Leste</button>
+    <button class="zona-btn" onclick="setZona(this,'Rural')"><span class="zona-dot" style="background:#639922"></span>Rural</button>
+  </div>
+
+  <!-- Métricas -->
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-label">Check-ins hoje</div>
+      <div class="metric-value" id="m-checkins">–</div>
+      <div class="metric-delta" id="m-checkins-delta">&nbsp;</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Ativistas em campo</div>
+      <div class="metric-value" id="m-ativistas">–</div>
+      <div class="metric-delta" id="m-ativistas-delta">&nbsp;</div>
     </div>
   </div>
-  <div class="nav-right">
-    <div class="nav-live"><div class="live-dot"></div> AO VIVO</div>
-    <button class="btn-refresh" onclick="carregar()">🔄 Atualizar</button>
+
+  <!-- Tab pages -->
+  <div class="body-grid">
+
+    <!-- CHECK-INS -->
+    <div class="tab-page active" id="tab-checkins">
+      <div class="section">
+        <div class="section-hdr">
+          <div class="section-title">
+            <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Feed de campo
+          </div>
+          <span class="section-link" onclick="loadData(true)">atualizar</span>
+        </div>
+        <div id="feed-container">
+          <div class="loading-state">
+            <div class="spinner"></div>
+            Buscando check-ins...
+          </div>
+        </div>
+        <div class="empty-state" id="feed-empty">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Nenhum check-in encontrado para esta zona.
+        </div>
+      </div>
+    </div>
+
+    <!-- ATIVISTAS -->
+    <div class="tab-page" id="tab-ativistas">
+      <div class="section">
+        <div class="section-hdr">
+          <div class="section-title">
+            <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197"/></svg>
+            Ativistas cadastrados
+          </div>
+        </div>
+        <div id="ativistas-container">
+          <div class="loading-state"><div class="spinner"></div>Carregando...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ELEITORES -->
+    <div class="tab-page" id="tab-eleitores">
+      <div class="section">
+        <div class="section-hdr">
+          <div class="section-title">
+            <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Eleitores registrados
+          </div>
+        </div>
+        <div id="eleitores-container">
+          <div class="loading-state"><div class="spinner"></div>Carregando...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOTOS -->
+    <div class="tab-page" id="tab-fotos">
+      <div class="section">
+        <div class="section-hdr">
+          <div class="section-title">
+            <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Fotos de campo
+          </div>
+        </div>
+        <div id="fotos-grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
+          <div class="loading-state" style="grid-column:1/-1"><div class="spinner"></div>Carregando fotos...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR (ranking) -->
+    <div class="sidebar" id="sidebar-ranking">
+      <div class="section-hdr">
+        <div class="section-title">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+          Ranking de ativistas
+        </div>
+      </div>
+      <div id="ranking-list"><div class="loading-state"><div class="spinner"></div></div></div>
+
+      <div class="section-hdr" style="margin-top:16px">
+        <div class="section-title">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 9m0 8V9m0 0L9 7"/></svg>
+          Por zona
+        </div>
+      </div>
+      <div id="zona-bars"><div class="loading-state"><div class="spinner"></div></div></div>
+    </div>
+
   </div>
-</nav>
-
-<!-- STORIES -->
-<div class="stories-bar" id="storiesBar">
-  <div style="display:flex;align-items:center;color:#d4d4d4;font-size:12px;padding:8px 0">Carregando ativistas...</div>
 </div>
 
-<!-- STATS -->
-<div class="stats-bar">
-  <div class="stat-item"><div class="stat-n" id="s-total">—</div><div class="stat-l">Check-ins</div></div>
-  <div class="stat-item"><div class="stat-n" id="s-ativistas">—</div><div class="stat-l">Ativistas</div></div>
-  <div class="stat-item"><div class="stat-n" id="s-eleit">—</div><div class="stat-l">Eleitores</div></div>
-  <div class="stat-item"><div class="stat-n" id="s-fotos">—</div><div class="stat-l">Fotos</div></div>
-</div>
-
-<!-- FILTROS -->
-<div class="filtros">
-  <button class="ftag on" data-z="" onclick="filtrar(this)">Todos</button>
-  <button class="ftag" data-z="Zona Norte" onclick="filtrar(this)">🔵 Norte</button>
-  <button class="ftag" data-z="Zona Sul" onclick="filtrar(this)">🔴 Sul</button>
-  <button class="ftag" data-z="Centro" onclick="filtrar(this)">🟣 Centro</button>
-  <button class="ftag" data-z="Zona Oeste" onclick="filtrar(this)">🟡 Oeste</button>
-  <button class="ftag" data-z="Zona Leste" onclick="filtrar(this)">🟢 Leste</button>
-  <button class="ftag" data-z="Zona Rural" onclick="filtrar(this)">🌿 Rural</button>
-</div>
-
-<!-- LAYOUT -->
-<div class="layout">
-  <div class="feed">
-    <div class="feed-header-row">
-      <div class="feed-label">📸 Feed de campo</div>
-      <div class="feed-count-badge" id="feed-count">—</div>
-    </div>
-    <div id="feed-area">
-      <div class="loading"><div class="spinner"></div>Aguardando autenticação...</div>
-    </div>
-  </div>
-
-  <div class="sidebar">
-    <div class="side-card">
-      <div class="side-title">🏆 Ranking</div>
-      <div id="ranking-lista"><div style="padding:16px;font-size:13px;color:#a8a29e;text-align:center">—</div></div>
-    </div>
-    <div class="side-card">
-      <div class="side-title">📊 Por zona</div>
-      <div id="zonas-lista"><div style="padding:16px;font-size:13px;color:#a8a29e;text-align:center">—</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox" onclick="fecharLb()">
-  <button class="lb-close" onclick="fecharLb()">✕</button>
-  <img class="lb-img" id="lb-img" src="" alt="">
-  <div class="lb-caption" id="lb-cap"></div>
-</div>
+<!-- Toast -->
+<div id="toast"></div>
 
 <script>
-const WEBHOOK = "https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec";
-const TOKEN   = "avante70-am-2026-token-secreto";
-const PIN_HASH = "7a3ed03b12b784c2581ae5308e31f2a80248b481d8b0d369ee2193dcc3c1c4c5";
+// ── Config ──────────────────────────────────────────────────────────────────
+const WEBHOOK = 'https://script.google.com/macros/s/AKfycbwo8lkCo7SY3g-Mu0pTkIIgEEBMcdyBn1n41GwWVHSbpCW2ZDSY6a_6DKO6d8p3mRE-/exec';
+const TOKEN   = 'avante70-am-2026-token-secreto';
+const PIN     = '7070';
+const RELOAD_MS = 60000; // auto-reload a cada 60s
 
-const ZCORS = {
-  "Zona Norte":"#3b82f6","Zona Sul":"#ef4444","Centro":"#8b5cf6",
-  "Zona Oeste":"#f59e0b","Zona Leste":"#10b981","Zona Rural":"#84cc16",
+// ── Estado ──────────────────────────────────────────────────────────────────
+let allCheckins   = [];
+let allAtivistas  = [];
+let allEleitores  = [];
+let currentZona   = '';
+let currentTab    = 'checkins';
+let reloadTimer   = null;
+
+// ── Cores por zona ───────────────────────────────────────────────────────────
+const ZONA_CORES = {
+  'Norte':'#378ADD','Sul':'#D4537E','Centro':'#7F77DD',
+  'Oeste':'#EF9F27','Leste':'#1D9E75','Rural':'#639922','Interior':'#854F0B'
 };
 
-let checkins  = [];
-let filtroZ   = "";
-let autenticado = false;
-
-// ── PIN ───────────────────────────────────────────────────
-async function verificarPin() {
-  const pin = document.getElementById("pinInput").value;
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(pin));
-  const hash = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
-  if (hash === PIN_HASH) {
-    autenticado = true;
-    document.getElementById("pinOverlay").style.display = "none";
-    carregar();
+// ── PIN ──────────────────────────────────────────────────────────────────────
+function checkPin() {
+  const val = document.getElementById('pin-input').value.trim();
+  if (val === PIN) {
+    document.getElementById('pin-overlay').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadData(false);
+    scheduleReload();
   } else {
-    document.getElementById("pinErro").style.display = "block";
-    document.getElementById("pinInput").value = "";
+    const err = document.getElementById('pin-error');
+    err.style.display = 'block';
+    document.getElementById('pin-input').value = '';
+    document.getElementById('pin-input').focus();
+    setTimeout(() => { err.style.display = 'none'; }, 3000);
   }
 }
+document.getElementById('pin-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkPin();
+});
 
-// ── CARREGAR ──────────────────────────────────────────────
-async function carregar() {
-  if (!autenticado) return;
-  document.getElementById("feed-area").innerHTML = `<div class="loading"><div class="spinner"></div>Buscando check-ins...</div>`;
+// ── Tabs ─────────────────────────────────────────────────────────────────────
+function setTab(el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  currentTab = el.dataset.tab;
+  document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + currentTab).classList.add('active');
+  renderCurrentTab();
+}
 
+function setZona(el, zona) {
+  document.querySelectorAll('.zona-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  currentZona = zona;
+  renderCurrentTab();
+}
+
+// ── Fetch ────────────────────────────────────────────────────────────────────
+async function loadData(manual) {
+  if (manual) {
+    const btn = document.getElementById('btn-refresh');
+    btn.style.opacity = '.5';
+    btn.style.pointerEvents = 'none';
+  }
   try {
-    const url  = `${WEBHOOK}?acao=listar_checkins&token=${TOKEN}&t=${Date.now()}`;
-    const resp = await fetch(url);
-    const json = await resp.json();
+    const url = WEBHOOK + '?action=getDashboard&token=' + TOKEN;
+    const res = await fetch(url);
+    const data = await res.json();
 
-    if (json.checkins && Array.isArray(json.checkins) && json.checkins.length > 0) {
-      checkins = json.checkins;
-    } else {
-      // Sem dados reais — mostra estado vazio (sem demo)
-      checkins = [];
-    }
-  } catch(e) {
-    console.warn("Erro ao buscar:", e.message);
-    checkins = [];
+    if (data.error) throw new Error(data.error);
+
+    allCheckins  = data.checkins  || [];
+    allAtivistas = data.ativistas || [];
+    allEleitores = data.eleitores || [];
+
+    updateMetrics();
+    renderCurrentTab();
+    buildRanking();
+    buildZonaBars();
+
+    const total = allAtivistas.length;
+    document.getElementById('hdr-sub').textContent =
+      total + ' ativista' + (total !== 1 ? 's' : '') + ' cadastrado' + (total !== 1 ? 's' : '');
+
+    if (manual) showToast('Dados atualizados ✓');
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById('hdr-sub').textContent = 'Erro ao carregar dados';
+    if (manual) showToast('Erro ao atualizar. Verifique a conexão.');
+  } finally {
+    const btn = document.getElementById('btn-refresh');
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
   }
-
-  renderTudo();
-  atualizarHora();
 }
 
-function filtrar(btn) {
-  document.querySelectorAll(".ftag").forEach(b=>b.classList.remove("on"));
-  btn.classList.add("on");
-  filtroZ = btn.dataset.z;
-  renderFeed();
+function scheduleReload() {
+  if (reloadTimer) clearInterval(reloadTimer);
+  reloadTimer = setInterval(() => loadData(false), RELOAD_MS);
 }
 
-function filtrados() {
-  return filtroZ ? checkins.filter(c=>c.zona===filtroZ) : checkins;
-}
-
-function renderTudo() {
-  renderStories();
-  renderStats();
-  renderFeed();
-  renderRanking();
-  renderZonas();
-}
-
-// ── STORIES ───────────────────────────────────────────────
-function renderStories() {
-  const bar  = document.getElementById("storiesBar");
-  const cont = {};
-  checkins.forEach(c => {
-    if (!cont[c.nome]) cont[c.nome] = { checkins:0, zona:c.zona };
-    cont[c.nome].checkins++;
+// ── Métricas ─────────────────────────────────────────────────────────────────
+function updateMetrics() {
+  const hoje = new Date().toLocaleDateString('pt-BR');
+  const checkinsHoje = allCheckins.filter(c => {
+    try { return new Date(c.timestamp).toLocaleDateString('pt-BR') === hoje; } catch { return false; }
   });
-  const sorted = Object.entries(cont).sort((a,b)=>b[1].checkins-a[1].checkins);
-  if (!sorted.length) {
-    bar.innerHTML = `<div style="display:flex;align-items:center;color:#a8a29e;font-size:12px;padding:8px 0">Nenhum ativista em campo</div>`;
-    return;
-  }
-  bar.innerHTML = sorted.map(([nome, d]) => {
-    const cor = ZCORS[d.zona] || "#f97316";
-    const ini = nome.split(" ").map(p=>p[0]).slice(0,2).join("").toUpperCase();
-    return `<div class="story-item">
-      <div class="story-ring">
-        <div class="story-avatar" style="background:${cor};color:#fff">${ini}</div>
-      </div>
-      <div class="story-nome">${esc(nome.split(" ")[0])}</div>
-      <div class="story-checkins">${d.checkins}×</div>
-    </div>`;
-  }).join("");
+  document.getElementById('m-checkins').textContent = checkinsHoje.length || allCheckins.length;
+  document.getElementById('m-ativistas').textContent = allAtivistas.length;
+  document.getElementById('m-checkins-delta').textContent = allCheckins.length + ' no total';
+  document.getElementById('m-ativistas-delta').textContent = 'atualizado agora';
 }
 
-// ── STATS ─────────────────────────────────────────────────
-function renderStats() {
-  document.getElementById("s-total").textContent    = checkins.length;
-  document.getElementById("s-ativistas").textContent = new Set(checkins.map(c=>c.nome)).size;
-  document.getElementById("s-eleit").textContent    = checkins.reduce((a,c)=>a+Number(c.eleit||0),0);
-  document.getElementById("s-fotos").textContent    = checkins.filter(c=>c.foto_url&&c.foto_url.startsWith("http")).length;
+// ── Render helpers ────────────────────────────────────────────────────────────
+function filtrar(arr) {
+  if (!currentZona) return arr;
+  return arr.filter(item => (item.zona || item.Zona || '') === currentZona);
 }
 
-// ── FEED ──────────────────────────────────────────────────
+function iniciais(nome) {
+  if (!nome) return '?';
+  return nome.trim().split(' ').slice(0,2).map(p => p[0]).join('').toUpperCase();
+}
+
+function tempoRelativo(ts) {
+  if (!ts) return '';
+  const diff = Math.floor((Date.now() - new Date(ts)) / 1000);
+  if (diff < 60) return 'agora';
+  if (diff < 3600) return 'há ' + Math.floor(diff/60) + ' min';
+  if (diff < 86400) return 'há ' + Math.floor(diff/3600) + 'h';
+  return 'há ' + Math.floor(diff/86400) + 'd';
+}
+
+// ── Feed ──────────────────────────────────────────────────────────────────────
 function renderFeed() {
-  const lista = filtrados();
-  const area  = document.getElementById("feed-area");
-  document.getElementById("feed-count").textContent = `${lista.length} registro${lista.length!==1?"s":""}`;
+  const container = document.getElementById('feed-container');
+  const empty     = document.getElementById('feed-empty');
+  const items = filtrar(allCheckins).slice().reverse().slice(0, 50);
 
-  if (!lista.length) {
-    area.innerHTML = `<div class="empty">
-      <div class="empty-icon">📭</div>
-      <div class="empty-msg">${filtroZ ? "Nenhum check-in nessa zona" : "Nenhum check-in registrado ainda"}</div>
-      <div class="empty-sub">Os check-ins aparecerão aqui em tempo real</div>
-    </div>`;
+  if (!items.length) {
+    container.innerHTML = '';
+    empty.style.display = 'flex';
     return;
   }
+  empty.style.display = 'none';
 
-  area.innerHTML = [...lista].reverse().map(c => {
-    const cor = ZCORS[c.zona] || "#f97316";
-    const ini = (c.nome||"A").split(" ").map(p=>p[0]).slice(0,2).join("").toUpperCase();
-    const temFoto = c.foto_url && c.foto_url.startsWith("http");
-    const mapsUrl = c.lat && c.lng ? `https://maps.google.com/?q=${c.lat},${c.lng}` : "";
-    const fotoEsc = temFoto ? esc(c.foto_url) : "";
+  container.innerHTML = items.map(c => {
+    const nome    = c.nome || c.Nome || 'Ativista';
+    const zona    = c.zona || c.Zona || '';
+    const bairro  = c.bairro || c.Bairro || '';
+    const tipo    = c.tipo_acao || c.tipoAcao || c.tipo || '';
+    const cand    = c.candidato || c.Candidato || '';
+    const foto    = c.foto_url || c.fotoUrl || c.foto || '';
+    const ts      = c.timestamp || c.Timestamp || '';
+    const dotCor  = ZONA_CORES[zona] || '#BA7517';
 
-    const fotoHtml = temFoto
-      ? `<div class="post-foto-wrap" onclick="abrirLb('${fotoEsc}','${esc(c.nome)} · ${esc(c.hora)}')">
-           <img class="post-foto" src="${fotoEsc}" loading="lazy"
-             onerror="this.closest('.post-foto-wrap').outerHTML='<div class=post-no-foto><span style=font-size:32px>📷</span><span>Foto indisponível</span></div>'">
-         </div>`
-      : `<div class="post-no-foto"><span>📷</span><span>Sem foto registrada</span></div>`;
-
-    return `<div class="post-card">
-      <div class="post-header">
-        <div class="post-avatar" style="background:${cor}">${ini}</div>
-        <div class="post-user">
-          <div class="post-nome">${esc(c.nome||"Ativista")}</div>
-          <div class="post-meta">
-            <span style="color:${cor};font-weight:700">${esc(c.zona||"")}</span>
-            ${c.lider ? ` · ${esc(c.lider)}` : ""}
-          </div>
-          <div class="post-tipo">${esc(c.tipo||"")}</div>
+    return `
+    <div class="checkin-card">
+      <div class="avatar">${iniciais(nome)}</div>
+      <div class="checkin-body">
+        <div class="checkin-name">${escHtml(nome)}</div>
+        <div class="checkin-meta">
+          ${bairro ? `<span><svg fill="none" viewBox="0 0 24 24" stroke-width="2" style="width:11px;height:11px;stroke:currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>${escHtml(bairro)}${zona ? ' · <span style="color:'+dotCor+'">' + escHtml(zona) + '</span>' : ''}</span>` : ''}
+          ${cand ? `<span>${escHtml(cand)}</span>` : ''}
         </div>
-        <div class="post-hora">${esc(c.hora||"")}<br><span style="font-size:10px">${esc(c.dia||"")}</span></div>
+        ${tipo ? `<span class="tag-tipo">${escHtml(tipo)}</span>` : ''}
       </div>
-
-      ${fotoHtml}
-
-      <div class="post-actions">
-        <div class="post-action destaque">👥 <strong>${c.eleit||0}</strong></div>
-        ${temFoto ? `<div class="post-action">📸 foto</div>` : ""}
-        ${mapsUrl ? `<div class="post-action">📍 GPS</div>` : ""}
-      </div>
-
-      <div class="post-body">
-        <div class="post-eleit">
-          <em>${c.eleit||0}</em> eleitor${Number(c.eleit)!==1?"es":""} abordado${Number(c.eleit)!==1?"s":""}
+      <div class="checkin-right">
+        <div class="checkin-time">${tempoRelativo(ts)}</div>
+        <div class="foto-thumb">
+          ${foto ? `<img src="${escHtml(foto)}" alt="Foto da ação" loading="lazy">` : `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>`}
         </div>
-        ${c.obs ? `<div class="post-obs">${esc(c.obs)}</div>` : ""}
-        ${mapsUrl ? `<div class="post-gps">📍 <a href="${mapsUrl}" target="_blank">Ver localização no mapa</a> (±${esc(String(c.acc||""))}m)</div>` : ""}
       </div>
     </div>`;
-  }).join("");
+  }).join('');
 }
 
-// ── RANKING ───────────────────────────────────────────────
-function renderRanking() {
-  const cont = {};
-  checkins.forEach(c => {
-    if (!cont[c.nome]) cont[c.nome] = {n:0, eleit:0, zona:c.zona};
-    cont[c.nome].n++;
-    cont[c.nome].eleit += Number(c.eleit||0);
+// ── Ativistas ─────────────────────────────────────────────────────────────────
+function renderAtivistas() {
+  const container = document.getElementById('ativistas-container');
+  const items = filtrar(allAtivistas);
+  if (!items.length) {
+    container.innerHTML = '<div class="loading-state">Nenhum ativista encontrado.</div>';
+    return;
+  }
+  container.innerHTML = items.map(a => {
+    const nome  = a.nome || a.Nome || 'Ativista';
+    const zona  = a.zona || a.Zona || '';
+    const bairro = a.bairro || a.Bairro || '';
+    const fone  = a.telefone || a.Telefone || '';
+    return `
+    <div class="checkin-card">
+      <div class="avatar">${iniciais(nome)}</div>
+      <div class="checkin-body">
+        <div class="checkin-name">${escHtml(nome)}</div>
+        <div class="checkin-meta">
+          ${zona   ? `<span>${escHtml(zona)}</span>` : ''}
+          ${bairro ? `<span>${escHtml(bairro)}</span>` : ''}
+          ${fone   ? `<span>${escHtml(fone)}</span>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Eleitores ─────────────────────────────────────────────────────────────────
+function renderEleitores() {
+  const container = document.getElementById('eleitores-container');
+  const items = filtrar(allEleitores);
+  if (!items.length) {
+    container.innerHTML = '<div class="loading-state">Nenhum eleitor encontrado.</div>';
+    return;
+  }
+  container.innerHTML = items.map(e => {
+    const nome  = e.nome || e.Nome || 'Eleitor';
+    const zona  = e.zona || e.Zona || '';
+    const bairro = e.bairro || e.Bairro || '';
+    return `
+    <div class="checkin-card">
+      <div class="avatar">${iniciais(nome)}</div>
+      <div class="checkin-body">
+        <div class="checkin-name">${escHtml(nome)}</div>
+        <div class="checkin-meta">
+          ${zona ? `<span>${escHtml(zona)}</span>` : ''}
+          ${bairro ? `<span>${escHtml(bairro)}</span>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Fotos ─────────────────────────────────────────────────────────────────────
+function renderFotos() {
+  const grid = document.getElementById('fotos-grid');
+  const comFoto = filtrar(allCheckins).filter(c => c.foto_url || c.fotoUrl || c.foto);
+  if (!comFoto.length) {
+    grid.innerHTML = '<div class="loading-state" style="grid-column:1/-1">Nenhuma foto enviada ainda.</div>';
+    return;
+  }
+  grid.innerHTML = comFoto.slice().reverse().map(c => {
+    const url  = c.foto_url || c.fotoUrl || c.foto;
+    const nome = c.nome || c.Nome || '';
+    const tipo = c.tipo_acao || c.tipo || '';
+    return `
+    <div style="border-radius:var(--radius-md);overflow:hidden;border:0.5px solid var(--border);background:var(--amber-50)">
+      <img src="${escHtml(url)}" alt="Foto de campo" loading="lazy"
+        style="width:100%;aspect-ratio:1;object-fit:cover;display:block">
+      <div style="padding:6px 8px">
+        <div style="font-size:11px;font-weight:600;color:var(--amber-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(nome)}</div>
+        ${tipo ? `<div style="font-size:10px;color:var(--text-muted)">${escHtml(tipo)}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Ranking ───────────────────────────────────────────────────────────────────
+function buildRanking() {
+  const lista = document.getElementById('ranking-list');
+  // contar check-ins por ativista
+  const contagem = {};
+  allCheckins.forEach(c => {
+    const nome = c.nome || c.Nome || '?';
+    const zona = c.zona || c.Zona || '';
+    if (!contagem[nome]) contagem[nome] = { nome, zona, total: 0 };
+    contagem[nome].total++;
   });
-  const sorted = Object.entries(cont).sort((a,b)=>b[1].eleit-a[1].eleit).slice(0,8);
-  const el = document.getElementById("ranking-lista");
-  if (!sorted.length) { el.innerHTML = `<div style="padding:14px;font-size:13px;color:#a8a29e;text-align:center">Sem dados</div>`; return; }
-  const pc = ["g","s","b"];
-  el.innerHTML = sorted.map(([nome,d],i) => {
-    const cor = ZCORS[d.zona]||"#f97316";
-    const ini = nome.split(" ").map(p=>p[0]).slice(0,2).join("").toUpperCase();
-    return `<div class="rank-item">
-      <div class="rank-pos ${pc[i]||""}">${i+1}</div>
-      <div class="rank-av" style="background:${cor}">${ini}</div>
+  const top = Object.values(contagem).sort((a,b) => b.total - a.total).slice(0, 5);
+  if (!top.length) { lista.innerHTML = '<div style="font-size:12px;color:var(--text-muted);padding:8px 0">Sem dados ainda</div>'; return; }
+  const medalhas = ['🥇','🥈','🥉'];
+  lista.innerHTML = top.map((item, i) => `
+    <div class="ranking-item">
+      <div class="rank-pos">${medalhas[i] || (i+1)}</div>
+      <div class="avatar" style="width:28px;height:28px;font-size:10px">${iniciais(item.nome)}</div>
       <div class="rank-info">
-        <div class="rank-nome">${esc(nome)}</div>
-        <div class="rank-sub">${d.n} check-in${d.n!==1?"s":""}</div>
+        <div class="rank-name">${escHtml(item.nome)}</div>
+        <div class="rank-zona">${escHtml(item.zona)}</div>
       </div>
-      <div class="rank-n">${d.eleit}</div>
-    </div>`;
-  }).join("");
+      <div class="rank-count">${item.total}</div>
+    </div>`).join('');
 }
 
-// ── ZONAS ─────────────────────────────────────────────────
-function renderZonas() {
-  const cont = {};
-  checkins.forEach(c => {
-    const z = c.zona||"Sem zona";
-    if (!cont[z]) cont[z] = {n:0, eleit:0};
-    cont[z].n++;
-    cont[z].eleit += Number(c.eleit||0);
+// ── Barras por zona ───────────────────────────────────────────────────────────
+function buildZonaBars() {
+  const container = document.getElementById('zona-bars');
+  const porZona = {};
+  allCheckins.forEach(c => {
+    const zona = c.zona || c.Zona || 'Outros';
+    porZona[zona] = (porZona[zona] || 0) + 1;
   });
-  const sorted = Object.entries(cont).sort((a,b)=>b[1].eleit-a[1].eleit);
-  const max = Math.max(...sorted.map(([,d])=>d.eleit),1);
-  const el  = document.getElementById("zonas-lista");
-  if (!sorted.length) { el.innerHTML = `<div style="padding:14px;font-size:13px;color:#a8a29e;text-align:center">Sem dados</div>`; return; }
-  el.innerHTML = sorted.map(([zona,d]) => {
-    const cor = ZCORS[zona]||"#f97316";
-    const pct = Math.round(d.eleit/max*100);
-    return `<div class="zona-item">
-      <div class="zona-row">
-        <div class="zona-nome" style="color:${cor}">${esc(zona)}</div>
-        <div class="zona-count">${d.n} check-ins</div>
+  const entries = Object.entries(porZona).sort((a,b) => b[1]-a[1]);
+  if (!entries.length) { container.innerHTML = '<div style="font-size:12px;color:var(--text-muted);padding:8px 0">Sem dados ainda</div>'; return; }
+  const max = entries[0][1];
+  container.innerHTML = entries.map(([zona, total]) => {
+    const cor  = ZONA_CORES[zona] || '#BA7517';
+    const pct  = Math.round((total / max) * 100);
+    return `
+    <div class="zona-bar">
+      <div class="zona-bar-hdr">
+        <div class="zona-bar-name"><span class="zona-dot" style="background:${cor}"></span>${escHtml(zona)}</div>
+        <div class="zona-bar-count">${total}</div>
       </div>
-      <div class="zona-bar"><div class="zona-fill" style="width:${pct}%;background:${cor}"></div></div>
-      <div class="zona-eleit">👥 ${d.eleit} eleitores</div>
+      <div class="zona-bar-track"><div class="zona-bar-fill" style="width:${pct}%;background:${cor}"></div></div>
     </div>`;
-  }).join("");
+  }).join('');
 }
 
-// ── LIGHTBOX ──────────────────────────────────────────────
-function abrirLb(url, cap) {
-  document.getElementById("lb-img").src = url;
-  document.getElementById("lb-cap").textContent = cap;
-  document.getElementById("lightbox").classList.add("open");
-}
-function fecharLb() { document.getElementById("lightbox").classList.remove("open"); }
-document.addEventListener("keydown", e => { if(e.key==="Escape") fecharLb(); });
-
-// ── HELPERS ───────────────────────────────────────────────
-function esc(s) {
-  if (!s) return "";
-  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-}
-function atualizarHora() {
-  const h = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-  document.getElementById("hora-texto").textContent = `Atualizado às ${h}`;
+// ── Router de render ──────────────────────────────────────────────────────────
+function renderCurrentTab() {
+  if (currentTab === 'checkins')  renderFeed();
+  if (currentTab === 'ativistas') renderAtivistas();
+  if (currentTab === 'eleitores') renderEleitores();
+  if (currentTab === 'fotos')     renderFotos();
 }
 
-// Auto-refresh a cada 60s
-setInterval(() => { if(autenticado) carregar(); }, 60000);
+// ── Toast ─────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── Util ──────────────────────────────────────────────────────────────────────
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 </script>
 </body>
 </html>
